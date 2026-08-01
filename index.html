@@ -264,10 +264,11 @@
         <div class="input-row">
           <span class="input-label">IDR per 1 SGD</span>
           <div class="input-field-wrap">
-            <input type="number" id="in-fx" value="13936" min="1" oninput="recalc()">
+            <input type="number" id="in-fx" value="13936" min="1" oninput="onFxManualEdit(); recalc()">
             <span class="input-unit">IDR/SGD</span>
           </div>
         </div>
+        <div id="fx-live-stamp" style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--amber);margin-top:6px;line-height:1.4">&nbsp;</div>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--subtle);cursor:pointer">
             <input type="checkbox" id="use-live-fx" checked onchange="onToggleLiveFX()" style="accent-color:var(--teal);width:14px;height:14px;cursor:pointer">
@@ -2267,9 +2268,54 @@ const useLiveFX = () => {
   return el ? el.checked : true;
 };
 
+// The amber "LIVE · <date> <time>" stamp sitting directly under the rate box.
+// Shows MANUAL instead when the rate has been overridden, so the number on
+// screen is never ambiguous about where it came from.
+function renderFXStamp() {
+  const el = document.getElementById('fx-live-stamp');
+  if (!el) return;
+
+  if (LIVE_FX.error && !LIVE_FX.rate) {
+    el.style.color = 'var(--red)';
+    el.textContent = '⚠ LIVE RATE UNAVAILABLE';
+    return;
+  }
+  if (!LIVE_FX.rate) { el.innerHTML = '&nbsp;'; return; }
+
+  const d = LIVE_FX.asOf ? new Date(LIVE_FX.asOf) : new Date();
+  const stamp = d.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})
+              + ', ' + d.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+
+  if (useLiveFX()) {
+    el.style.color = 'var(--amber)';
+    el.innerHTML = `● LIVE · ${stamp}`;
+  } else {
+    el.style.color = 'var(--muted)';
+    el.innerHTML = `MANUAL · live was ${LIVE_FX.rate.toLocaleString(undefined,{maximumFractionDigits:0})} on ${stamp}`;
+  }
+}
+
+// Typing in the rate box switches the model to manual and keeps it there, so a
+// refresh will not quietly undo the override.
+function onFxManualEdit() {
+  const el = document.getElementById('in-fx');
+  if (!el) return;
+  const typed = parseFloat(el.value) || 0;
+  manualFX = typed;
+  if (useLiveFX() && LIVE_FX.rate && typed !== Math.round(LIVE_FX.rate)) {
+    const cb = document.getElementById('use-live-fx');
+    if (cb) cb.checked = false;
+    const trFx = document.getElementById('tr-fx');
+    if (trFx) trFx.value = typed;
+    if (typeof renderTransferDerived === 'function') renderTransferDerived();
+    renderLiveFXStatus();
+  }
+}
+
 function renderLiveFXStatus() {
   const el = document.getElementById('live-fx-status');
   const accEl = document.getElementById('acc-fx-live');
+  renderFXStamp();
 
   if (LIVE_FX.error) {
     if (el) el.innerHTML = `<span style="color:var(--amber)">⚠ Live rate unavailable — using your saved rate.</span>`;
