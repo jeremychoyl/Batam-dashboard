@@ -746,6 +746,7 @@
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px">
       <div class="card teal-border"><div class="kpi-label">Running Balance</div><div class="kpi-value teal" id="tr-balance">—</div><div class="kpi-sub" id="tr-balance-sgd">—</div></div>
       <div class="card"><div class="kpi-label">Total Deposited</div><div class="kpi-value" id="tr-deposited">—</div><div class="kpi-sub">Jeremy → Edi</div></div>
+      <div class="card"><div class="kpi-label">Rent Returned</div><div class="kpi-value" id="tr-returned">—</div><div class="kpi-sub">Edi → Jeremy</div></div>
       <div class="card"><div class="kpi-label">Total Spent</div><div class="kpi-value" id="tr-spent">—</div><div class="kpi-sub">Capex &amp; expenses</div></div>
       <div class="card"><div class="kpi-label">Transactions</div><div class="kpi-value" id="tr-count">—</div><div class="kpi-sub">entries recorded</div></div>
     </div>
@@ -2172,13 +2173,15 @@ function renderTransfers() {
 // Recomputes the running balance and summary cards without touching any input.
 function renderTransferDerived() {
   const fx = getTRFX();
-  let runBal = 0, totalDep = 0, totalSpent = 0;
+  // Deposits flow both ways: Jeremy funds the project, Edi remits collected
+  // rent. Totalling them together would be meaningless, so split by direction.
+  let runBal = 0, depFromJeremy = 0, depFromEdi = 0, totalSpent = 0;
 
   transfers.forEach((r, i) => {
     const dep = parseFloat(r.deposited) || 0;
     const sp  = parseFloat(r.spent) || 0;
     runBal += dep - sp;
-    totalDep += dep;
+    if (dep) { if (r.from === 'Edi') depFromEdi += dep; else depFromJeremy += dep; }
     totalSpent += sp;
 
     const balSGD  = Math.round(runBal / fx);
@@ -2199,7 +2202,8 @@ function renderTransferDerived() {
   const balSGD = Math.round(runBal / fx);
   set('tr-balance',     (runBal >= 0 ? '' : '−') + 'Rp ' + Math.abs(Math.round(runBal)).toLocaleString());
   set('tr-balance-sgd', (balSGD >= 0 ? 'SGD ' : '−SGD ') + Math.abs(balSGD).toLocaleString());
-  set('tr-deposited',   'Rp ' + Math.round(totalDep).toLocaleString());
+  set('tr-deposited',   'Rp ' + Math.round(depFromJeremy).toLocaleString());
+  set('tr-returned',    'Rp ' + Math.round(depFromEdi).toLocaleString());
   set('tr-spent',       'Rp ' + Math.round(totalSpent).toLocaleString());
   set('tr-count',       transfers.length + ' rows');
 }
