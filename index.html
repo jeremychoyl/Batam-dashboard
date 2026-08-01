@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ace Hotel & Laundry — Shared Live Model</title>
+<title>Ace Hotel &amp; Laundry — Shared Live Model</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -158,7 +158,6 @@
   .snap-btn.del:hover { border-color:var(--red); color:var(--red); }
   @media(max-width:600px) { .snap-row { grid-template-columns:1fr; } }
 
-
   /* RENOVATION TABLE */
   .reno-input { background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; color:#e2e8f0; font-family:'Inter',sans-serif; font-size:12px; padding:5px 8px; outline:none; width:100%; transition:border-color .15s; }
   .reno-input:focus { border-color:var(--teal); }
@@ -169,17 +168,6 @@
   .reno-total-cell { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); text-align:right; white-space:nowrap; }
   #reno-body tr { border-bottom:1px solid var(--border); }
   #reno-body td { padding:8px 4px; vertical-align:middle; }
-
-
-  .reno-input { background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; color:#e2e8f0; font-family:'Inter',sans-serif; font-size:12px; padding:5px 8px; outline:none; width:100%; transition:border-color .15s; }
-  .reno-input:focus { border-color:var(--teal); }
-  .reno-input.mono { font-family:'JetBrains Mono',monospace; text-align:right; color:#60d4ff; }
-  .reno-del { background:none; border:none; color:#334155; font-size:15px; cursor:pointer; padding:4px 8px; border-radius:4px; transition:color .15s; }
-  .reno-del:hover { color:var(--red); }
-  .reno-total-cell { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); text-align:right; white-space:nowrap; padding:8px 4px; }
-  #reno-body tr { border-bottom:1px solid var(--border); }
-  #reno-body td { padding:7px 4px; vertical-align:middle; }
-
 
   /* RATINGS */
   .rat-explanation { padding:16px 0; border-bottom:1px solid var(--border); }
@@ -195,6 +183,21 @@
   .score-bar-fill { height:100%; border-radius:4px; transition:width .5s ease; }
   .score-bar-val { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; width:28px; text-align:right; }
 
+  /* ACCOUNTS */
+  .acc-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .acc-row:last-child { border-bottom:none; }
+  .acc-row.section { padding-top:14px; }
+  .acc-label { color:var(--subtle); flex:1; }
+  .acc-label.bold { color:#f1f5f9; font-weight:600; }
+  .acc-label.indent { color:var(--muted); padding-left:12px; font-size:12px; }
+  .acc-idr { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); text-align:right; min-width:110px; }
+  .acc-sgd { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; color:var(--teal); text-align:right; min-width:80px; }
+  .acc-sgd.neg { color:var(--red); }
+  .acc-sgd.bold { color:#f1f5f9; font-weight:700; }
+  .acc-total { background:var(--teal-dim); border-radius:6px; padding:10px 12px; display:flex; justify-content:space-between; margin-top:10px; }
+  .acc-input-idr { background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; color:#60d4ff; font-family:'JetBrains Mono',monospace; font-size:12px; padding:3px 7px; width:110px; text-align:right; outline:none; transition:border-color .15s; -moz-appearance:textfield; }
+  .acc-input-idr:focus { border-color:var(--teal); }
+  .acc-input-idr::-webkit-outer-spin-button, .acc-input-idr::-webkit-inner-spin-button { -webkit-appearance:none; }
 </style>
 </head>
 <body>
@@ -223,6 +226,7 @@
   <button class="tab" onclick="switchTab('timeline',this)">Timeline</button>
   <button class="tab" onclick="switchTab('renovation',this)">🔨 Renovation</button>
   <button class="tab" onclick="switchTab('ratings',this)">⭐ Ratings</button>
+  <button class="tab" onclick="switchTab('accounts',this)">📒 Accounts</button>
 </div>
 
 <div class="content">
@@ -230,13 +234,13 @@
   <!-- ── INPUTS ─────────────────────────────────────────── -->
   <div id="panel-inputs" class="panel active">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px">
-  <div class="sh" style="margin-bottom:0"><h2>Editable Inputs</h2><p>Changes save to the cloud and sync for all viewers in real time.</p></div>
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-    <span id="last-saved" style="font-size:11px;color:var(--muted)"></span>
-    <button onclick="saveToSupabase()" id="save-btn" style="background:var(--teal);color:#07101f;border:none;border-radius:8px;padding:9px 20px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s">💾 Save Changes</button>
-    <button onclick="resetDefaults()" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:9px 14px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer">Reset Defaults</button>
-  </div>
-</div>
+      <div class="sh" style="margin-bottom:0"><h2>Editable Inputs</h2><p>Changes save to the cloud and sync for all viewers in real time.</p></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <span id="last-saved" style="font-size:11px;color:var(--muted)"></span>
+        <button onclick="saveToSupabase()" id="save-btn" style="background:var(--teal);color:#07101f;border:none;border-radius:8px;padding:9px 20px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s">💾 Save Changes</button>
+        <button onclick="resetDefaults()" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:9px 14px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer">Reset Defaults</button>
+      </div>
+    </div>
     <div class="blue-hint">Blue numbers are editable inputs. Everything else is calculated.</div>
 
     <div class="inputs-grid">
@@ -514,7 +518,6 @@
     </div>
   </div>
 
-
   <!-- ── RENOVATION ──────────────────────────────────────── -->
   <div id="panel-renovation" class="panel">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
@@ -597,9 +600,7 @@
               <th class="r" style="width:10%">Weighted</th>
             </tr>
           </thead>
-          <tbody id="rat-tbody">
-            <!-- injected by renderRatings() -->
-          </tbody>
+          <tbody id="rat-tbody"></tbody>
           <tfoot>
             <tr>
               <td colspan="5" style="padding:12px 0;font-weight:700;color:#f1f5f9;border-top:2px solid var(--teal)">TOTAL WEIGHTED SCORE</td>
@@ -625,6 +626,84 @@
 
   </div>
 
+  <!-- ── ACCOUNTS ────────────────────────────────────────── -->
+  <div id="panel-accounts" class="panel">
+
+    <!-- Header + FX input -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <div class="sh" style="margin-bottom:0">
+        <h2>📒 Local Laundry — Accounts</h2>
+        <p>Live P&amp;L, Cash Flow and Balance Sheet from your accounting software. Edit figures to update SGD conversions instantly.</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;color:var(--muted)">IDR per SGD</span>
+        <input type="number" id="acc-fx" value="16000" min="1" oninput="recalcAccounts()" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:6px;color:#60d4ff;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;padding:5px 9px;width:90px;text-align:right;outline:none;-moz-appearance:textfield">
+      </div>
+    </div>
+
+    <!-- Period selectors -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--subtle)">
+        📅 <strong style="color:#f1f5f9">P&amp;L Period:</strong>
+        <input type="text" id="acc-pl-period" value="1–30 Jul 2026" oninput="recalcAccounts()" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;width:130px;margin-left:6px">
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--subtle)">
+        📅 <strong style="color:#f1f5f9">Cash Flow Period:</strong>
+        <input type="text" id="acc-cf-period" value="May–Jul 2026" oninput="recalcAccounts()" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;width:130px;margin-left:6px">
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--subtle)">
+        📅 <strong style="color:#f1f5f9">Balance Sheet Date:</strong>
+        <input type="text" id="acc-bs-date" value="30 Jul 2026" oninput="recalcAccounts()" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;width:130px;margin-left:6px">
+      </div>
+    </div>
+
+    <!-- KPI Summary -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px">
+      <div class="card teal-border"><div class="kpi-label">Monthly Revenue</div><div class="kpi-value teal" id="acc-kpi-rev">—</div><div class="kpi-sub" id="acc-kpi-rev-idr">—</div></div>
+      <div class="card teal-border"><div class="kpi-label">Net Profit (Month)</div><div class="kpi-value teal" id="acc-kpi-profit">—</div><div class="kpi-sub" id="acc-kpi-profit-idr">—</div></div>
+      <div class="card"><div class="kpi-label">Net Profit Margin</div><div class="kpi-value" id="acc-kpi-margin">—</div><div class="kpi-sub">Revenue → Profit</div></div>
+      <div class="card"><div class="kpi-label">Cash at End of Period</div><div class="kpi-value" id="acc-kpi-cash">—</div><div class="kpi-sub" id="acc-kpi-cash-idr">—</div></div>
+      <div class="card"><div class="kpi-label">Total Assets</div><div class="kpi-value" id="acc-kpi-assets">—</div><div class="kpi-sub" id="acc-kpi-assets-idr">—</div></div>
+      <div class="card"><div class="kpi-label">Total Equity</div><div class="kpi-value" id="acc-kpi-equity">—</div><div class="kpi-sub" id="acc-kpi-equity-idr">—</div></div>
+    </div>
+
+    <div class="grid-2 mb24">
+
+      <!-- P&L -->
+      <div class="card">
+        <div class="sh"><h2>Profit &amp; Loss</h2><p id="acc-pl-title">1–30 Jul 2026</p></div>
+        <div id="acc-pl-table"></div>
+      </div>
+
+      <!-- Cash Flow -->
+      <div class="card">
+        <div class="sh"><h2>Cash Flow Statement</h2><p id="acc-cf-title">May–Jul 2026</p></div>
+        <div id="acc-cf-table"></div>
+      </div>
+
+    </div>
+
+    <!-- Balance Sheet -->
+    <div class="card mb24">
+      <div class="sh"><h2>Balance Sheet</h2><p id="acc-bs-title">As of 30 Jul 2026</p></div>
+      <div class="grid-2">
+        <div>
+          <div style="font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:12px">Assets</div>
+          <div id="acc-assets-table"></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:12px">Liabilities &amp; Equity</div>
+          <div id="acc-equity-table"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Note -->
+    <div style="padding:13px;background:var(--teal-dim);border:1px solid var(--teal);border-radius:8px;font-size:12px;color:var(--subtle)">
+      💡 All IDR figures are editable — SGD conversions update instantly using the exchange rate above. Hit <strong style="color:var(--teal)">💾 Save Changes</strong> in ⚙️ Inputs to sync account figures with everyone.
+    </div>
+
+  </div>
 
 </div>
 
@@ -744,7 +823,7 @@ function calc() {
     laundryRevP1, aceRevP1, totalRevP1, netP1_IDR, netP1_SGD, annualP1_SGD,
     laundryRevP2, aceRevP2, totalRevP2, netP2_IDR, netP2_SGD, annualP2_SGD,
     breakevenP1, breakevenP2, yieldP1, yieldP2,
-    incrProfit, incrReturn, incrPayback, phase2Capex,
+    incrProfit, incrReturn, incrPayback,
     laundryP1_100, laundryP2_100, aceP1_100, aceP2_100,
     beLP1, beLP2, beAP1, beAP2
   };
@@ -822,23 +901,19 @@ function renderOccupancy(m) {
   const occs = [0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0];
   const occLabels = occs.map(o=>Math.round(o*100)+'%');
   const fx = m.fx;
-  // Per-property monthly profit at each occupancy
   const lR_mo_per = m.laundryRent / fx; // rev per room per month SGD
   const aR_mo_per = m.aceRent / fx;
-  const lRent = m.laundryAnnual / 12 / fx * (m.laundryAnnual / (m.aceAnnual + m.laundryAnnual));
-  const aRent = m.laundryAnnual / 12 / fx * (m.aceAnnual / (m.aceAnnual + m.laundryAnnual));
   const aceRentMo   = m.aceAnnual / 12 / fx;
   const laundryRentMo = m.laundryAnnual / 12 / fx;
   const aceOpexMo   = m.opex / fx * 2/3;
   const laundryOpexMo = m.opex / fx * 1/3;
 
-  const ds = occ => ({
+  const d = {
     lP1: occs.map(o=> Math.round(lR_mo_per*m.laundryP1*o - laundryRentMo - laundryOpexMo)),
     lP2: occs.map(o=> Math.round(lR_mo_per*m.laundryP2*o + m.reception/fx - laundryRentMo - laundryOpexMo)),
     aP1: occs.map(o=> Math.round(aR_mo_per*m.aceP1*o - aceRentMo - aceOpexMo)),
     aP2: occs.map(o=> Math.round(aR_mo_per*m.aceP2*o - aceRentMo - aceOpexMo)),
-  });
-  const d = ds();
+  };
 
   upsertChart('chartOcc',{type:'line',data:{labels:occLabels,datasets:[
     {label:'Laundry Ph.1',data:d.lP1,borderColor:RED,borderWidth:2,pointRadius:3,fill:false},
@@ -866,7 +941,6 @@ function renderBenchmarks(m) {
   const yP1pct = (m.yieldP1*100).toFixed(1);
   const idPct  = (m.idYield*100).toFixed(1);
   const sgPct  = (m.sgYield*100).toFixed(1);
-  const maxY   = m.yieldP2*100;
 
   $('bench-bars').innerHTML = [
     {l:'Batam — Phase 2', v:yP2pct+'%', w:100, c:TEAL, vc:TEAL},
@@ -916,28 +990,6 @@ function renderTimeline(m) {
   </tbody></table>`;
 }
 
-function renderRating(m) {
-  // Dynamic scoring based on live inputs
-  const yieldScore   = m.yieldP2 > 1.0 ? 5 : m.yieldP2 > 0.5 ? 4 : m.yieldP2 > 0.2 ? 3 : m.yieldP2 > 0.1 ? 2 : 1;
-  const paybackScore = m.breakevenP2 < 6 ? 5 : m.breakevenP2 < 12 ? 4 : m.breakevenP2 < 24 ? 3 : m.breakevenP2 < 36 ? 2 : 1;
-  const roiScore     = (m.annualP2_SGD * 5 / m.totalP2Invest) > 5 ? 5 : (m.annualP2_SGD * 5 / m.totalP2Invest) > 2 ? 4 : 3;
-  const marginScore  = m.netP2_IDR / m.totalRevP2 > 0.6 ? 5 : m.netP2_IDR / m.totalRevP2 > 0.4 ? 4 : 3;
-  // Fixed scores (qualitative)
-  const diversScore  = 4; // 3 revenue streams
-  const stabilScore  = 3; // medium occupancy risk
-  const capAppScore  = 2; // leasehold
-  const liqScore     = 2; // low liquidity
-  const score = (yieldScore*0.2 + paybackScore*0.15 + roiScore*0.15 + marginScore*0.1 +
-                 diversScore*0.1 + stabilScore*0.1 + capAppScore*0.1 + liqScore*0.1);
-  let grade = 'E – Avoid';
-  if (score >= 4.5) grade = 'A – Strong Buy';
-  else if (score >= 3.5) grade = 'B – Buy';
-  else if (score >= 2.5) grade = 'C – Hold';
-  else if (score >= 1.5) grade = 'D – Caution';
-  $('hdr-grade').textContent = grade;
-  $('hdr-score').textContent = 'Score ' + score.toFixed(1) + ' / 5.0';
-}
-
 // ── MASTER RECALC ─────────────────────────────────────────────────────────────
 function recalc() {
   const m = calc();
@@ -949,7 +1001,7 @@ function recalc() {
   renderOccupancy(m);
   renderBenchmarks(m);
   renderTimeline(m);
-  renderRating(m);
+  renderRatings(m);   // also refreshes the header grade badge
 }
 
 // ── TAB SWITCHING ─────────────────────────────────────────────────────────────
@@ -958,10 +1010,8 @@ function switchTab(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   $('panel-' + id).classList.add('active');
+  if (id === 'accounts') renderAccounts();
 }
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-recalc();
 </script>
 
 <script>
@@ -974,6 +1024,7 @@ const SUPA_HEADERS = {
   "Content-Type": "application/json",
   "Prefer": "return=minimal"
 };
+const SUPA_READ_HEADERS = { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY };
 
 function setSyncStatus(msg, color) {
   const el = document.getElementById('sync-status');
@@ -1011,6 +1062,7 @@ const DEFAULTS = {
   'in-idYield': 8.3, 'in-sgYield': 3.3
 };
 
+// Base collect/apply — extended below by the renovation and accounts modules.
 function collectInputs() {
   const data = {};
   Object.keys(DEFAULTS).forEach(id => {
@@ -1048,8 +1100,7 @@ async function saveToSupabase() {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     setSyncStatus('✓ saved', 'var(--teal)');
-    const nowTs = new Date().toISOString();
-    setLastSaved(nowTs);
+    setLastSaved(new Date().toISOString());
     updateFooterTimestamp('live', new Date());
     if (btn) { btn.textContent = '✓ Saved'; setTimeout(() => { btn.textContent = '💾 Save Changes'; btn.style.opacity = '1'; btn.disabled = false; }, 1500); }
   } catch(e) {
@@ -1063,9 +1114,7 @@ async function saveToSupabase() {
 async function loadFromSupabase() {
   setSyncStatus('loading...', 'var(--amber)');
   try {
-    const res = await fetch(SUPA_URL + '/rest/v1/inputs?id=eq.1&select=data,updated_at', {
-      headers: { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY }
-    });
+    const res = await fetch(SUPA_URL + '/rest/v1/inputs?id=eq.1&select=data,updated_at', { headers: SUPA_READ_HEADERS });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const rows = await res.json();
     if (rows.length && rows[0].data && Object.keys(rows[0].data).length > 0) {
@@ -1088,9 +1137,7 @@ async function loadFromSupabase() {
 let lastUpdatedAt = null;
 async function pollForUpdates() {
   try {
-    const res = await fetch(SUPA_URL + '/rest/v1/inputs?id=eq.1&select=data,updated_at', {
-      headers: { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY }
-    });
+    const res = await fetch(SUPA_URL + '/rest/v1/inputs?id=eq.1&select=data,updated_at', { headers: SUPA_READ_HEADERS });
     if (!res.ok) return;
     const rows = await res.json();
     if (!rows.length) return;
@@ -1105,22 +1152,13 @@ async function pollForUpdates() {
     lastUpdatedAt = serverTime;
   } catch(e) { /* silent */ }
 }
-
-// ── INIT ─────────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', async () => {
-  await loadFromSupabase();
-  // Start polling after first load
-  const firstRow = await fetch(SUPA_URL + '/rest/v1/inputs?id=eq.1&select=updated_at', {
-    headers: { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY }
-  }).then(r => r.json()).catch(() => []);
-  if (firstRow.length) lastUpdatedAt = firstRow[0].updated_at;
-  setInterval(pollForUpdates, 15000);
-});
 </script>
-
 
 <script>
 // ── SNAPSHOT SYSTEM ─────────────────────────────────────────────────────────
+
+// Escape a value for safe embedding in an inline onclick="...'VALUE'..." handler.
+const jsAttr = s => String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;');
 
 async function saveSnapshot() {
   const nameEl = document.getElementById('snapshot-name');
@@ -1134,7 +1172,6 @@ async function saveSnapshot() {
     return;
   }
 
-  // Button feedback
   if (btn) { btn.textContent = '⏳ Saving...'; btn.style.opacity='0.6'; btn.disabled=true; }
   setSyncStatus('saving snapshot...', 'var(--amber)');
 
@@ -1152,11 +1189,7 @@ async function saveSnapshot() {
   try {
     const res = await fetch(SUPA_URL + '/rest/v1/snapshots', {
       method: 'POST',
-      headers: {
-        'apikey': SUPA_KEY,
-        'Authorization': 'Bearer ' + SUPA_KEY,
-        'Content-Type': 'application/json'
-      },
+      headers: { ...SUPA_READ_HEADERS, 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, data, summary })
     });
     if (!res.ok) {
@@ -1184,9 +1217,7 @@ async function saveSnapshot() {
 async function restoreSnapshot(id) {
   if (!confirm('Restore this snapshot? This will overwrite the current live model for everyone.')) return;
   try {
-    const res = await fetch(SUPA_URL + '/rest/v1/snapshots?id=eq.' + id + '&select=data,name', {
-      headers: { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY }
-    });
+    const res = await fetch(SUPA_URL + '/rest/v1/snapshots?id=eq.' + id + '&select=data,name', { headers: SUPA_READ_HEADERS });
     const rows = await res.json();
     if (!rows.length) return;
     applyInputs({ ...DEFAULTS, ...rows[0].data });
@@ -1202,10 +1233,7 @@ async function restoreSnapshot(id) {
 async function deleteSnapshot(id, name) {
   if (!confirm('Delete snapshot "' + name + '"? This cannot be undone.')) return;
   try {
-    await fetch(SUPA_URL + '/rest/v1/snapshots?id=eq.' + id, {
-      method: 'DELETE',
-      headers: SUPA_HEADERS
-    });
+    await fetch(SUPA_URL + '/rest/v1/snapshots?id=eq.' + id, { method: 'DELETE', headers: SUPA_HEADERS });
     await loadSnapshots();
   } catch(e) { console.error(e); }
 }
@@ -1214,9 +1242,7 @@ async function loadSnapshots() {
   const el = document.getElementById('snapshot-list');
   if (!el) return;
   try {
-    const res = await fetch(SUPA_URL + '/rest/v1/snapshots?select=id,name,summary,created_at&order=created_at.desc&limit=20', {
-      headers: { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY }
-    });
+    const res = await fetch(SUPA_URL + '/rest/v1/snapshots?select=id,name,summary,created_at&order=created_at.desc&limit=20', { headers: SUPA_READ_HEADERS });
     const rows = await res.json();
     if (!rows.length) {
       el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px 0">No snapshots yet. Save one above to start tracking versions.</div>';
@@ -1227,11 +1253,12 @@ async function loadSnapshots() {
       const dateStr = d.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
       const s = r.summary || {};
       const meta = s.netP2_SGD ? `Ph.2 net SGD ${Number(s.netP2_SGD).toLocaleString()}/mo · yield ${s.yieldP2pct}% · payback ${s.breakevenP2} mo · 5-yr SGD ${Number(s.cum5yr).toLocaleString()}` : '';
+      const safeName = jsAttr(r.name);
       return `<div class="snap-row">
         <div><div class="snap-name">${r.name}</div><div class="snap-meta">${dateStr}${meta ? ' · ' + meta : ''}</div></div>
-        <button class="snap-btn" onclick="previewSnapshot(${r.id},'${r.name.replace(/'/g,"\'")}')">👁 Preview</button>
+        <button class="snap-btn" onclick="previewSnapshot(${r.id},'${safeName}')">👁 Preview</button>
         <button class="snap-btn restore" onclick="restoreSnapshot(${r.id})">↩ Restore</button>
-        <button class="snap-btn del" onclick="deleteSnapshot(${r.id},'${r.name.replace(/'/g,"\'")}')">✕</button>
+        <button class="snap-btn del" onclick="deleteSnapshot(${r.id},'${safeName}')">✕</button>
       </div>`;
     }).join('');
   } catch(e) {
@@ -1242,9 +1269,7 @@ async function loadSnapshots() {
 // Preview: load snapshot into a modal without overwriting live model
 async function previewSnapshot(id, name) {
   try {
-    const res = await fetch(SUPA_URL + '/rest/v1/snapshots?id=eq.' + id + '&select=data,summary', {
-      headers: { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY }
-    });
+    const res = await fetch(SUPA_URL + '/rest/v1/snapshots?id=eq.' + id + '&select=data,summary', { headers: SUPA_READ_HEADERS });
     const rows = await res.json();
     if (!rows.length) return;
     const s = rows[0].summary || {};
@@ -1260,8 +1285,7 @@ async function previewSnapshot(id, name) {
       ['5-Year Cumulative', s.cum5yr ? 'SGD ' + Number(s.cum5yr).toLocaleString() : '—'],
       ['Total Ph.2 Investment', s.totalP2Invest ? 'SGD ' + Number(s.totalP2Invest).toLocaleString() : '—'],
     ];
-    // Build modal
-    let existing = document.getElementById('snap-modal');
+    const existing = document.getElementById('snap-modal');
     if (existing) existing.remove();
     const modal = document.createElement('div');
     modal.id = 'snap-modal';
@@ -1284,14 +1308,7 @@ async function previewSnapshot(id, name) {
     modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
   } catch(e) { console.error(e); }
 }
-
-// Load snapshots on page ready
-window.addEventListener('DOMContentLoaded', () => {
-  // Hook into existing DOMContentLoaded — snapshots load after main data
-  setTimeout(loadSnapshots, 1500);
-});
 </script>
-
 
 <!-- FOOTER TIMESTAMP BAR -->
 <div id="footer-bar" style="position:fixed;bottom:0;left:0;right:0;background:#060e1a;border-top:1px solid #1a2d45;padding:8px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;z-index:50;font-size:11px;color:#475569">
@@ -1303,10 +1320,8 @@ window.addEventListener('DOMContentLoaded', () => {
 </div>
 <div style="height:40px"></div>
 
-
 <script>
 // ── RENOVATION SYSTEM ────────────────────────────────────────────────────────
-
 const DEFAULT_RENO_ROWS = [
   { item: 'Xiaomi Smart TV (32")',          unitCost: 2000000,  qty: 11 },
   { item: 'New AC (0.5–1 PK inverter)',     unitCost: 5000000,  qty: 11 },
@@ -1323,19 +1338,37 @@ const DEFAULT_RENO_ROWS = [
 
 let renoRows = JSON.parse(JSON.stringify(DEFAULT_RENO_ROWS));
 
+function renoFX() { return parseFloat(document.getElementById('in-fx').value) || 13936; }
+
+function formatIDR(n) {
+  if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return 'Rp ' + Math.round(n/1000) + 'K';
+  return 'Rp ' + Math.round(n).toLocaleString();
+}
+
+// Takes an IDR amount, renders it as SGD at the live FX rate.
+function formatSGD(idr) {
+  return 'SGD ' + Math.round(idr / renoFX()).toLocaleString();
+}
+
+// Escape for safe use inside an HTML attribute value.
+const htmlAttr = s => String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
 function renderRenoTable() {
   const tbody = document.getElementById('reno-body');
   if (!tbody) return;
 
-  tbody.innerHTML = renoRows.map((r, i) => `
-    <tr>
-      <td><input class="reno-input" placeholder="Item description" value="${r.item.replace(/"/g,'&quot;')}" oninput="updateRenoRow(${i},'item',this.value)"></td>
+  tbody.innerHTML = renoRows.map((r, i) => {
+    const total = (r.unitCost || 0) * (r.qty || 0);
+    return `<tr>
+      <td><input class="reno-input" placeholder="Item description" value="${htmlAttr(r.item)}" oninput="updateRenoRow(${i},'item',this.value)"></td>
       <td><input class="reno-input mono" type="number" min="0" placeholder="0" value="${r.unitCost || ''}" oninput="updateRenoRow(${i},'unitCost',this.value)"></td>
       <td><input class="reno-input qty" type="number" min="0" placeholder="1" value="${r.qty || ''}" oninput="updateRenoRow(${i},'qty',this.value)"></td>
-      <td class="reno-total-cell" id="reno-row-idr-${i}">${r.unitCost && r.qty ? formatIDR(r.unitCost * r.qty) : '—'}</td>
-      <td class="reno-total-cell" id="reno-row-sgd-${i}">${r.unitCost && r.qty ? formatSGD(r.unitCost * r.qty) : '—'}</td>
+      <td class="reno-total-cell" id="reno-row-idr-${i}">${total > 0 ? formatIDR(total) : '—'}</td>
+      <td class="reno-total-cell" id="reno-row-sgd-${i}">${total > 0 ? formatSGD(total) : '—'}</td>
       <td><button class="reno-del" onclick="deleteRenoRow(${i})" title="Remove">✕</button></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 
   updateRenoTotals();
 }
@@ -1345,7 +1378,7 @@ function updateRenoRow(i, field, value) {
   else if (field === 'unitCost') renoRows[i].unitCost = parseFloat(value) || 0;
   else if (field === 'qty') renoRows[i].qty = parseFloat(value) || 0;
 
-  // Update row totals inline without full re-render (preserve focus)
+  // Update row totals inline without a full re-render, so focus is preserved.
   const total = (renoRows[i].unitCost || 0) * (renoRows[i].qty || 0);
   const idrEl = document.getElementById('reno-row-idr-' + i);
   const sgdEl = document.getElementById('reno-row-sgd-' + i);
@@ -1363,7 +1396,6 @@ function deleteRenoRow(i) {
 function addRenovationRow() {
   renoRows.push({ item: '', unitCost: 0, qty: 1 });
   renderRenoTable();
-  // Focus the new item input
   setTimeout(() => {
     const rows = document.querySelectorAll('#reno-body tr');
     const lastRow = rows[rows.length - 1];
@@ -1372,25 +1404,17 @@ function addRenovationRow() {
 }
 
 function updateRenoTotals() {
-  const fx = parseFloat(document.getElementById('in-fx').value) || 13936;
   const totalIDR = renoRows.reduce((sum, r) => sum + (r.unitCost || 0) * (r.qty || 0), 0);
-  const totalSGD = totalIDR / fx;
   const count = renoRows.filter(r => r.item.trim()).length;
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  // Update summary cards
-  const idrEl = document.getElementById('reno-total-idr');
-  const sgdEl = document.getElementById('reno-total-sgd');
-  const cntEl = document.getElementById('reno-item-count');
-  const footIdr = document.getElementById('reno-foot-idr');
-  const footSgd = document.getElementById('reno-foot-sgd');
+  set('reno-total-idr', formatIDR(totalIDR));
+  set('reno-total-sgd', formatSGD(totalIDR));
+  set('reno-item-count', count + ' items');
+  set('reno-foot-idr', formatIDR(totalIDR));
+  set('reno-foot-sgd', formatSGD(totalIDR));
 
-  if (idrEl) idrEl.textContent = formatIDR(totalIDR);
-  if (sgdEl) sgdEl.textContent = 'SGD ' + Math.round(totalSGD).toLocaleString();
-  if (cntEl) cntEl.textContent = count + ' items';
-  if (footIdr) footIdr.textContent = formatIDR(totalIDR);
-  if (footSgd) footSgd.textContent = 'SGD ' + Math.round(totalSGD).toLocaleString();
-
-  // Auto-update the renovation cost input and trigger recalc
+  // Push the total into the Renovation Cost input so every tab picks it up.
   const renoInput = document.getElementById('in-reno');
   if (renoInput && totalIDR > 0) {
     renoInput.value = Math.round(totalIDR);
@@ -1398,20 +1422,8 @@ function updateRenoTotals() {
   }
 }
 
-function formatIDR(n) {
-  if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000) return 'Rp ' + Math.round(n/1000) + 'K';
-  return 'Rp ' + Math.round(n).toLocaleString();
-}
-
-function formatSGD(n) {
-  const fx = parseFloat(document.getElementById('in-fx').value) || 13936;
-  return 'SGD ' + Math.round(n/fx).toLocaleString();
-}
-
-// Load reno rows from saved inputs if available
 function loadRenoRows(savedData) {
-  if (savedData && savedData._renoRows && Array.isArray(savedData._renoRows)) {
+  if (savedData && Array.isArray(savedData._renoRows)) {
     renoRows = savedData._renoRows;
   } else {
     renoRows = JSON.parse(JSON.stringify(DEFAULT_RENO_ROWS));
@@ -1419,134 +1431,20 @@ function loadRenoRows(savedData) {
   renderRenoTable();
 }
 
-// Patch collectInputs to also save renoRows
-const _origCollect = collectInputs;
+// Extend collectInputs / applyInputs to carry the renovation rows.
+const _collectBeforeReno = collectInputs;
 collectInputs = function() {
-  const data = _origCollect();
+  const data = _collectBeforeReno();
   data._renoRows = JSON.parse(JSON.stringify(renoRows));
   return data;
 };
 
-// Patch applyInputs to also restore renoRows
-const _origApply = applyInputs;
+const _applyBeforeReno = applyInputs;
 applyInputs = function(data) {
-  _origApply(data);
+  _applyBeforeReno(data);
   loadRenoRows(data);
 };
-
-// Init on load
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => { renderRenoTable(); }, 100);
-});
 </script>
-
-
-<script>
-// ── RENOVATION SYSTEM ────────────────────────────────────────────────────────
-const DEFAULT_RENO_ROWS = [
-  { item: 'Xiaomi Smart TV (32")',         unitCost: 2000000,  qty: 11 },
-  { item: 'New AC (0.5–1 PK inverter)',    unitCost: 5000000,  qty: 11 },
-  { item: 'Water heater',                  unitCost: 1500000,  qty: 11 },
-  { item: 'Wardrobe',                      unitCost: 2000000,  qty: 11 },
-  { item: 'Paint & minor touch-up',        unitCost: 700000,   qty: 11 },
-  { item: 'Ceiling leak & plafon repairs', unitCost: 15000000, qty: 1  },
-  { item: '', unitCost: 0, qty: 1 },
-  { item: '', unitCost: 0, qty: 1 },
-  { item: '', unitCost: 0, qty: 1 },
-  { item: '', unitCost: 0, qty: 1 },
-  { item: '', unitCost: 0, qty: 1 },
-];
-
-let renoRows = JSON.parse(JSON.stringify(DEFAULT_RENO_ROWS));
-
-function getFX() { return parseFloat(document.getElementById('in-fx').value) || 13936; }
-function fmtIDR(n) {
-  if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000) return 'Rp ' + Math.round(n/1000) + 'K';
-  return 'Rp ' + Math.round(n).toLocaleString();
-}
-
-function renderRenoTable() {
-  const tbody = document.getElementById('reno-body');
-  if (!tbody) return;
-  tbody.innerHTML = renoRows.map((r, i) => {
-    const total = (r.unitCost||0) * (r.qty||0);
-    return `<tr>
-      <td><input class="reno-input" placeholder="Item description" value="${r.item.replace(/"/g,'&quot;').replace(/&/g,'&amp;')}" oninput="updateRenoRow(${i},'item',this.value)"></td>
-      <td><input class="reno-input mono" type="number" min="0" placeholder="0" value="${r.unitCost||''}" oninput="updateRenoRow(${i},'unitCost',this.value)" style="width:130px"></td>
-      <td><input class="reno-input mono" type="number" min="0" placeholder="1" value="${r.qty||''}" oninput="updateRenoRow(${i},'qty',this.value)" style="width:55px"></td>
-      <td class="reno-total-cell" id="reno-idr-${i}">${total>0?fmtIDR(total):'—'}</td>
-      <td class="reno-total-cell" id="reno-sgd-${i}">${total>0?'SGD '+Math.round(total/getFX()).toLocaleString():'—'}</td>
-      <td><button class="reno-del" onclick="deleteRenoRow(${i})" title="Remove">✕</button></td>
-    </tr>`;
-  }).join('');
-  updateRenoTotals();
-}
-
-function updateRenoRow(i, field, value) {
-  if (field === 'item') renoRows[i].item = value;
-  else if (field === 'unitCost') renoRows[i].unitCost = parseFloat(value)||0;
-  else if (field === 'qty') renoRows[i].qty = parseFloat(value)||0;
-  const total = (renoRows[i].unitCost||0)*(renoRows[i].qty||0);
-  const idrEl = document.getElementById('reno-idr-'+i);
-  const sgdEl = document.getElementById('reno-sgd-'+i);
-  if (idrEl) idrEl.textContent = total>0 ? fmtIDR(total) : '—';
-  if (sgdEl) sgdEl.textContent = total>0 ? 'SGD '+Math.round(total/getFX()).toLocaleString() : '—';
-  updateRenoTotals();
-}
-
-function deleteRenoRow(i) { renoRows.splice(i,1); renderRenoTable(); }
-
-function addRenovationRow() {
-  renoRows.push({item:'',unitCost:0,qty:1});
-  renderRenoTable();
-  setTimeout(()=>{
-    const rows = document.querySelectorAll('#reno-body tr');
-    const last = rows[rows.length-1];
-    if (last) last.querySelector('.reno-input').focus();
-  },50);
-}
-
-function updateRenoTotals() {
-  const fx = getFX();
-  const totalIDR = renoRows.reduce((s,r)=>s+(r.unitCost||0)*(r.qty||0),0);
-  const totalSGD = totalIDR/fx;
-  const count = renoRows.filter(r=>r.item.trim()).length;
-  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  set('reno-total-idr', fmtIDR(totalIDR));
-  set('reno-total-sgd', 'SGD '+Math.round(totalSGD).toLocaleString());
-  set('reno-item-count', count+' items');
-  set('reno-foot-idr', fmtIDR(totalIDR));
-  set('reno-foot-sgd', 'SGD '+Math.round(totalSGD).toLocaleString());
-  // Push total into renovation input and trigger recalc
-  const renoInput = document.getElementById('in-reno');
-  if (renoInput && totalIDR > 0) { renoInput.value = Math.round(totalIDR); recalc(); }
-}
-
-// Patch collectInputs to save renoRows alongside inputs
-const _origCollectInputs = collectInputs;
-collectInputs = function() {
-  const data = _origCollectInputs();
-  data._renoRows = JSON.parse(JSON.stringify(renoRows));
-  return data;
-};
-
-// Patch applyInputs to restore renoRows
-const _origApplyInputs = applyInputs;
-applyInputs = function(data) {
-  _origApplyInputs(data);
-  if (data && data._renoRows && Array.isArray(data._renoRows)) {
-    renoRows = data._renoRows;
-  } else {
-    renoRows = JSON.parse(JSON.stringify(DEFAULT_RENO_ROWS));
-  }
-  renderRenoTable();
-};
-
-// Init
-window.addEventListener('DOMContentLoaded', ()=>{ setTimeout(renderRenoTable, 200); });
-</script>
-
 
 <script>
 // ── RATINGS SYSTEM ────────────────────────────────────────────────────────────
@@ -1620,7 +1518,7 @@ function renderRatings(m) {
       id: '—', sg: '—',
       score: 3, weight: 0.10,
       dynamic: false,
-      why: `Revenue is directly tied to room occupancy. Laundry Shophouse Phase 1 breaks even at <strong>79.4% occupancy</strong> — leaving limited buffer. Phase 2 dramatically improves this to 35.4%. Ace Hotel is more resilient at 29.8% (Phase 2). Rated Medium because while breakevens are low in Phase 2, demand in Batam can fluctuate seasonally. Score: 3/5 — improve by locking in corporate or long-stay tenants.`
+      why: `Revenue is directly tied to room occupancy. Laundry Shophouse Phase 1 breaks even at <strong>${(m.beLP1*100).toFixed(1)}% occupancy</strong> — leaving limited buffer. Phase 2 improves this to ${(Math.max(0,m.beLP2)*100).toFixed(1)}%. Ace Hotel is more resilient at ${(m.beAP2*100).toFixed(1)}% (Phase 2). Rated Medium because while Phase 2 breakevens are low, demand in Batam can fluctuate seasonally. Score: 3/5 — improve by locking in corporate or long-stay tenants.`
     },
     {
       metric: 'Capital Appreciation Potential',
@@ -1643,7 +1541,6 @@ function renderRatings(m) {
   // Weighted total
   const total = rows.reduce((s,r) => s + r.score * r.weight, 0);
 
-  // Update header
   let grade = 'E – Avoid';
   if (total >= 4.5) grade = 'A – Strong Buy';
   else if (total >= 3.5) grade = 'B – Buy';
@@ -1709,25 +1606,253 @@ function renderRatings(m) {
     }).join('');
   }
 }
+</script>
 
-// Hook into recalc so ratings update with inputs
-const _origRecalc = recalc;
-recalc = function() {
-  _origRecalc();
-  const panel = document.getElementById('panel-ratings');
-  if (panel && panel.classList.contains('active')) renderRatings();
+<script>
+// ── ACCOUNTS SYSTEM ───────────────────────────────────────────────────────────
+
+// Every editable IDR figure on the Accounts tab, in one place.
+const ACC_FIELD_IDS = [
+  'pl_revenue','pl_depreciation','pl_salaries','pl_supplies',
+  'cf_revenue','cf_salaries','cf_supplies','cf_cashOpen',
+  'bs_cash','bs_receivable','bs_inventory','bs_otherCurrent',
+  'bs_fixedAssets','bs_accDeprec','bs_liabilities','bs_openingEquity'
+];
+
+const ACC_DEFAULTS = {
+  // P&L (IDR)
+  pl_revenue:      6000000,
+  pl_depreciation: 1612500,
+  pl_salaries:     750000,
+  pl_supplies:     430000,
+  // Cash Flow (IDR)
+  cf_revenue:      13200000,
+  cf_salaries:     1500000,
+  cf_supplies:     430000,
+  cf_cashOpen:     0,
+  // Balance Sheet (IDR)
+  bs_cash:         11270000,
+  bs_receivable:   0,
+  bs_inventory:    0,
+  bs_otherCurrent: 0,
+  bs_fixedAssets:  96750000,
+  bs_accDeprec:    3225000,
+  bs_liabilities:  0,
+  bs_openingEquity:96750000,
 };
 
-// Also render when tab is clicked
-const _origSwitchTab = switchTab;
-switchTab = function(id, btn) {
-  _origSwitchTab(id, btn);
-  if (id === 'ratings') renderRatings();
+// Working values live here, not in the DOM, so a re-render never loses a figure.
+let accValues = { ...ACC_DEFAULTS };
+
+function getAccFX() { return parseFloat(document.getElementById('acc-fx').value) || 16000; }
+function toSGD(idr) { return Math.round(idr / getAccFX()); }
+
+function fmtSGD2(n) {
+  const s = 'SGD ' + Math.abs(n).toLocaleString();
+  return n < 0 ? '−' + s : s;
+}
+
+function fmtIDR2(n) {
+  const abs = Math.abs(n);
+  let s;
+  if (abs >= 1000000) s = 'Rp ' + (abs/1000000).toFixed(2) + 'M';
+  else if (abs >= 1000) s = 'Rp ' + Math.round(abs/1000) + 'K';
+  else s = 'Rp ' + Math.round(abs).toLocaleString();
+  return n < 0 ? '−' + s : s;
+}
+
+function accInputRow(label, id, value, indent) {
+  return `<div class="acc-row">
+    <span class="acc-label${indent?' indent':''}">${label}</span>
+    <input class="acc-input-idr" type="number" id="${id}" value="${value}" oninput="onAccInput('${id}', this.value)">
+    <span class="acc-sgd" id="${id}-sgd">${fmtSGD2(toSGD(value))}</span>
+  </div>`;
+}
+
+function accStaticRow(label, idrVal, sgdVal, bold, neg, indent) {
+  return `<div class="acc-row">
+    <span class="acc-label${bold?' bold':''}${indent?' indent':''}">${label}</span>
+    <span class="acc-idr">${fmtIDR2(idrVal)}</span>
+    <span class="acc-sgd${neg?' neg':''}${bold?' bold':''}">${fmtSGD2(sgdVal)}</span>
+  </div>`;
+}
+
+// Typing into an accounts field updates the model, then refreshes only the
+// derived figures. The input elements themselves are never re-created, so
+// focus and cursor position survive every keystroke.
+function onAccInput(id, value) {
+  accValues[id] = parseFloat(value) || 0;
+  updateAccDerived();
+}
+
+function accDerived() {
+  const v = accValues;
+  // P&L
+  const totalExp  = v.pl_depreciation + v.pl_salaries + v.pl_supplies;
+  const netProfit = v.pl_revenue - totalExp;
+  const margin    = v.pl_revenue > 0 ? (netProfit / v.pl_revenue * 100).toFixed(1) : '0';
+  // Cash flow
+  const cfOp  = v.cf_revenue - v.cf_salaries - v.cf_supplies;
+  const cfEnd = v.cf_cashOpen + cfOp;
+  // Balance sheet
+  const totalCA    = v.bs_cash + v.bs_receivable + v.bs_inventory + v.bs_otherCurrent;
+  const netFixed   = v.bs_fixedAssets - v.bs_accDeprec;
+  const totalAss   = totalCA + netFixed;
+  const totalEquity= v.bs_openingEquity + netProfit;
+  const totalLE    = v.bs_liabilities + totalEquity;
+  return { totalExp, netProfit, margin, cfOp, cfEnd, totalCA, netFixed, totalAss, totalEquity, totalLE };
+}
+
+// Rebuilds the statement tables. Call on first paint / tab activation / restore
+// — NOT on every keystroke.
+function renderAccounts() {
+  const v = accValues;
+  const d = accDerived();
+
+  document.getElementById('acc-pl-table').innerHTML =
+    `<div style="font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Revenue</div>` +
+    accInputRow('Revenue', 'pl_revenue', v.pl_revenue) +
+    `<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 8px">Operating Expenses</div>` +
+    accInputRow('Depreciation &amp; Amortisation', 'pl_depreciation', v.pl_depreciation, true) +
+    accInputRow('Salaries &amp; Benefits', 'pl_salaries', v.pl_salaries, true) +
+    accInputRow('Office &amp; Admin Supplies', 'pl_supplies', v.pl_supplies, true) +
+    `<div id="acc-pl-derived"></div>`;
+
+  document.getElementById('acc-cf-table').innerHTML =
+    `<div style="font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Operating Activities</div>` +
+    accInputRow('Revenue received', 'cf_revenue', v.cf_revenue) +
+    accInputRow('Salaries paid', 'cf_salaries', v.cf_salaries, true) +
+    accInputRow('Office supplies paid', 'cf_supplies', v.cf_supplies, true) +
+    `<div id="acc-cf-op"></div>` +
+    `<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 8px">Summary</div>` +
+    accInputRow('Cash at Beginning of Period', 'cf_cashOpen', v.cf_cashOpen) +
+    `<div id="acc-cf-derived"></div>`;
+
+  document.getElementById('acc-assets-table').innerHTML =
+    `<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Current Assets</div>` +
+    accInputRow('Cash &amp; Bank', 'bs_cash', v.bs_cash, true) +
+    accInputRow('Accounts Receivable', 'bs_receivable', v.bs_receivable, true) +
+    accInputRow('Inventory', 'bs_inventory', v.bs_inventory, true) +
+    accInputRow('Other Current Assets', 'bs_otherCurrent', v.bs_otherCurrent, true) +
+    `<div id="acc-ca-total"></div>` +
+    `<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 8px">Fixed Assets</div>` +
+    accInputRow('Historical Value', 'bs_fixedAssets', v.bs_fixedAssets, true) +
+    accInputRow('Accumulated Depreciation', 'bs_accDeprec', v.bs_accDeprec, true) +
+    `<div id="acc-assets-derived"></div>`;
+
+  document.getElementById('acc-equity-table').innerHTML =
+    `<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Liabilities</div>` +
+    accInputRow('Total Liabilities', 'bs_liabilities', v.bs_liabilities) +
+    `<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 8px">Equity</div>` +
+    accInputRow('Opening Balance Equity', 'bs_openingEquity', v.bs_openingEquity, true) +
+    `<div id="acc-equity-derived"></div>`;
+
+  updateAccDerived();
+}
+
+// Updates every calculated cell — totals, SGD conversions, KPI cards, period
+// labels — without touching the input elements.
+function updateAccDerived() {
+  const v = accValues;
+  const d = accDerived();
+  const setHTML = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+  const setText = (id, t)    => { const el = document.getElementById(id); if (el) el.textContent = t; };
+
+  // P&L derived rows
+  setHTML('acc-pl-derived',
+    accStaticRow('Total Operating Expenses', d.totalExp, toSGD(d.totalExp), true, true) +
+    `<div class="acc-total"><span style="color:var(--teal);font-weight:700;font-size:13px">Net Profit After Tax</span><span style="font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtSGD2(toSGD(d.netProfit))}</span></div>`);
+
+  // Cash flow derived rows
+  setHTML('acc-cf-op', accStaticRow('Net Cash from Operations', d.cfOp, toSGD(d.cfOp), true, false));
+  setHTML('acc-cf-derived',
+    `<div class="acc-total"><span style="color:var(--teal);font-weight:700;font-size:13px">Cash at End of Period</span><span style="font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtSGD2(toSGD(d.cfEnd))}</span></div>`);
+
+  // Balance sheet derived rows
+  setHTML('acc-ca-total', accStaticRow('Total Current Assets', d.totalCA, toSGD(d.totalCA), true));
+  setHTML('acc-assets-derived',
+    accStaticRow('Net Fixed Assets', d.netFixed, toSGD(d.netFixed), true) +
+    `<div class="acc-total"><span style="color:var(--teal);font-weight:700;font-size:13px">Total Assets</span><span style="font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtSGD2(toSGD(d.totalAss))}</span></div>`);
+  setHTML('acc-equity-derived',
+    accStaticRow('Current Earnings of the Year', d.netProfit, toSGD(d.netProfit), false, false, true) +
+    accStaticRow('Total Equity', d.totalEquity, toSGD(d.totalEquity), true) +
+    `<div class="acc-total"><span style="color:var(--teal);font-weight:700;font-size:13px">Total Liabilities &amp; Equity</span><span style="font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtSGD2(toSGD(d.totalLE))}</span></div>`);
+
+  // Per-input SGD conversions
+  ACC_FIELD_IDS.forEach(id => setText(id + '-sgd', fmtSGD2(toSGD(v[id]))));
+
+  // KPI cards
+  setText('acc-kpi-rev',        'SGD ' + toSGD(v.pl_revenue).toLocaleString());
+  setText('acc-kpi-rev-idr',    fmtIDR2(v.pl_revenue));
+  setText('acc-kpi-profit',     'SGD ' + toSGD(d.netProfit).toLocaleString());
+  setText('acc-kpi-profit-idr', fmtIDR2(d.netProfit));
+  setText('acc-kpi-margin',     d.margin + '%');
+  setText('acc-kpi-cash',       'SGD ' + toSGD(d.cfEnd).toLocaleString());
+  setText('acc-kpi-cash-idr',   fmtIDR2(d.cfEnd));
+  setText('acc-kpi-assets',     'SGD ' + toSGD(d.totalAss).toLocaleString());
+  setText('acc-kpi-assets-idr', fmtIDR2(d.totalAss));
+  setText('acc-kpi-equity',     'SGD ' + toSGD(d.totalEquity).toLocaleString());
+  setText('acc-kpi-equity-idr', fmtIDR2(d.totalEquity));
+
+  // Period labels
+  const g = id => document.getElementById(id);
+  setText('acc-pl-title', g('acc-pl-period') ? g('acc-pl-period').value : '');
+  setText('acc-cf-title', g('acc-cf-period') ? g('acc-cf-period').value : '');
+  setText('acc-bs-title', 'As of ' + (g('acc-bs-date') ? g('acc-bs-date').value : ''));
+}
+
+// Called by the FX and period inputs — derived values only, no rebuild.
+function recalcAccounts() { updateAccDerived(); }
+
+// Extend collectInputs / applyInputs to carry the accounts figures.
+const _collectBeforeAcc = collectInputs;
+collectInputs = function() {
+  const data = _collectBeforeAcc();
+  const accFX = document.getElementById('acc-fx');
+  if (accFX) data._acc_fx = parseFloat(accFX.value) || 16000;
+  ['acc-pl-period','acc-cf-period','acc-bs-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data['_' + id.replace(/-/g,'_')] = el.value;
+  });
+  ACC_FIELD_IDS.forEach(id => { data['_acc_' + id] = accValues[id]; });
+  return data;
 };
 
-// Init
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => { renderRatings(); }, 300);
+const _applyBeforeAcc = applyInputs;
+applyInputs = function(data) {
+  _applyBeforeAcc(data);
+  const accFX = document.getElementById('acc-fx');
+  if (accFX && data._acc_fx) accFX.value = data._acc_fx;
+  ['acc-pl-period','acc-cf-period','acc-bs-date'].forEach(id => {
+    const el = document.getElementById(id);
+    const key = '_' + id.replace(/-/g,'_');
+    if (el && data[key] !== undefined) el.value = data[key];
+  });
+  ACC_FIELD_IDS.forEach(id => {
+    accValues[id] = data['_acc_' + id] !== undefined ? data['_acc_' + id] : ACC_DEFAULTS[id];
+  });
+  renderAccounts();
+};
+</script>
+
+<script>
+// ── INIT ──────────────────────────────────────────────────────────────────────
+// One ordered startup path. Everything paints from defaults first, then the
+// cloud state (if any) overwrites it via applyInputs().
+window.addEventListener('DOMContentLoaded', async () => {
+  renderRenoTable();
+  renderAccounts();
+  recalc();
+
+  await loadFromSupabase();
+
+  try {
+    const rows = await fetch(SUPA_URL + '/rest/v1/inputs?id=eq.1&select=updated_at', { headers: SUPA_READ_HEADERS }).then(r => r.json());
+    if (rows.length) lastUpdatedAt = rows[0].updated_at;
+  } catch(e) { /* offline — polling simply finds nothing */ }
+  setInterval(pollForUpdates, 15000);
+
+  loadSnapshots();
 });
 </script>
 
