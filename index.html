@@ -268,6 +268,14 @@
             <span class="input-unit">IDR/SGD</span>
           </div>
         </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--subtle);cursor:pointer">
+            <input type="checkbox" id="use-live-fx" checked onchange="onToggleLiveFX()" style="accent-color:var(--teal);width:14px;height:14px;cursor:pointer">
+            Use live market rate
+          </label>
+          <div id="live-fx-status" style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5">Fetching live rate…</div>
+          <button onclick="fetchLiveFX(true)" style="margin-top:7px;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Inter',sans-serif;font-size:11px;color:var(--subtle);cursor:pointer">↻ Refresh rate</button>
+        </div>
       </div>
 
       <div class="input-group">
@@ -649,9 +657,12 @@
         <h2>📒 Local Laundry — Accounts</h2>
         <p>Live P&amp;L, Cash Flow and Balance Sheet from your accounting software. Edit figures to update SGD conversions instantly.</p>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:12px;color:var(--muted)">IDR per SGD</span>
-        <input type="number" id="acc-fx" value="16000" min="1" oninput="recalcAccounts()" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:6px;color:#60d4ff;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;padding:5px 9px;width:90px;text-align:right;outline:none;-moz-appearance:textfield">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:12px;color:var(--muted)">IDR per SGD</span>
+          <input type="number" id="acc-fx" value="16000" min="1" oninput="recalcAccounts()" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:6px;color:#60d4ff;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;padding:5px 9px;width:90px;text-align:right;outline:none;-moz-appearance:textfield">
+        </div>
+        <div id="acc-fx-live" style="font-size:11px;color:var(--muted);margin-top:7px">&nbsp;</div>
       </div>
     </div>
 
@@ -2237,6 +2248,129 @@ applyInputs = function(data) {
 </script>
 
 <script>
+// ── LIVE EXCHANGE RATE ────────────────────────────────────────────────────────
+// Pulled fresh on every page load from open.er-api.com (free, no API key,
+// CORS-enabled). XE has no free public API, so this stands in for it — it
+// tracks the same mid-market reference rates.
+//
+// Applies to the MODEL rate and the LEDGER display rate, both of which express
+// "what is this worth now". It deliberately does NOT touch the Accounts book
+// rate: those statements come out of the accounting software at a fixed rate,
+// and silently restating them would misreport history. The live rate is shown
+// beside it with a one-click apply instead.
+
+const FX_ENDPOINT = 'https://open.er-api.com/v6/latest/SGD';
+let LIVE_FX = { rate: null, asOf: null, error: null };
+
+const useLiveFX = () => {
+  const el = document.getElementById('use-live-fx');
+  return el ? el.checked : true;
+};
+
+function renderLiveFXStatus() {
+  const el = document.getElementById('live-fx-status');
+  const accEl = document.getElementById('acc-fx-live');
+
+  if (LIVE_FX.error) {
+    if (el) el.innerHTML = `<span style="color:var(--amber)">⚠ Live rate unavailable — using your saved rate.</span>`;
+    if (accEl) accEl.innerHTML = '&nbsp;';
+    return;
+  }
+  if (!LIVE_FX.rate) {
+    if (el) el.textContent = 'Fetching live rate…';
+    return;
+  }
+
+  const pretty = LIVE_FX.rate.toLocaleString(undefined,{maximumFractionDigits:2});
+  const when   = LIVE_FX.asOf ? new Date(LIVE_FX.asOf).toLocaleString('en-SG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+  if (el) {
+    el.innerHTML = `<span style="color:var(--teal)">1 SGD = ${pretty} IDR</span><br>
+      as of ${when} · open.er-api.com<br>
+      ${useLiveFX() ? 'Applied to the model and the ledger.' : '<span style="color:var(--amber)">Not applied — using your manual rate.</span>'}`;
+  }
+  if (accEl) {
+    accEl.innerHTML = `Live rate: <span style="color:var(--teal);font-family:'JetBrains Mono',monospace">${pretty}</span>
+      <button onclick="applyLiveToAccounts()" style="margin-left:6px;background:none;border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:10px;color:var(--subtle);cursor:pointer">use</button>`;
+  }
+}
+
+// Push the live rate into the model + ledger. Assigning .value fires no input
+// event, so this never marks the model as unsaved — a refresh alone will not
+// look like someone edited it.
+function applyLiveFX() {
+  if (!LIVE_FX.rate || !useLiveFX()) return;
+  const rounded = Math.round(LIVE_FX.rate);
+  const inFx = document.getElementById('in-fx');
+  const trFx = document.getElementById('tr-fx');
+  if (inFx) inFx.value = rounded;
+  if (trFx) trFx.value = rounded;
+  recalc();
+  if (typeof renderTransferDerived === 'function') renderTransferDerived();
+}
+
+function applyLiveToAccounts() {
+  if (!LIVE_FX.rate) return;
+  const el = document.getElementById('acc-fx');
+  if (el) { el.value = Math.round(LIVE_FX.rate); hasUnsavedEdits = true; recalcAccounts(); }
+}
+
+// The rate that was saved with the model, so switching the toggle off puts the
+// manual rate back rather than stranding the live one.
+let manualFX = null;
+
+function onToggleLiveFX() {
+  if (useLiveFX()) {
+    applyLiveFX();
+  } else if (manualFX) {
+    const inFx = document.getElementById('in-fx');
+    const trFx = document.getElementById('tr-fx');
+    if (inFx) inFx.value = manualFX;
+    if (trFx) trFx.value = manualFX;
+    recalc();
+    if (typeof renderTransferDerived === 'function') renderTransferDerived();
+  }
+  renderLiveFXStatus();
+}
+
+async function fetchLiveFX(manual) {
+  const el = document.getElementById('live-fx-status');
+  if (manual && el) el.textContent = 'Refreshing…';
+  try {
+    const res = await fetch(FX_ENDPOINT, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    const rate = j && j.rates && j.rates.IDR;
+    if (!rate) throw new Error('no IDR rate in response');
+    LIVE_FX = { rate, asOf: j.time_last_update_utc || null, error: null };
+    applyLiveFX();
+  } catch(e) {
+    console.error('Live FX failed:', e);
+    LIVE_FX = { rate: LIVE_FX.rate, asOf: LIVE_FX.asOf, error: e.message };
+  }
+  renderLiveFXStatus();
+}
+
+// Persist the toggle with the rest of the model.
+const _collectBeforeFX = collectInputs;
+collectInputs = function() {
+  const data = _collectBeforeFX();
+  data._useLiveFX = useLiveFX();
+  return data;
+};
+
+const _applyBeforeFX = applyInputs;
+applyInputs = function(data) {
+  _applyBeforeFX(data);
+  const el = document.getElementById('use-live-fx');
+  if (el && data && data._useLiveFX !== undefined) el.checked = !!data._useLiveFX;
+  // Remember the saved rate before any live overlay replaces it.
+  if (data && data['in-fx']) manualFX = data['in-fx'];
+  if (useLiveFX()) applyLiveFX();   // a partner's save must not undo the live rate
+  renderLiveFXStatus();
+};
+</script>
+
+<script>
 // ── INIT ──────────────────────────────────────────────────────────────────────
 // One ordered startup path. Everything paints from defaults first, then the
 // cloud state (if any) overwrites it via applyInputs().
@@ -2247,6 +2381,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   recalc();
 
   await loadFromSupabase();
+
+  // After the saved model is in place, overlay the live rate (if enabled).
+  fetchLiveFX();
 
   try {
     const rows = await fetch(SUPA_URL + '/rest/v1/inputs?id=eq.1&select=updated_at', { headers: SUPA_READ_HEADERS }).then(r => r.json());
