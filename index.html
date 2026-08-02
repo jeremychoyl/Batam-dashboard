@@ -734,52 +734,154 @@
   <!-- ── CASH TRANSFERS ──────────────────────────────────── -->
   <div id="panel-transfers" class="panel">
 
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
-      <div class="sh" style="margin-bottom:0">
-        <h2>💸 Cash Transfers</h2>
-        <p>Running ledger of capital flows between Edi Haron and Jeremy Cho. All amounts in IDR.</p>
+    <!-- ═══ PART 1: CAPITAL EXPENDITURE ═══ -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="background:#1a2d45;border-left:4px solid var(--amber);border-radius:0 8px 8px 0;padding:10px 18px;flex:1">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9">Part 1 — Capital Expenditure</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Jeremy's investment into Laundry Hostel renovation · Pre 02/06/2026</div>
       </div>
-      <button onclick="addTransferRow()" style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:9px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer">+ Add Row</button>
     </div>
 
-    <!-- Summary cards -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px">
-      <div class="card teal-border"><div class="kpi-label">Running Balance</div><div class="kpi-value teal" id="tr-balance">—</div><div class="kpi-sub" id="tr-balance-sgd">—</div></div>
-      <div class="card"><div class="kpi-label">Total Deposited</div><div class="kpi-value" id="tr-deposited">—</div><div class="kpi-sub">Jeremy → Edi</div></div>
-      <div class="card"><div class="kpi-label">Rent Returned</div><div class="kpi-value" id="tr-returned">—</div><div class="kpi-sub">Edi → Jeremy</div></div>
-      <div class="card"><div class="kpi-label">Total Spent</div><div class="kpi-value" id="tr-spent">—</div><div class="kpi-sub">Capex &amp; expenses</div></div>
-      <div class="card"><div class="kpi-label">Transactions</div><div class="kpi-value" id="tr-count">—</div><div class="kpi-sub">entries recorded</div></div>
+    <!-- Part 1 Summary Cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+      <div class="card"><div class="kpi-label">Total Invested</div><div class="kpi-value" id="p1-invested" style="font-size:18px">—</div><div class="kpi-sub">Jeremy → Laundry</div></div>
+      <div class="card"><div class="kpi-label">Total Spent</div><div class="kpi-value" id="p1-spent" style="font-size:18px;color:var(--red)">—</div><div class="kpi-sub">Renovation & Furniture</div></div>
+      <div class="card"><div class="kpi-label">Net Balance to Part 2</div><div class="kpi-value" id="p1-balance" style="font-size:18px">—</div><div class="kpi-sub">Carry-over</div></div>
+      <div class="card teal-border"><div class="kpi-label">Avg Cost / Room (7 rooms)</div><div class="kpi-value teal" id="p1-per-room" style="font-size:18px">—</div><div class="kpi-sub">For Ace Hotel reference</div></div>
     </div>
 
-    <!-- FX for SGD display -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-      <span style="font-size:12px;color:var(--muted)">IDR per SGD for display:</span>
-      <input type="number" id="tr-fx" value="13936" min="1" oninput="renderTransferDerived()" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:6px;color:#60d4ff;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:5px 9px;width:90px;text-align:right;outline:none;-moz-appearance:textfield">
-    </div>
-
-    <!-- Table -->
-    <div class="card" style="overflow-x:auto">
-      <table style="font-size:13px;min-width:780px">
+    <div class="card mb24" style="overflow-x:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div style="font-size:12px;color:var(--muted)">All amounts IDR. Negative balance = cumulative investment outstanding.</div>
+        <button onclick="addP1Row()" style="background:#1e2d1a;color:#86efac;border:1px solid #22c55e;border-radius:7px;padding:7px 14px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600">+ Add Row</button>
+      </div>
+      <table style="font-size:12px;min-width:820px">
         <thead>
           <tr>
-            <th style="width:11%">Date</th>
-            <th style="width:10%" class="r">Deposited (IDR)</th>
-            <th style="width:10%" class="r">Spent (IDR)</th>
-            <th style="width:12%" class="r">Balance (IDR)</th>
-            <th style="width:10%" class="r">Balance (SGD)</th>
-            <th style="width:9%">From</th>
-            <th style="width:9%">To</th>
+            <th style="width:10%">Date</th>
+            <th style="width:14%" class="r">Beginning Amt (IDR)</th>
+            <th style="width:12%" class="r">Money Spent (IDR)</th>
+            <th style="width:12%" class="r">Deposited (IDR)</th>
+            <th style="width:12%" class="r">Running Total (IDR)</th>
+            <th style="width:10%">Category</th>
             <th style="width:24%">Remarks</th>
-            <th style="width:5%"></th>
+            <th style="width:4%"></th>
           </tr>
         </thead>
-        <tbody id="tr-body"></tbody>
+        <tbody id="p1-body"></tbody>
+        <tfoot id="p1-foot"></tfoot>
       </table>
     </div>
 
-    <div style="margin-top:16px;padding:13px;background:var(--teal-dim);border:1px solid var(--teal);border-radius:8px;font-size:12px;color:var(--subtle)">
-      💡 Running balance auto-calculates row by row. Hit <strong style="color:var(--teal)">💾 Save Changes</strong> in ⚙️ Inputs to sync with everyone.
+    <!-- ═══ PART 2: RENTAL COLLECTIONS ═══ -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="background:#1a2d45;border-left:4px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 18px;flex:1">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9">Part 2 — Rental Collections</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Edi collects rent and transfers to Jeremy · From 04/06/2026</div>
+      </div>
+      <div style="background:var(--teal-dim);border:1px solid var(--teal);border-radius:8px;padding:8px 16px;text-align:center;white-space:nowrap">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:3px">CURRENT BALANCE</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--teal)" id="p2-current-bal">—</div>
+        <div style="font-size:10px;color:var(--muted)" id="p2-current-bal-sgd">—</div>
+      </div>
     </div>
+
+    <!-- Part 2 Summary Cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+      <div class="card"><div class="kpi-label">Carry-over from Part 1</div><div class="kpi-value" id="p2-carryover" style="font-size:18px">—</div></div>
+      <div class="card teal-border"><div class="kpi-label">Total Rent Collected</div><div class="kpi-value teal" id="p2-collected" style="font-size:18px">—</div></div>
+      <div class="card"><div class="kpi-label">Total Expenses</div><div class="kpi-value" id="p2-expenses" style="font-size:18px;color:var(--red)">—</div></div>
+      <div class="card teal-border"><div class="kpi-label">Net Return to Jeremy</div><div class="kpi-value teal" id="p2-net" style="font-size:18px">—</div><div class="kpi-sub">vs total invested</div></div>
+    </div>
+
+    <!-- FX selector -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <span style="font-size:12px;color:var(--muted)">IDR per SGD:</span>
+      <input type="number" id="tr-fx" value="13936" min="1" oninput="renderTransfers()" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:6px;color:#60d4ff;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:5px 9px;width:90px;text-align:right;outline:none;-moz-appearance:textfield">
+    </div>
+
+    <div class="card mb24" style="overflow-x:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div style="font-size:12px;color:var(--muted)">Positive = money to Jeremy. Negative = expenses deducted.</div>
+        <button onclick="addP2Row()" style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:7px;padding:7px 14px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600">+ Add Row</button>
+      </div>
+      <table style="font-size:12px;min-width:820px">
+        <thead>
+          <tr>
+            <th style="width:10%">Date</th>
+            <th style="width:14%" class="r">Opening Balance</th>
+            <th style="width:13%" class="r">Rent Collected (IDR)</th>
+            <th style="width:11%" class="r">Expenses (IDR)</th>
+            <th style="width:13%" class="r">Running Total (IDR)</th>
+            <th style="width:11%" class="r">Running Total (SGD)</th>
+            <th style="width:22%">Remarks</th>
+            <th style="width:4%"></th>
+          </tr>
+        </thead>
+        <tbody id="p2-body"></tbody>
+        <tfoot id="p2-foot"></tfoot>
+      </table>
+    </div>
+
+    <!-- ═══ PART 3: ROOM MANAGEMENT ═══ -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="background:#1a2d45;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:10px 18px;flex:1">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9">Part 3 — Room Management</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Laundry Hostel · 7 rooms · <span style="color:var(--amber);font-weight:600">Monthly Rental: Rp 1,200,000</span></div>
+      </div>
+    </div>
+
+    <!-- Delinquency Alert Banner -->
+    <div id="delinquency-banner" style="display:none;margin-bottom:16px;padding:14px 18px;border:2px solid var(--red);border-radius:10px;background:rgba(239,68,68,0.08)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:16px">🔴</span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--red);font-size:14px">DELINQUENCY ALERT — Overdue Payments</span>
+      </div>
+      <div id="delinquency-list" style="font-size:12px;color:var(--subtle);line-height:1.8"></div>
+    </div>
+
+    <!-- Section A: Room Details -->
+    <div class="card mb16" style="overflow-x:auto">
+      <div style="font-size:13px;font-weight:600;color:#f1f5f9;margin-bottom:14px">Section A — Room Details</div>
+      <table style="font-size:12px;min-width:900px">
+        <thead>
+          <tr>
+            <th style="width:7%">Room</th>
+            <th style="width:7%">Status</th>
+            <th style="width:14%">Tenant Name</th>
+            <th style="width:9%">Check-In Date</th>
+            <th style="width:8%">Due Date</th>
+            <th style="width:9%" id="col-k-header-th"><input class="tr-input" id="col-k-header" value="" placeholder="Column K" oninput="renderPaymentGrid()" style="width:90px;font-size:11px;font-weight:600;color:var(--amber)"></th>
+            <th style="width:9%" id="col-l-header-th"><input class="tr-input" id="col-l-header" value="" placeholder="Column L" oninput="renderPaymentGrid()" style="width:90px;font-size:11px;font-weight:600;color:var(--amber)"></th>
+            <th style="width:9%" id="col-m-header-th"><input class="tr-input" id="col-m-header" value="" placeholder="Column M" oninput="renderPaymentGrid()" style="width:90px;font-size:11px;font-weight:600;color:var(--amber)"></th>
+            <th style="width:9%">Category</th>
+            <th style="width:15%">Remarks</th>
+          </tr>
+        </thead>
+        <tbody id="room-body"></tbody>
+      </table>
+    </div>
+
+    <!-- Section B: 12-Month Payment Tracker -->
+    <div class="card" style="overflow-x:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#f1f5f9">Section B — 12-Month Payment Tracker</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">May 2026 – Apr 2027 · Tap cell to toggle: ⬜ Unpaid → ✅ Paid → 🔴 Late</div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;align-items:center;flex-wrap:wrap">
+          <span>⬜ Unpaid</span><span>✅ Paid</span><span>🔴 Late / Overdue</span><span>— N/A</span>
+        </div>
+      </div>
+      <div id="payment-grid-wrap"></div>
+
+      <!-- Archive section -->
+      <div id="archive-section" style="margin-top:20px;display:none">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;border-top:1px solid var(--border);padding-top:14px">📦 Archived Period</div>
+        <div id="archive-content"></div>
+      </div>
+    </div>
+
   </div>
 
 </div>
@@ -2111,145 +2213,433 @@ applyInputs = function(data) {
 </script>
 
 <script>
-// ── CASH TRANSFERS ────────────────────────────────────────────────────────────
+// ── CASH TRANSFERS v2 ─────────────────────────────────────────────────────────
 
-const DEFAULT_TRANSFERS = [
-  { date:'28/03/2026', deposited:0,         spent:2650000,  from:'Jeremy', to:'Edi', remarks:'Bought 1 Queen Bed' },
-  { date:'31/03/2026', deposited:0,         spent:3000000,  from:'Jeremy', to:'Edi', remarks:'Labor And Material' },
-  { date:'11/04/2026', deposited:0,         spent:2250000,  from:'Jeremy', to:'Edi', remarks:'1 Unit Midea Air Con' },
-  { date:'12/04/2026', deposited:0,         spent:2000000,  from:'Jeremy', to:'Edi', remarks:'Labor And Material' },
-  { date:'16/04/2026', deposited:0,         spent:500000,   from:'Jeremy', to:'Edi', remarks:'Labor And Material' },
-  { date:'24/04/2026', deposited:0,         spent:5000000,  from:'Jeremy', to:'Edi', remarks:'Labor And Material' },
-  { date:'25/04/2026', deposited:0,         spent:13500000, from:'Jeremy', to:'Edi', remarks:'6 Units Midea Air Con @ Rp 2,250,000 each' },
-  { date:'25/04/2026', deposited:0,         spent:14000000, from:'Jeremy', to:'Edi', remarks:'Installation of 7 Units Air Con @ Rp 2,000,000 each' },
-  { date:'29/04/2026', deposited:0,         spent:5000000,  from:'Jeremy', to:'Edi', remarks:'Labor And Material' },
-  { date:'30/04/2026', deposited:0,         spent:2000000,  from:'Jeremy', to:'Edi', remarks:'Labor And Material' },
-  { date:'05/05/2026', deposited:0,         spent:5000000,  from:'Jeremy', to:'Edi', remarks:'Labor And Material — Electrical Wiring' },
-  { date:'07/05/2026', deposited:0,         spent:10000000, from:'Jeremy', to:'Edi', remarks:'Labor And Material — Final Phases' },
-  { date:'08/05/2026', deposited:64900000,  spent:0,        from:'Jeremy', to:'Edi', remarks:'Jeremy Deposited — full capex to date' },
-  { date:'15/05/2026', deposited:0,         spent:25850000, from:'Jeremy', to:'Edi', remarks:'7 Wardrobes, 5 Queen Beds, 1 Single Bed' },
-  { date:'19/05/2026', deposited:0,         spent:3000000,  from:'Jeremy', to:'Edi', remarks:'Labor And Material — Toilet Door' },
-  { date:'28/05/2026', deposited:0,         spent:3000000,  from:'Jeremy', to:'Edi', remarks:'Labor And Material' },
-  { date:'01/06/2026', deposited:230000,    spent:0,        from:'Jeremy', to:'Edi', remarks:'Jeremy Deposited' },
-  { date:'02/06/2026', deposited:31620000,  spent:0,        from:'Jeremy', to:'Edi', remarks:'Jeremy Deposited' },
-  { date:'04/06/2026', deposited:1200000,   spent:0,        from:'Edi',    to:'Jeremy', remarks:'First Unit Rent 15/5–15/6/2026' },
-  { date:'09/06/2026', deposited:2400000,   spent:0,        from:'Edi',    to:'Jeremy', remarks:'Unit 1 (Rara) 15/6–15/7 + Unit 2 (Uci) 7/6–7/7' },
-  { date:'26/06/2026', deposited:3600000,   spent:750000,   from:'Edi',    to:'Jeremy', remarks:'Units 3,4,5 rent collected. Dahlia bonus salary Rp 750,000' },
-  { date:'07/07/2026', deposited:3600000,   spent:0,        from:'Edi',    to:'Jeremy', remarks:'Room 4 (Dewa), Room 1 (Uci & Rara), Room 2 (Erna)' },
-  { date:'30/07/2026', deposited:2400000,   spent:1180000,  from:'Edi',    to:'Jeremy', remarks:'Room 5 & 7 rent. Dahlia bonus Rp 750,000 + CCTV Rp 430,000' },
+// ── PART 1 DATA ───────────────────────────────────────────────────────────────
+const DEFAULT_P1 = [
+  { date:'28/03/2026', spent:2650000,  deposited:0,        category:'Furniture',     remarks:'Bought 1 Queen Bed' },
+  { date:'31/03/2026', spent:3000000,  deposited:0,        category:'Labor',         remarks:'Labor And Material' },
+  { date:'11/04/2026', spent:2250000,  deposited:0,        category:'Equipment',     remarks:'1 Unit Midea Air Con' },
+  { date:'12/04/2026', spent:2000000,  deposited:0,        category:'Labor',         remarks:'Labor And Material' },
+  { date:'16/04/2026', spent:500000,   deposited:0,        category:'Labor',         remarks:'Labor And Material' },
+  { date:'24/04/2026', spent:5000000,  deposited:0,        category:'Labor',         remarks:'Labor And Material' },
+  { date:'25/04/2026', spent:13500000, deposited:0,        category:'Equipment',     remarks:'6 Units Midea Air Con @ Rp 2,250,000 each' },
+  { date:'25/04/2026', spent:14000000, deposited:0,        category:'Installation',  remarks:'Installation of 7 Units Air Con @ Rp 2,000,000 each' },
+  { date:'29/04/2026', spent:5000000,  deposited:0,        category:'Labor',         remarks:'Labor And Material' },
+  { date:'30/04/2026', spent:2000000,  deposited:0,        category:'Labor',         remarks:'Labor And Material' },
+  { date:'05/05/2026', spent:5000000,  deposited:0,        category:'Electrical',    remarks:'Labor And Material — Electrical Wiring' },
+  { date:'07/05/2026', spent:10000000, deposited:0,        category:'Labor',         remarks:'Labor And Material — Final Phases' },
+  { date:'08/05/2026', spent:0,        deposited:64900000, category:'Deposit',       remarks:'Jeremy Deposited — full capex to date' },
+  { date:'15/05/2026', spent:25850000, deposited:0,        category:'Furniture',     remarks:'7 Wardrobes, 5 Queen Beds, 1 Single Bed' },
+  { date:'19/05/2026', spent:3000000,  deposited:0,        category:'Labor',         remarks:'Labor And Material — Toilet Door' },
+  { date:'28/05/2026', spent:3000000,  deposited:0,        category:'Labor',         remarks:'Labor And Material' },
+  { date:'01/06/2026', spent:0,        deposited:230000,   category:'Deposit',       remarks:'Jeremy Deposited' },
+  { date:'02/06/2026', spent:0,        deposited:31620000, category:'Deposit',       remarks:'Jeremy Deposited — final top-up' },
 ];
 
-let transfers = JSON.parse(JSON.stringify(DEFAULT_TRANSFERS));
+// ── PART 2 DATA ───────────────────────────────────────────────────────────────
+const DEFAULT_P2 = [
+  { date:'04/06/2026', collected:1200000,  expenses:0,       remarks:'First Unit Rent — Room 7 (Ara) 15/5–15/6/2026' },
+  { date:'09/06/2026', collected:2400000,  expenses:0,       remarks:'Room 1 (Rara) 15/6–15/7 + Room 2 (Uci) 7/6–7/7' },
+  { date:'26/06/2026', collected:3600000,  expenses:750000,  remarks:'Rooms 3,4,5 rent. Dahlia bonus salary Rp 750,000' },
+  { date:'07/07/2026', collected:3600000,  expenses:0,       remarks:'Room 4 (Dewa) 5/7, Room 1 (Uci & Rara) 7/7, Room 2 (Erna) 6/7' },
+  { date:'30/07/2026', collected:2400000,  expenses:1180000, remarks:'Room 5 & 7 rent. Dahlia bonus Rp 750,000 + Xiaomi CCTV Rp 430,000' },
+];
 
-function getTRFX() { return parseFloat(document.getElementById('tr-fx').value) || 13936; }
+// ── ROOM DATA ─────────────────────────────────────────────────────────────────
+const DEFAULT_ROOMS = [
+  { room:'Room 1', status:'occupied', tenant:'Uci & Rara',    checkIn:'15/05/2026', dueDay:15, colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
+  { room:'Room 2', status:'occupied', tenant:'Erna & ???',    checkIn:'06/05/2026', dueDay:6,  colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
+  { room:'Room 3', status:'occupied', tenant:'Dahlia (Staff)',checkIn:'01/05/2026', dueDay:1,  colK:'', colL:'', colM:'', category:'Non-Revenue', remarks:'Staff room — salary offset. Will be converted to revenue room once Ace Hotel is acquired.' },
+  { room:'Room 4', status:'occupied', tenant:'Dewa & Sherly', checkIn:'05/05/2026', dueDay:5,  colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
+  { room:'Room 5', status:'occupied', tenant:'Olivia & Fitri',checkIn:'15/05/2026', dueDay:15, colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
+  { room:'Room 6', status:'vacant',   tenant:'',              checkIn:'',           dueDay:0,  colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
+  { room:'Room 7', status:'occupied', tenant:'Ara',           checkIn:'10/05/2026', dueDay:10, colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
+];
 
-// Builds the table rows. Called on first paint / tab activation / restore only —
-// NOT on every keystroke, so the field being typed into is never destroyed.
-function renderTransfers() {
-  const tbody = document.getElementById('tr-body');
+// Payment grid: rooms × 12 months. State: 0=unpaid, 1=paid, 2=late, 3=na
+const MONTHS_12 = ['May 26','Jun 26','Jul 26','Aug 26','Sep 26','Oct 26','Nov 26','Dec 26','Jan 27','Feb 27','Mar 27','Apr 27'];
+const DEFAULT_PAYMENTS = DEFAULT_ROOMS.map(() => Array(12).fill(0));
+
+let p1Rows    = JSON.parse(JSON.stringify(DEFAULT_P1));
+let p2Rows    = JSON.parse(JSON.stringify(DEFAULT_P2));
+let rooms     = JSON.parse(JSON.stringify(DEFAULT_ROOMS));
+let payments  = JSON.parse(JSON.stringify(DEFAULT_PAYMENTS));
+let archived  = null; // stores archived 12-month summary
+
+function getTRFX() { return parseFloat(document.getElementById('tr-fx')?.value) || 13936; }
+function fmtRP(n)  {
+  const abs = Math.abs(Math.round(n));
+  const s   = abs >= 1000000 ? 'Rp ' + (abs/1000000).toFixed(2) + 'M' : 'Rp ' + abs.toLocaleString();
+  return n < 0 ? '−' + s : s;
+}
+function fmtSGDtr(n) {
+  const abs = Math.abs(Math.round(n/getTRFX()));
+  return (n<0?'−':'') + 'SGD ' + abs.toLocaleString();
+}
+
+// ── PART 1 RENDER ─────────────────────────────────────────────────────────────
+function renderP1() {
+  const tbody = document.getElementById('p1-body');
+  const tfoot = document.getElementById('p1-foot');
   if (!tbody) return;
 
-  tbody.innerHTML = transfers.map((r, i) => `<tr>
-      <td><input class="tr-input date" value="${htmlAttr(r.date)}" placeholder="DD/MM/YYYY" oninput="updateTransfer(${i},'date',this.value)"></td>
-      <td><input class="tr-input mono" type="number" min="0" value="${r.deposited||''}" placeholder="0" oninput="updateTransfer(${i},'deposited',this.value)" style="width:110px"></td>
-      <td><input class="tr-input mono" type="number" min="0" value="${r.spent||''}" placeholder="0" oninput="updateTransfer(${i},'spent',this.value)" style="width:110px"></td>
-      <td id="tr-bal-${i}"></td>
-      <td id="tr-balsgd-${i}" style="font-size:11px"></td>
-      <td><select class="tr-input" onchange="updateTransfer(${i},'from',this.value)" style="width:80px">
-        <option ${r.from==='Jeremy'?'selected':''}>Jeremy</option>
-        <option ${r.from==='Edi'?'selected':''}>Edi</option>
-      </select></td>
-      <td><select class="tr-input" onchange="updateTransfer(${i},'to',this.value)" style="width:80px">
-        <option ${r.to==='Edi'?'selected':''}>Edi</option>
-        <option ${r.to==='Jeremy'?'selected':''}>Jeremy</option>
-      </select></td>
-      <td><input class="tr-input" value="${htmlAttr(r.remarks)}" placeholder="Description" oninput="updateTransfer(${i},'remarks',this.value)"></td>
-      <td><button class="tr-del" onclick="deleteTransfer(${i})">✕</button></td>
-    </tr>`).join('');
+  let running = 0, totalSpent = 0, totalDeposited = 0;
+  let html = '';
 
-  renderTransferDerived();
-}
+  p1Rows.forEach((r, i) => {
+    const spent = parseFloat(r.spent)||0;
+    const dep   = parseFloat(r.deposited)||0;
+    const begin = running;
+    running = running - spent + dep;
+    totalSpent     += spent;
+    totalDeposited += dep;
 
-// Recomputes the running balance and summary cards without touching any input.
-function renderTransferDerived() {
-  const fx = getTRFX();
-  // Deposits flow both ways: Jeremy funds the project, Edi remits collected
-  // rent. Totalling them together would be meaningless, so split by direction.
-  let runBal = 0, depFromJeremy = 0, depFromEdi = 0, totalSpent = 0;
+    const runClass = running >= 0 ? 'color:var(--teal)' : 'color:var(--red)';
+    const cats = ['Furniture','Labor','Equipment','Installation','Electrical','Deposit','Other'];
+    const catOpts = cats.map(c=>`<option ${r.category===c?'selected':''}>${c}</option>`).join('');
 
-  transfers.forEach((r, i) => {
-    const dep = parseFloat(r.deposited) || 0;
-    const sp  = parseFloat(r.spent) || 0;
-    runBal += dep - sp;
-    if (dep) { if (r.from === 'Edi') depFromEdi += dep; else depFromJeremy += dep; }
-    totalSpent += sp;
-
-    const balSGD  = Math.round(runBal / fx);
-    const cls     = runBal >= 0 ? 'tr-bal-pos' : 'tr-bal-neg';
-    const balEl   = document.getElementById('tr-bal-' + i);
-    const sgdEl   = document.getElementById('tr-balsgd-' + i);
-    if (balEl) {
-      balEl.className = cls;
-      balEl.textContent = (runBal >= 0 ? '' : '−') + 'Rp ' + Math.abs(Math.round(runBal)).toLocaleString();
-    }
-    if (sgdEl) {
-      sgdEl.className = cls;
-      sgdEl.textContent = (balSGD >= 0 ? 'SGD ' : '−SGD ') + Math.abs(balSGD).toLocaleString();
-    }
+    html += `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:6px 4px"><input class="tr-input date" value="${r.date}" placeholder="DD/MM/YYYY" oninput="p1Rows[${i}].date=this.value;renderTransfers()"></td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${begin<0?'var(--red)':'var(--muted)'}"><input class="tr-input mono" style="width:110px" value="${begin||''}" readonly tabindex="-1" style="background:transparent;border-color:transparent;cursor:default"></td>
+      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${spent||''}" placeholder="0" oninput="p1Rows[${i}].spent=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
+      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${dep||''}" placeholder="0" oninput="p1Rows[${i}].deposited=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;${runClass}">${fmtRP(running)}</td>
+      <td style="padding:6px 4px"><select class="tr-input" style="width:95px" oninput="p1Rows[${i}].category=this.value">${catOpts}</select></td>
+      <td style="padding:6px 4px"><input class="tr-input" value="${r.remarks.replace(/"/g,'&quot;')}" placeholder="Remarks" oninput="p1Rows[${i}].remarks=this.value" style="width:100%"></td>
+      <td style="padding:6px 4px"><button class="tr-del" onclick="p1Rows.splice(${i},1);renderTransfers()">✕</button></td>
+    </tr>`;
   });
 
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  const balSGD = Math.round(runBal / fx);
-  set('tr-balance',     (runBal >= 0 ? '' : '−') + 'Rp ' + Math.abs(Math.round(runBal)).toLocaleString());
-  set('tr-balance-sgd', (balSGD >= 0 ? 'SGD ' : '−SGD ') + Math.abs(balSGD).toLocaleString());
-  set('tr-deposited',   'Rp ' + Math.round(depFromJeremy).toLocaleString());
-  set('tr-returned',    'Rp ' + Math.round(depFromEdi).toLocaleString());
-  set('tr-spent',       'Rp ' + Math.round(totalSpent).toLocaleString());
-  set('tr-count',       transfers.length + ' rows');
+  tbody.innerHTML = html;
+
+  // Summary footer
+  const perRoom = totalSpent / 7;
+  tfoot.innerHTML = `
+    <tr style="border-top:2px solid var(--amber)">
+      <td style="padding:10px 4px;color:#f1f5f9;font-weight:700" colspan="2">PART 1 SUMMARY</td>
+      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--red);font-weight:700">${fmtRP(totalSpent)}</td>
+      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtRP(totalDeposited)}</td>
+      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtRP(running)}</td>
+      <td colspan="3" style="padding:10px 4px;font-size:11px;color:var(--muted)">Avg/room: <strong style="color:var(--teal)">${fmtRP(perRoom)}</strong> · Balance carries to Part 2</td>
+    </tr>`;
+
+  // Update summary cards
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('p1-invested', fmtRP(totalDeposited));
+  set('p1-spent',    fmtRP(totalSpent));
+  set('p1-balance',  fmtRP(running));
+  set('p1-per-room', fmtRP(perRoom));
+
+  return running; // carry-over to Part 2
 }
 
-function updateTransfer(i, field, value) {
-  if (field === 'deposited' || field === 'spent') transfers[i][field] = parseFloat(value) || 0;
-  else transfers[i][field] = value;
-  renderTransferDerived();   // balances only — inputs keep focus
+// ── PART 2 RENDER ─────────────────────────────────────────────────────────────
+function renderP2(carryOver) {
+  const tbody = document.getElementById('p2-body');
+  const tfoot = document.getElementById('p2-foot');
+  if (!tbody) return;
+
+  const fx = getTRFX();
+  let running = carryOver || 0;
+  let totalCollected = 0, totalExpenses = 0;
+  let html = '';
+
+  p2Rows.forEach((r, i) => {
+    const col  = parseFloat(r.collected)||0;
+    const exp  = parseFloat(r.expenses)||0;
+    const open = running;
+    running = running + col - exp;
+    totalCollected += col;
+    totalExpenses  += exp;
+    const runClass = running >= 0 ? 'color:var(--teal)' : 'color:var(--red)';
+
+    html += `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:6px 4px"><input class="tr-input date" value="${r.date}" placeholder="DD/MM/YYYY" oninput="p2Rows[${i}].date=this.value"></td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${open>=0?'var(--teal)':'var(--red)'}">${fmtRP(open)}</td>
+      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${col||''}" placeholder="0" oninput="p2Rows[${i}].collected=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
+      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${exp||''}" placeholder="0" oninput="p2Rows[${i}].expenses=parseFloat(this.value)||0;renderTransfers()" style="width:100px"></td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;${runClass}">${fmtRP(running)}</td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;${runClass}">${fmtSGDtr(running)}</td>
+      <td style="padding:6px 4px"><input class="tr-input" value="${r.remarks.replace(/"/g,'&quot;')}" placeholder="Remarks" oninput="p2Rows[${i}].remarks=this.value" style="width:100%"></td>
+      <td style="padding:6px 4px"><button class="tr-del" onclick="p2Rows.splice(${i},1);renderTransfers()">✕</button></td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+
+  tfoot.innerHTML = `
+    <tr style="border-top:2px solid var(--teal)">
+      <td style="padding:10px 4px;color:#f1f5f9;font-weight:700" colspan="2">PART 2 SUMMARY</td>
+      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtRP(totalCollected)}</td>
+      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--red);font-weight:700">${fmtRP(totalExpenses)}</td>
+      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtRP(running)}</td>
+      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtSGDtr(running)}</td>
+      <td colspan="2" style="padding:10px 4px;font-size:11px;color:var(--muted)">Net return: <strong style="color:var(--teal)">${fmtRP(totalCollected - totalExpenses)}</strong> from rent so far</td>
+    </tr>`;
+
+  // Summary cards
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('p2-carryover',   fmtRP(carryOver||0));
+  set('p2-collected',   fmtRP(totalCollected));
+  set('p2-expenses',    fmtRP(totalExpenses));
+  set('p2-net',         fmtRP(totalCollected - totalExpenses));
+  set('p2-current-bal', fmtRP(running));
+  set('p2-current-bal-sgd', fmtSGDtr(running));
 }
 
-function deleteTransfer(i) {
-  if (!confirm('Delete this row?')) return;
-  transfers.splice(i, 1);
+// ── PART 3A: ROOM DETAILS ─────────────────────────────────────────────────────
+function renderRooms() {
+  const tbody = document.getElementById('room-body');
+  if (!tbody) return;
+
+  const today = new Date();
+  let delinquent = [];
+
+  tbody.innerHTML = rooms.map((r, i) => {
+    const isVacant   = r.status === 'vacant';
+    const isNonRev   = r.category === 'Non-Revenue';
+    const statusIcon = isVacant ? '❌' : '✅';
+    const statusColor= isVacant ? 'var(--red)' : 'var(--teal)';
+
+    // Check delinquency: if occupied, revenue, check-in exists, due day known
+    if (!isVacant && !isNonRev && r.checkIn && r.dueDay) {
+      const [d,m,y] = r.checkIn.split('/').map(Number);
+      const checkInDate = new Date(y, m-1, d);
+      const dueDateThisMonth = new Date(today.getFullYear(), today.getMonth(), r.dueDay);
+      const daysSinceDue = Math.floor((today - dueDateThisMonth) / 86400000);
+      if (daysSinceDue > 30) delinquent.push(`${r.room} — ${r.tenant} (${daysSinceDue} days overdue)`);
+    }
+
+    const catOpts = ['Revenue','Non-Revenue'].map(c=>`<option ${r.category===c?'selected':''}>${c}</option>`).join('');
+
+    return `<tr style="border-bottom:1px solid var(--border);${isVacant?'background:rgba(239,68,68,0.04)':''}">
+      <td style="padding:7px 4px;font-weight:700;color:#f1f5f9;font-size:12px">${r.room}</td>
+      <td style="padding:7px 4px;text-align:center">
+        <button onclick="toggleRoomStatus(${i})" style="background:none;border:none;font-size:18px;cursor:pointer;line-height:1" title="Click to toggle">${statusIcon}</button>
+      </td>
+      <td style="padding:7px 4px"><input class="tr-input" value="${r.tenant.replace(/"/g,'&quot;')}" placeholder="${isVacant?'VACANT':'Tenant name'}" oninput="rooms[${i}].tenant=this.value;renderDelinquency()"></td>
+      <td style="padding:7px 4px"><input class="tr-input date" value="${r.checkIn}" placeholder="DD/MM/YYYY" oninput="rooms[${i}].checkIn=this.value;renderDelinquency()"></td>
+      <td style="padding:7px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--subtle)">${r.dueDay ? r.dueDay+'th' : '—'}</td>
+      <td style="padding:7px 4px"><input class="tr-input" value="${(r.colK||'').replace(/"/g,'&quot;')}" placeholder="—" oninput="rooms[${i}].colK=this.value"></td>
+      <td style="padding:7px 4px"><input class="tr-input" value="${(r.colL||'').replace(/"/g,'&quot;')}" placeholder="—" oninput="rooms[${i}].colL=this.value"></td>
+      <td style="padding:7px 4px"><input class="tr-input" value="${(r.colM||'').replace(/"/g,'&quot;')}" placeholder="—" oninput="rooms[${i}].colM=this.value"></td>
+      <td style="padding:7px 4px"><select class="tr-input" style="width:100px" oninput="rooms[${i}].category=this.value;renderDelinquency()">${catOpts}</select></td>
+      <td style="padding:7px 4px"><input class="tr-input" value="${(r.remarks||'').replace(/"/g,'&quot;')}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
+    </tr>`;
+  }).join('');
+
+  renderDelinquency(delinquent);
+}
+
+function toggleRoomStatus(i) {
+  rooms[i].status = rooms[i].status === 'occupied' ? 'vacant' : 'occupied';
+  if (rooms[i].status === 'vacant') rooms[i].tenant = '';
+  renderRooms();
+  renderPaymentGrid();
+}
+
+function renderDelinquency(list) {
+  const banner = document.getElementById('delinquency-banner');
+  const listEl = document.getElementById('delinquency-list');
+  if (!banner || !listEl) return;
+  if (!list || list.length === 0) { banner.style.display = 'none'; return; }
+  banner.style.display = 'block';
+  listEl.innerHTML = list.map(d => `⚠️ ${d}`).join('<br>');
+}
+
+// ── PART 3B: PAYMENT GRID ─────────────────────────────────────────────────────
+const PAYMENT_STATES = ['⬜','✅','🔴','—'];
+
+function togglePayment(ri, mi) {
+  payments[ri][mi] = (payments[ri][mi] + 1) % 4;
+  renderPaymentGrid();
+}
+
+function renderPaymentGrid() {
+  const wrap = document.getElementById('payment-grid-wrap');
+  if (!wrap) return;
+
+  const today = new Date();
+  const RENT  = 1200000;
+
+  // Auto-flag late: if today is >30 days past due and cell is still unpaid(0)
+  rooms.forEach((r, ri) => {
+    if (r.status === 'vacant' || r.category === 'Non-Revenue') return;
+    MONTHS_12.forEach((_, mi) => {
+      if (payments[ri][mi] === 0) {
+        // Month index 0 = May 2026
+        const mYear  = mi < 8 ? 2026 : 2027;
+        const mMonth = (mi + 4) % 12; // May=4
+        const dueDate = new Date(mYear, mMonth, r.dueDay || 1);
+        const daysPast = Math.floor((today - dueDate) / 86400000);
+        if (daysPast > 30) payments[ri][mi] = 2; // auto-mark late
+      }
+    });
+  });
+
+  // Check if should archive (all 12 months filled for all rooms)
+  const allFilled = payments.every(row => row.every(c => c !== 0));
+
+  let html = `<div style="overflow-x:auto"><table style="font-size:12px;min-width:900px;border-collapse:collapse">
+    <thead><tr>
+      <th style="padding:8px 6px;text-align:left;min-width:80px">Room</th>
+      <th style="padding:8px 4px;text-align:left;min-width:70px">Tenant</th>
+      ${MONTHS_12.map(m=>`<th style="padding:8px 4px;text-align:center;min-width:52px;font-size:11px">${m}</th>`).join('')}
+      <th style="padding:8px 6px;text-align:right;min-width:80px">Total Paid</th>
+      <th style="padding:8px 6px;text-align:right;min-width:90px">Outstanding</th>
+    </tr></thead><tbody>`;
+
+  let monthTotals = Array(12).fill(0);
+
+  rooms.forEach((r, ri) => {
+    const isVacant = r.status === 'vacant';
+    const isNonRev = r.category === 'Non-Revenue';
+    let paid = 0, outstanding = 0;
+
+    html += `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${r.room}</td>
+      <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${isVacant?'<span style="color:var(--red)">VACANT</span>':r.tenant||'—'}</td>`;
+
+    MONTHS_12.forEach((_, mi) => {
+      if (isVacant) {
+        html += `<td style="padding:7px 4px;text-align:center;color:var(--muted)">—</td>`;
+        return;
+      }
+      if (isNonRev) {
+        html += `<td style="padding:7px 4px;text-align:center;color:var(--muted)" title="Non-Revenue">—</td>`;
+        return;
+      }
+      const state = payments[ri][mi];
+      const icon  = PAYMENT_STATES[state];
+      const bg    = state===1?'rgba(0,212,184,0.1)':state===2?'rgba(239,68,68,0.12)':'';
+      const border= state===2?'1px solid var(--red)':'1px solid transparent';
+      if (state === 1) { paid++; monthTotals[mi] += RENT; }
+      if (state === 0 || state === 2) outstanding++;
+      html += `<td style="padding:4px;text-align:center">
+        <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:38px;transition:all .15s" title="Click to toggle">${icon}</button>
+      </td>`;
+    });
+
+    const paidAmt   = paid * RENT;
+    const outAmt    = outstanding * RENT;
+    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${isVacant||isNonRev?'—':fmtRP(paidAmt)}</td>`;
+    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${outAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${isVacant||isNonRev?'—':outAmt>0?fmtRP(outAmt):'✅ Clear'}</td>`;
+    html += `</tr>`;
+  });
+
+  // Month totals row
+  html += `<tr style="border-top:2px solid var(--teal);background:rgba(0,212,184,0.05)">
+    <td style="padding:8px 6px;font-weight:700;color:#f1f5f9;font-size:12px" colspan="2">Monthly Total</td>
+    ${monthTotals.map(t=>`<td style="padding:8px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:${t>0?'var(--teal)':'var(--muted)'};font-weight:700">${t>0?fmtRP(t):'—'}</td>`).join('')}
+    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${fmtRP(monthTotals.reduce((a,b)=>a+b,0))}</td>
+    <td></td>
+  </tr>`;
+
+  html += `</tbody></table></div>`;
+
+  // Archive button if all 12 months done
+  if (allFilled && !archived) {
+    html += `<div style="margin-top:14px;padding:12px;background:rgba(245,158,11,0.1);border:1px solid var(--amber);border-radius:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <span style="font-size:12px;color:var(--amber)">📦 All 12 months complete — ready to archive and start a new period.</span>
+      <button onclick="archivePeriod()" style="background:var(--amber);color:#000;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer">Archive & Reset</button>
+    </div>`;
+  }
+
+  wrap.innerHTML = html;
+  renderArchive();
+}
+
+function archivePeriod() {
+  if (!confirm('Archive May 2026 – Apr 2027 and start a fresh tracker?')) return;
+  const totalPaid = payments.flat().filter(s=>s===1).length * 1200000;
+  archived = { period: 'May 2026 – Apr 2027', totalPaid, rooms: rooms.map((r,i)=>({
+    room:r.room, tenant:r.tenant, paid: payments[i].filter(s=>s===1).length
+  }))};
+  payments = rooms.map(() => Array(12).fill(0));
+  renderPaymentGrid();
+}
+
+function renderArchive() {
+  const sec = document.getElementById('archive-section');
+  const con = document.getElementById('archive-content');
+  if (!sec || !con || !archived) return;
+  sec.style.display = 'block';
+  con.innerHTML = `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px">
+    <div style="font-size:12px;font-weight:600;color:#f1f5f9;margin-bottom:8px">📦 ${archived.period}</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Total collected: <strong style="color:var(--teal)">${fmtRP(archived.totalPaid)}</strong></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      ${archived.rooms.map(r=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:11px">
+        <span style="color:#f1f5f9;font-weight:600">${r.room}</span> · ${r.tenant||'Vacant'} · <span style="color:var(--teal)">${r.paid}/12 paid</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── MASTER RENDER ─────────────────────────────────────────────────────────────
+function renderTransfers() {
+  const carryOver = renderP1();
+  renderP2(carryOver);
+  renderRooms();
+  renderPaymentGrid();
+}
+// Compatibility alias: the live-FX module calls renderTransferDerived() to
+// refresh the ledger's SGD display when the rate changes.
+function renderTransferDerived() { renderTransfers(); }
+
+function addP1Row() {
+  p1Rows.push({date:'',spent:0,deposited:0,category:'Labor',remarks:''});
   renderTransfers();
+  setTimeout(()=>{ const rows=document.querySelectorAll('#p1-body tr'); const last=rows[rows.length-1]; if(last) last.querySelector('.tr-input').focus(); },50);
 }
-
-function addTransferRow() {
-  transfers.push({ date:'', deposited:0, spent:0, from:'Jeremy', to:'Edi', remarks:'' });
+function addP2Row() {
+  p2Rows.push({date:'',collected:0,expenses:0,remarks:''});
   renderTransfers();
-  setTimeout(() => {
-    const rows = document.querySelectorAll('#tr-body tr');
-    const last = rows[rows.length - 1];
-    if (last) last.querySelector('.tr-input').focus();
-  }, 50);
+  setTimeout(()=>{ const rows=document.querySelectorAll('#p2-body tr'); const last=rows[rows.length-1]; if(last) last.querySelector('.tr-input').focus(); },50);
 }
 
-// Extend collectInputs / applyInputs to carry the ledger.
-const _collectBeforeTR = collectInputs;
+// ── PERSIST ───────────────────────────────────────────────────────────────────
+const _origCollectTR = collectInputs;
 collectInputs = function() {
-  const data = _collectBeforeTR();
-  data._transfers = JSON.parse(JSON.stringify(transfers));
-  const trFX = document.getElementById('tr-fx');
-  if (trFX) data._tr_fx = parseFloat(trFX.value) || 13936;
+  const data = _origCollectTR();
+  data._p1Rows   = JSON.parse(JSON.stringify(p1Rows));
+  data._p2Rows   = JSON.parse(JSON.stringify(p2Rows));
+  data._rooms    = JSON.parse(JSON.stringify(rooms));
+  data._payments = JSON.parse(JSON.stringify(payments));
+  data._archived = archived;
+  data._tr_fx    = parseFloat(document.getElementById('tr-fx')?.value)||13936;
+  data._colK     = document.getElementById('col-k-header')?.value||'';
+  data._colL     = document.getElementById('col-l-header')?.value||'';
+  data._colM     = document.getElementById('col-m-header')?.value||'';
   return data;
 };
 
-const _applyBeforeTR = applyInputs;
+const _origApplyTR = applyInputs;
 applyInputs = function(data) {
-  _applyBeforeTR(data);
-  transfers = (data && Array.isArray(data._transfers))
-    ? data._transfers
-    : JSON.parse(JSON.stringify(DEFAULT_TRANSFERS));
+  _origApplyTR(data);
+  if (data._p1Rows)   p1Rows   = data._p1Rows;
+  if (data._p2Rows)   p2Rows   = data._p2Rows;
+  if (data._rooms)    rooms    = data._rooms;
+  if (data._payments) payments = data._payments;
+  if (data._archived !== undefined) archived = data._archived;
   const trFX = document.getElementById('tr-fx');
   if (trFX && data._tr_fx) trFX.value = data._tr_fx;
+  const kh = document.getElementById('col-k-header');
+  const lh = document.getElementById('col-l-header');
+  const mh = document.getElementById('col-m-header');
+  if (kh && data._colK) kh.value = data._colK;
+  if (lh && data._colL) lh.value = data._colL;
+  if (mh && data._colM) mh.value = data._colM;
   renderTransfers();
 };
+
+const _origSwitchTR = switchTab;
+switchTab = function(id, btn) {
+  _origSwitchTR(id, btn);
+  if (id === 'transfers') renderTransfers();
+};
+
+window.addEventListener('DOMContentLoaded', ()=>{ setTimeout(renderTransfers, 600); });
 </script>
 
 <script>
