@@ -212,6 +212,11 @@
   }
   input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
   input[type="date"]::-webkit-date-and-time-value { text-align:left; }
+  /* Accounts period / date selectors */
+  .acc-period-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 16px; font-size:12px; color:var(--subtle); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .acc-date { background:transparent; border:none; border-bottom:1px solid var(--border); color:var(--teal); font-family:'JetBrains Mono',monospace; font-size:12px; padding:2px 0; outline:none; width:148px; }
+  .acc-date:focus { border-bottom-color:var(--teal); }
+  .acc-date-arrow { color:var(--muted); font-size:12px; }
   .tr-del { background:none; border:none; color:#334155; font-size:15px; cursor:pointer; padding:3px 7px; border-radius:4px; transition:color .15s; }
   .tr-del:hover { color:var(--red); }
   #tr-body tr { border-bottom:1px solid var(--border); }
@@ -677,17 +682,21 @@
 
     <!-- Period selectors -->
     <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--subtle)">
+      <div class="acc-period-card">
         📅 <strong style="color:#f1f5f9">P&amp;L Period:</strong>
-        <input type="text" id="acc-pl-period" value="1–30 Jul 2026" oninput="recalcAccounts()" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;width:130px;margin-left:6px">
+        <input type="date" id="acc-pl-from" class="acc-date" value="2026-07-01" title="Period start — tap to pick" onchange="recalcAccounts()">
+        <span class="acc-date-arrow">→</span>
+        <input type="date" id="acc-pl-to" class="acc-date" value="2026-07-30" title="Period end — tap to pick" onchange="recalcAccounts()">
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--subtle)">
+      <div class="acc-period-card">
         📅 <strong style="color:#f1f5f9">Cash Flow Period:</strong>
-        <input type="text" id="acc-cf-period" value="May–Jul 2026" oninput="recalcAccounts()" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;width:130px;margin-left:6px">
+        <input type="date" id="acc-cf-from" class="acc-date" value="2026-05-01" title="Period start — tap to pick" onchange="recalcAccounts()">
+        <span class="acc-date-arrow">→</span>
+        <input type="date" id="acc-cf-to" class="acc-date" value="2026-07-31" title="Period end — tap to pick" onchange="recalcAccounts()">
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--subtle)">
+      <div class="acc-period-card">
         📅 <strong style="color:#f1f5f9">Balance Sheet Date:</strong>
-        <input type="date" id="acc-bs-date" value="2026-07-30" title="Tap to pick a date" onchange="recalcAccounts()" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;width:150px;margin-left:6px">
+        <input type="date" id="acc-bs-date" class="acc-date" value="2026-07-30" title="Tap to pick a date" onchange="recalcAccounts()">
       </div>
     </div>
 
@@ -1231,6 +1240,50 @@ function fromISO(s) {
 function fmtLongDate(s) {
   const m = (s||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
   return m ? `${Number(m[3])} ${_MONS[Number(m[2])-1]} ${m[1]}` : (s||'');
+}
+
+// two ISO dates → the tightest readable period label, e.g.
+// "Jul 2026" · "May–Jul 2026" · "1–30 Jul 2026" · "15 Jun – 14 Jul 2026"
+function fmtDateRange(a, b) {
+  const pa = (a||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const pb = (b||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!pa || !pb) return fmtLongDate(a || b);
+  const A = { y:+pa[1], m:+pa[2], d:+pa[3] };
+  const B = { y:+pb[1], m:+pb[2], d:+pb[3] };
+  const mn = m => _MONS[m-1];
+  const lastDay = (y,m) => new Date(y, m, 0).getDate();
+  // whole calendar months → drop the day numbers
+  if (A.d === 1 && B.d === lastDay(B.y, B.m)) {
+    if (A.y === B.y && A.m === B.m) return `${mn(A.m)} ${A.y}`;
+    if (A.y === B.y)                return `${mn(A.m)}–${mn(B.m)} ${A.y}`;
+    return `${mn(A.m)} ${A.y} – ${mn(B.m)} ${B.y}`;
+  }
+  if (A.y === B.y && A.m === B.m) return `${A.d}–${B.d} ${mn(A.m)} ${A.y}`;
+  if (A.y === B.y)                return `${A.d} ${mn(A.m)} – ${B.d} ${mn(B.m)} ${A.y}`;
+  return `${fmtLongDate(a)} – ${fmtLongDate(b)}`;
+}
+
+// Legacy free-text period ("1–30 Jul 2026", "May–Jul 2026", "Jul 2026")
+// → {from,to} ISO, so saved rows survive the switch to from/to pickers.
+function parseLegacyRange(s) {
+  s = (s||'').replace(/[–—]/g,'-').trim();
+  const mon = t => _MONS.findIndex(x => x.toLowerCase() === t.slice(0,3).toLowerCase()) + 1;
+  const iso = (y,m,d) => `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  const last = (y,m) => new Date(y, m, 0).getDate();
+  let m;
+  if ((m = s.match(/^(\d{1,2})\s*-\s*(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})$/))) {      // 1-30 Jul 2026
+    const mo = mon(m[3]), y = +m[4];
+    if (mo) return { from: iso(y,mo,+m[1]), to: iso(y,mo,+m[2]) };
+  }
+  if ((m = s.match(/^([A-Za-z]{3,})\s*-\s*([A-Za-z]{3,})\s+(\d{4})$/))) {             // May-Jul 2026
+    const a = mon(m[1]), b = mon(m[2]), y = +m[3];
+    if (a && b) return { from: iso(y,a,1), to: iso(y,b,last(y,b)) };
+  }
+  if ((m = s.match(/^([A-Za-z]{3,})\s+(\d{4})$/))) {                                  // Jul 2026
+    const mo = mon(m[1]), y = +m[2];
+    if (mo) return { from: iso(y,mo,1), to: iso(y,mo,last(y,mo)) };
+  }
+  return null;
 }
 
 // ── SUPABASE CONFIG ─────────────────────────────────────────────────────────
@@ -2011,6 +2064,9 @@ function renderRatings(m) {
 <script>
 // ── ACCOUNTS SYSTEM ───────────────────────────────────────────────────────────
 
+// The date pickers that scope the statements (period from/to + balance-sheet date).
+const ACC_DATE_IDS = ['acc-pl-from','acc-pl-to','acc-cf-from','acc-cf-to','acc-bs-date'];
+
 // Every editable IDR figure on the Accounts tab, in one place.
 const ACC_FIELD_IDS = [
   'pl_revenue','pl_depreciation','pl_salaries','pl_supplies',
@@ -2211,8 +2267,8 @@ function updateAccDerived() {
 
   // Period labels
   const g = id => document.getElementById(id);
-  setText('acc-pl-title', g('acc-pl-period') ? g('acc-pl-period').value : '');
-  setText('acc-cf-title', g('acc-cf-period') ? g('acc-cf-period').value : '');
+  setText('acc-pl-title', fmtDateRange(g('acc-pl-from')?.value, g('acc-pl-to')?.value));
+  setText('acc-cf-title', fmtDateRange(g('acc-cf-from')?.value, g('acc-cf-to')?.value));
   setText('acc-bs-title', 'As of ' + (g('acc-bs-date') ? fmtLongDate(g('acc-bs-date').value) : ''));
 }
 
@@ -2225,7 +2281,7 @@ collectInputs = function() {
   const data = _collectBeforeAcc();
   const accFX = document.getElementById('acc-fx');
   if (accFX) data._acc_fx = parseFloat(accFX.value) || 16000;
-  ['acc-pl-period','acc-cf-period','acc-bs-date'].forEach(id => {
+  ACC_DATE_IDS.forEach(id => {
     const el = document.getElementById(id);
     if (el) data['_' + id.replace(/-/g,'_')] = el.value;
   });
@@ -2238,12 +2294,20 @@ applyInputs = function(data) {
   _applyBeforeAcc(data);
   const accFX = document.getElementById('acc-fx');
   if (accFX && data._acc_fx) accFX.value = data._acc_fx;
-  ['acc-pl-period','acc-cf-period','acc-bs-date'].forEach(id => {
+  // Legacy free-text periods (_acc_pl_period / _acc_cf_period) → from/to pickers
+  ['pl','cf'].forEach(k => {
+    if (data[`_acc_${k}_from`] !== undefined) return;          // already migrated
+    const r = parseLegacyRange(data[`_acc_${k}_period`]);
+    if (!r) return;
+    data[`_acc_${k}_from`] = r.from;
+    data[`_acc_${k}_to`]   = r.to;
+  });
+  ACC_DATE_IDS.forEach(id => {
     const el = document.getElementById(id);
     const key = '_' + id.replace(/-/g,'_');
     if (!el || data[key] === undefined) return;
-    // acc-bs-date is now a date picker — coerce legacy "30 Jul 2026" values
-    el.value = id === 'acc-bs-date' ? (toISO(data[key]) || el.value) : data[key];
+    // every one of these is a date picker now — coerce legacy text values
+    el.value = toISO(data[key]) || el.value;
   });
   ACC_FIELD_IDS.forEach(id => {
     accValues[id] = data['_acc_' + id] !== undefined ? data['_acc_' + id] : ACC_DEFAULTS[id];

@@ -44,9 +44,14 @@ still refreshes it via a `renderTransferDerived()` alias.
 
 ### Dates
 All date entry uses native `<input type="date">` (tap = OS calendar picker).
-The *stored* value stays `DD/MM/YYYY` — `toISO()` / `fromISO()` / `fmtLongDate()`
-(top of the first `<script>`) convert at the edges, so legacy saved rows and the
-delinquency parser keep working. Keep that convention for any new date field.
+The *stored* value for table rows stays `DD/MM/YYYY` — `toISO()` / `fromISO()` /
+`fmtLongDate()` (top of the first `<script>`) convert at the edges, so legacy
+saved rows and the delinquency parser keep working. Keep that convention for any
+new date field. The Accounts tab's P&L / Cash-Flow periods are **from/to picker
+pairs** (`acc-pl-from|to`, `acc-cf-from|to`, listed in `ACC_DATE_IDS`, stored as
+ISO); `fmtDateRange()` renders the heading label and collapses whole calendar
+months (`1 May–31 Jul` → "May–Jul 2026"). `parseLegacyRange()` migrates the old
+free-text `_acc_pl_period` / `_acc_cf_period` keys on load.
 
 ## Working rules for this repo
 - **Change flow: branch → PR → Vercel preview → owner approves → merge to main.**
