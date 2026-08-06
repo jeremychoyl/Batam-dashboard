@@ -51,7 +51,28 @@ new date field. The Accounts tab's P&L / Cash-Flow periods are **from/to picker
 pairs** (`acc-pl-from|to`, `acc-cf-from|to`, listed in `ACC_DATE_IDS`, stored as
 ISO); `fmtDateRange()` renders the heading label and collapses whole calendar
 months (`1 May–31 Jul` → "May–Jul 2026"). `parseLegacyRange()` migrates the old
-free-text `_acc_pl_period` / `_acc_cf_period` keys on load.
+free-text `_acc_pl_period` / `_acc_cf_period` keys on load. Room rent due day is
+a 1–31 `<select>` (`setDueDay`); `setCheckIn` seeds it from the picked check-in
+date the first time only, never overwriting an explicit choice.
+
+### Timeline tab (made editable 2026-08-06)
+Milestones are data (`timeline`, persisted as `_timeline`), not markup. Each has
+`{month, label, event, detail, auto, accent}`: `month` is an `<input type="month">`,
+`label` overrides the rendered month when set (that's how "~Nov 2026" and
+"Phase 2 (Future)" work), `accent:'blue'` highlights. The ✏️ Edit button flips
+`tlEditing` between the presentation timeline and stacked edit cards. The two
+`auto:'p1'|'p2'` milestones keep their detail line from the live model —
+`renderTimeline()` (in the main model script, note the name clash with
+`renderMilestones()`) caches that text on `window._tlAuto` and writes through to
+`#tl-p1-detail`/`#tl-p2-detail` only if those nodes still exist, so deleting or
+editing a milestone can't break `recalc()`.
+
+### Input styling
+One card system: `.input-group` + `.input-group-title` + `.input-row` +
+`.input-label` (+ `.compact` for cards that size to content outside
+`.inputs-grid`). The Accounts/Cash-Transfers FX boxes, the Accounts period
+pickers and the Timeline editor all use it — don't hand-roll inline-styled boxes.
+`.field-date` is the picker equivalent of the global `input[type=number]` look.
 
 ## Working rules for this repo
 - **Change flow: branch → PR → Vercel preview → owner approves → merge to main.**

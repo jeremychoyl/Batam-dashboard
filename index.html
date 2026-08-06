@@ -66,6 +66,9 @@
   /* ── INPUTS — the blue-cell magic ── */
   .inputs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
   .input-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  /* Same card, sized to its contents — for the boxed controls that sit in a
+     flex row (period selectors, FX rate) rather than in .inputs-grid. */
+  .input-group.compact { padding: 12px 16px; min-width: 212px; }
   .input-group-title { font-size: 10px; color: var(--teal); text-transform: uppercase; letter-spacing: .12em; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
   .input-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
   .input-row:last-child { margin-bottom: 0; }
@@ -133,6 +136,11 @@
   .tl-date { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--teal); font-weight:600; margin-bottom:3px; }
   .tl-event { font-weight:600; color:#f1f5f9; font-size:13px; margin-bottom:2px; }
   .tl-detail { font-size:12px; color:var(--muted); }
+  .tl-btn { background:var(--surface); color:var(--teal); border:1px solid var(--border); border-radius:7px; padding:6px 12px; font-family:'Inter',sans-serif; font-size:11px; font-weight:600; cursor:pointer; transition:border-color .15s; }
+  .tl-btn:hover { border-color:var(--teal); }
+  .timeline-edit { display:flex; flex-direction:column; gap:12px; }
+  .tl-auto-note { font-size:11px; color:var(--muted); font-style:italic; text-align:right; }
+  .tl-accent { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); cursor:pointer; flex:1; }
 
   /* BENCH BAR */
   .bench-bar-wrap { margin-bottom: 12px; }
@@ -213,13 +221,10 @@
   input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
   input[type="date"]::-webkit-date-and-time-value { text-align:left; }
   /* Accounts period / date selectors */
-  .acc-period-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 16px; font-size:12px; color:var(--subtle); display:flex; flex-direction:column; gap:6px; min-width:196px; }
-  .acc-period-label { font-size:12px; color:var(--subtle); margin-bottom:2px; }
-  .acc-period-label strong { color:#f1f5f9; }
-  .acc-date-row { display:flex; align-items:center; gap:8px; }
-  .acc-date-lbl { color:var(--muted); font-size:11px; width:36px; flex:none; }
-  .acc-date { background:transparent; border:none; border-bottom:1px solid var(--border); color:var(--teal); font-family:'JetBrains Mono',monospace; font-size:12px; padding:2px 0; outline:none; width:148px; flex:none; }
-  .acc-date:focus { border-bottom-color:var(--teal); }
+  /* Date/month pickers inside an .input-group — same "blue = editable" look as
+     every other input on the Inputs tab. */
+  .field-date { background:var(--input-bg); border:1px solid var(--input-border); border-radius:6px; color:#60d4ff; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; padding:4px 8px; outline:none; transition:border-color .15s; }
+  .field-date:focus { border-color:var(--teal); }
   .tr-del { background:none; border:none; color:#334155; font-size:15px; cursor:pointer; padding:3px 7px; border-radius:4px; transition:color .15s; }
   .tr-del:hover { color:var(--red); }
   #tr-body tr { border-bottom:1px solid var(--border); }
@@ -536,13 +541,14 @@
     <div class="sh"><h2>Project Timeline 2026 – 2027</h2></div>
     <div class="grid-2">
       <div>
-        <div class="timeline">
-          <div class="tl-item"><div class="tl-dot"></div><div class="card"><div class="tl-date">Aug 2026</div><div class="tl-event">Renovation begins</div><div class="tl-detail">3-month build-out across Ace Hotel shophouses.</div></div></div>
-          <div class="tl-item"><div class="tl-dot"></div><div class="card"><div class="tl-date">Sep 2026</div><div class="tl-event">Ace Hotel rental payable — IDR 110M</div><div class="tl-detail">Prepays rental period Oct 2026 – Oct 2027.</div></div></div>
-          <div class="tl-item"><div class="tl-dot"></div><div class="card"><div class="tl-date">Oct 2026</div><div class="tl-event">Rental period begins</div><div class="tl-detail">2-month rental holiday before operations commence.</div></div></div>
-          <div class="tl-item"><div class="tl-dot"></div><div class="card"><div class="tl-date">~Nov 2026</div><div class="tl-event">Operations begin — Phase 1 live</div><div class="tl-detail" id="tl-p1-detail">7 laundry rooms + 11 hotel rooms. Monthly net: SGD 1,595.</div></div></div>
-          <div class="tl-item"><div class="tl-dot" style="background:var(--blue);box-shadow:0 0 7px var(--blue)"></div><div class="card blue-border"><div class="tl-date" style="color:var(--blue)">Phase 2 (Future)</div><div class="tl-event">Full expansion</div><div class="tl-detail" id="tl-p2-detail">Convert laundry ground floor + Ace ground floor to rooms. Monthly net: SGD 2,729.</div></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+          <div style="font-size:11px;color:var(--muted)">Milestones for the build-out and rollout.</div>
+          <div style="display:flex;gap:8px">
+            <button id="tl-add-btn" onclick="addMilestone()" class="tl-btn" style="display:none">+ Add Milestone</button>
+            <button id="tl-edit-btn" onclick="toggleTimelineEdit()" class="tl-btn">✏️ Edit</button>
+          </div>
         </div>
+        <div class="timeline" id="timeline-list"></div>
       </div>
       <div>
         <div class="card mb16">
@@ -674,10 +680,14 @@
         <h2>📒 Local Laundry — Accounts</h2>
         <p>Live P&amp;L, Cash Flow and Balance Sheet from your accounting software. Edit figures to update SGD conversions instantly.</p>
       </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:12px;color:var(--muted)">IDR per SGD</span>
-          <input type="number" id="acc-fx" value="16000" min="1" oninput="recalcAccounts()" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:6px;color:#60d4ff;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;padding:5px 9px;width:90px;text-align:right;outline:none;-moz-appearance:textfield">
+      <div class="input-group compact">
+        <div class="input-group-title">Exchange Rate</div>
+        <div class="input-row">
+          <span class="input-label">IDR per 1 SGD</span>
+          <div class="input-field-wrap">
+            <input type="number" id="acc-fx" value="16000" min="1" oninput="recalcAccounts()">
+            <span class="input-unit">IDR/SGD</span>
+          </div>
         </div>
         <div id="acc-fx-live" style="font-size:11px;color:var(--muted);margin-top:7px">&nbsp;</div>
       </div>
@@ -685,19 +695,19 @@
 
     <!-- Period selectors -->
     <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-      <div class="acc-period-card">
-        <div class="acc-period-label">📅 <strong>P&amp;L Period</strong></div>
-        <div class="acc-date-row"><span class="acc-date-lbl">From</span><input type="date" id="acc-pl-from" class="acc-date" value="2026-07-01" title="Period start — tap to pick" onchange="recalcAccounts()"></div>
-        <div class="acc-date-row"><span class="acc-date-lbl">To</span><input type="date" id="acc-pl-to" class="acc-date" value="2026-07-30" title="Period end — tap to pick" onchange="recalcAccounts()"></div>
+      <div class="input-group compact">
+        <div class="input-group-title">📅 P&amp;L Period</div>
+        <div class="input-row"><span class="input-label">From</span><input type="date" id="acc-pl-from" class="field-date" value="2026-07-01" title="Period start — tap to pick" onchange="recalcAccounts()"></div>
+        <div class="input-row"><span class="input-label">To</span><input type="date" id="acc-pl-to" class="field-date" value="2026-07-30" title="Period end — tap to pick" onchange="recalcAccounts()"></div>
       </div>
-      <div class="acc-period-card">
-        <div class="acc-period-label">📅 <strong>Cash Flow Period</strong></div>
-        <div class="acc-date-row"><span class="acc-date-lbl">From</span><input type="date" id="acc-cf-from" class="acc-date" value="2026-05-01" title="Period start — tap to pick" onchange="recalcAccounts()"></div>
-        <div class="acc-date-row"><span class="acc-date-lbl">To</span><input type="date" id="acc-cf-to" class="acc-date" value="2026-07-31" title="Period end — tap to pick" onchange="recalcAccounts()"></div>
+      <div class="input-group compact">
+        <div class="input-group-title">📅 Cash Flow Period</div>
+        <div class="input-row"><span class="input-label">From</span><input type="date" id="acc-cf-from" class="field-date" value="2026-05-01" title="Period start — tap to pick" onchange="recalcAccounts()"></div>
+        <div class="input-row"><span class="input-label">To</span><input type="date" id="acc-cf-to" class="field-date" value="2026-07-31" title="Period end — tap to pick" onchange="recalcAccounts()"></div>
       </div>
-      <div class="acc-period-card">
-        <div class="acc-period-label">📅 <strong>Balance Sheet Date</strong></div>
-        <div class="acc-date-row"><span class="acc-date-lbl">As of</span><input type="date" id="acc-bs-date" class="acc-date" value="2026-07-30" title="Tap to pick a date" onchange="recalcAccounts()"></div>
+      <div class="input-group compact">
+        <div class="input-group-title">📅 Balance Sheet Date</div>
+        <div class="input-row"><span class="input-label">As of</span><input type="date" id="acc-bs-date" class="field-date" value="2026-07-30" title="Tap to pick a date" onchange="recalcAccounts()"></div>
       </div>
     </div>
 
@@ -813,9 +823,17 @@
     </div>
 
     <!-- FX selector -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-      <span style="font-size:12px;color:var(--muted)">IDR per SGD:</span>
-      <input type="number" id="tr-fx" value="13936" min="1" oninput="renderTransfers()" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:6px;color:#60d4ff;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:5px 9px;width:90px;text-align:right;outline:none;-moz-appearance:textfield">
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="input-group compact">
+        <div class="input-group-title">Exchange Rate</div>
+        <div class="input-row">
+          <span class="input-label">IDR per 1 SGD</span>
+          <div class="input-field-wrap">
+            <input type="number" id="tr-fx" value="13936" min="1" oninput="renderTransfers()">
+            <span class="input-unit">IDR/SGD</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card mb24" style="overflow-x:auto">
@@ -1164,8 +1182,15 @@ function renderBenchmarks(m) {
 }
 
 function renderTimeline(m) {
-  $('tl-p1-detail').textContent = `${m.laundryP1} laundry rooms + ${m.aceP1} hotel rooms. Monthly net: SGD ${Math.round(m.netP1_SGD).toLocaleString()}.`;
-  $('tl-p2-detail').textContent = `${m.newLaundry} new laundry rooms + ${m.newAce} new hotel rooms. Total: ${m.laundryP2} laundry + ${m.aceP2} hotel. Monthly net: SGD ${Math.round(m.netP2_SGD).toLocaleString()}.`;
+  // The two "auto" milestones take their detail line from the live model. Cache
+  // the text on window._tlAuto so the (editable, re-rendered) milestone list can
+  // pick it up, and write through to the DOM only if that milestone still exists.
+  window._tlAuto = window._tlAuto || {};
+  window._tlAuto.p1 = `${m.laundryP1} laundry rooms + ${m.aceP1} hotel rooms. Monthly net: SGD ${Math.round(m.netP1_SGD).toLocaleString()}.`;
+  window._tlAuto.p2 = `${m.newLaundry} new laundry rooms + ${m.newAce} new hotel rooms. Total: ${m.laundryP2} laundry + ${m.aceP2} hotel. Monthly net: SGD ${Math.round(m.netP2_SGD).toLocaleString()}.`;
+  const p1El = $('tl-p1-detail'), p2El = $('tl-p2-detail');
+  if (p1El) p1El.textContent = window._tlAuto.p1;
+  if (p2El) p2El.textContent = window._tlAuto.p2;
 
   $('rental-table').innerHTML = `<table><thead><tr><th>Item</th><th class="r">IDR</th><th class="r">SGD</th></tr></thead><tbody>
     <tr><td>Ace Hotel annual rental</td><td class="r mono">${Math.round(m.aceAnnual).toLocaleString()}</td><td class="r mono">${Math.round(m.aceAnnual/m.fx).toLocaleString()}</td></tr>
@@ -1262,6 +1287,18 @@ function fmtDateRange(a, b) {
   if (A.y === B.y && A.m === B.m) return `${A.d}–${B.d} ${mn(A.m)} ${A.y}`;
   if (A.y === B.y)                return `${A.d} ${mn(A.m)} – ${B.d} ${mn(B.m)} ${A.y}`;
   return `${fmtLongDate(a)} – ${fmtLongDate(b)}`;
+}
+
+// YYYY-MM (from <input type="month">) → "Aug 2026"
+function fmtMonth(s) {
+  const m = (s||'').match(/^(\d{4})-(\d{2})$/);
+  return m ? `${_MONS[Number(m[2])-1]} ${m[1]}` : '';
+}
+
+// 1 → "1st", 22 → "22nd", 13 → "13th"
+function ordinal(n) {
+  const s = ['th','st','nd','rd'], v = n % 100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
 }
 
 // Legacy free-text period ("1–30 Jul 2026", "May–Jul 2026", "Jul 2026")
@@ -2517,6 +2554,10 @@ function renderRooms() {
     }
 
     const catOpts = ['Revenue','Non-Revenue'].map(c=>`<option ${r.category===c?'selected':''}>${c}</option>`).join('');
+    const dueDay  = Number(r.dueDay) || 0;
+    const dayOpts = `<option value="0" ${dueDay?'':'selected'}>—</option>` +
+      Array.from({length:31}, (_,n) =>
+        `<option value="${n+1}" ${dueDay===n+1?'selected':''}>${ordinal(n+1)}</option>`).join('');
 
     return `<tr style="border-bottom:1px solid var(--border);${isVacant?'background:rgba(239,68,68,0.04)':''}">
       <td style="padding:7px 4px;font-weight:700;color:#f1f5f9;font-size:12px">${r.room}</td>
@@ -2524,14 +2565,27 @@ function renderRooms() {
         <button onclick="toggleRoomStatus(${i})" style="background:none;border:none;font-size:18px;cursor:pointer;line-height:1" title="Click to toggle">${statusIcon}</button>
       </td>
       <td style="padding:7px 4px"><input class="tr-input" value="${r.tenant.replace(/"/g,'&quot;')}" placeholder="${isVacant?'VACANT':'Tenant name'}" oninput="rooms[${i}].tenant=this.value;renderDelinquency()"></td>
-      <td style="padding:7px 4px"><input type="date" class="tr-input date" value="${toISO(r.checkIn)}" title="Tap to pick a check-in date" onchange="rooms[${i}].checkIn=fromISO(this.value);renderRooms()"></td>
-      <td style="padding:7px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--subtle)">${r.dueDay ? r.dueDay+'th' : '—'}</td>
+      <td style="padding:7px 4px"><input type="date" class="tr-input date" value="${toISO(r.checkIn)}" title="Tap to pick a check-in date" onchange="setCheckIn(${i}, this.value)"></td>
+      <td style="padding:7px 4px;text-align:center"><select class="tr-input" style="width:78px" title="Day of the month rent falls due" onchange="setDueDay(${i}, this.value)">${dayOpts}</select></td>
       <td style="padding:7px 4px"><select class="tr-input" style="width:100px" oninput="rooms[${i}].category=this.value;renderDelinquency()">${catOpts}</select></td>
       <td style="padding:7px 4px"><input class="tr-input" value="${(r.remarks||'').replace(/"/g,'&quot;')}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
     </tr>`;
   }).join('');
 
   renderDelinquency(delinquent);
+}
+
+function setCheckIn(i, iso) {
+  rooms[i].checkIn = fromISO(iso);
+  // First time a check-in is set, default the rent due day to that day of month.
+  // An explicitly chosen due day is never overwritten.
+  if (!Number(rooms[i].dueDay)) rooms[i].dueDay = Number(iso.slice(8,10)) || 0;
+  renderRooms();
+}
+
+function setDueDay(i, v) {
+  rooms[i].dueDay = parseInt(v, 10) || 0;
+  renderRooms();
 }
 
 function toggleRoomStatus(i) {
@@ -2733,6 +2787,121 @@ switchTab = function(id, btn) {
 };
 
 window.addEventListener('DOMContentLoaded', ()=>{ setTimeout(renderTransfers, 600); });
+</script>
+
+<script>
+// ── PROJECT TIMELINE ──────────────────────────────────────────────────────────
+// The milestones used to be hardcoded markup. They are data now: each one has a
+// month picker, an optional label override (for "~Nov 2026" / "Phase 2 (Future)")
+// and free text. The two `auto` milestones keep taking their detail line from
+// the live model — see renderTimeline().
+
+const DEFAULT_TIMELINE = [
+  { month:'2026-08', label:'', event:'Renovation begins',
+    detail:'3-month build-out across Ace Hotel shophouses.', auto:'', accent:'teal' },
+  { month:'2026-09', label:'', event:'Ace Hotel rental payable — IDR 110M',
+    detail:'Prepays rental period Oct 2026 – Oct 2027.', auto:'', accent:'teal' },
+  { month:'2026-10', label:'', event:'Rental period begins',
+    detail:'2-month rental holiday before operations commence.', auto:'', accent:'teal' },
+  { month:'2026-11', label:'~Nov 2026', event:'Operations begin — Phase 1 live',
+    detail:'7 laundry rooms + 11 hotel rooms.', auto:'p1', accent:'teal' },
+  { month:'', label:'Phase 2 (Future)', event:'Full expansion',
+    detail:'Convert laundry ground floor + Ace ground floor to rooms.', auto:'p2', accent:'blue' },
+];
+
+let timeline  = JSON.parse(JSON.stringify(DEFAULT_TIMELINE));
+let tlEditing = false;
+
+const tlLabel  = it => it.label || fmtMonth(it.month) || '—';
+const tlDetail = it => (it.auto && window._tlAuto && window._tlAuto[it.auto]) || it.detail || '';
+
+function renderMilestones() {
+  const wrap = document.getElementById('timeline-list');
+  if (!wrap) return;
+  const addBtn = document.getElementById('tl-add-btn');
+  const edBtn  = document.getElementById('tl-edit-btn');
+  if (addBtn) addBtn.style.display = tlEditing ? '' : 'none';
+  if (edBtn)  edBtn.textContent    = tlEditing ? '✓ Done' : '✏️ Edit';
+  wrap.className = tlEditing ? 'timeline-edit' : 'timeline';
+  wrap.innerHTML = timeline.map(tlEditing ? tlEditRow : tlViewRow).join('');
+}
+
+function tlViewRow(it) {
+  const blue = it.accent === 'blue';
+  return `<div class="tl-item">
+    <div class="tl-dot"${blue?' style="background:var(--blue);box-shadow:0 0 7px var(--blue)"':''}></div>
+    <div class="${blue?'card blue-border':'card'}">
+      <div class="tl-date"${blue?' style="color:var(--blue)"':''}>${htmlAttr(tlLabel(it))}</div>
+      <div class="tl-event">${htmlAttr(it.event||'')}</div>
+      <div class="tl-detail"${it.auto?` id="tl-${it.auto}-detail"`:''}>${htmlAttr(tlDetail(it))}</div>
+    </div></div>`;
+}
+
+function tlEditRow(it, i) {
+  const detailCell = it.auto
+    ? `<span class="tl-auto-note">auto-calculated from the model inputs</span>`
+    : `<input class="tr-input" style="max-width:190px" value="${htmlAttr(it.detail||'')}" placeholder="Supporting detail" oninput="timeline[${i}].detail=this.value">`;
+  return `<div class="input-group">
+    <div class="input-group-title">Milestone ${i+1}</div>
+    <div class="input-row"><span class="input-label">Month</span>
+      <input type="month" class="field-date" value="${it.month||''}" title="Tap to pick a month" onchange="setMilestoneMonth(${i}, this.value)"></div>
+    <div class="input-row"><span class="input-label">Label</span>
+      <input class="tr-input" style="max-width:190px" value="${htmlAttr(it.label||'')}" placeholder="${htmlAttr(fmtMonth(it.month)||'e.g. Phase 2 (Future)')}" title="Overrides the month above — leave blank to show the picked month" oninput="timeline[${i}].label=this.value"></div>
+    <div class="input-row"><span class="input-label">Event</span>
+      <input class="tr-input" style="max-width:190px" value="${htmlAttr(it.event||'')}" placeholder="What happens" oninput="timeline[${i}].event=this.value"></div>
+    <div class="input-row"><span class="input-label">Detail</span>${detailCell}</div>
+    <div class="input-row" style="border-top:1px solid var(--border);padding-top:9px;margin-top:2px">
+      <label class="tl-accent"><input type="checkbox" ${it.accent==='blue'?'checked':''} style="accent-color:var(--blue);cursor:pointer" onchange="timeline[${i}].accent=this.checked?'blue':'teal'"> Highlight in blue</label>
+      <button class="tr-del" title="Delete this milestone" onclick="deleteMilestone(${i})">✕</button>
+    </div>
+  </div>`;
+}
+
+// Picking a month clears a stale label override that was just the old month name,
+// so the timeline follows the picker instead of silently ignoring it.
+function setMilestoneMonth(i, v) {
+  const it = timeline[i];
+  if (it.label && it.label === fmtMonth(it.month)) it.label = '';
+  it.month = v;
+  renderMilestones();
+}
+
+function toggleTimelineEdit() { tlEditing = !tlEditing; renderMilestones(); }
+
+function addMilestone() {
+  timeline.push({ month:'', label:'', event:'New milestone', detail:'', auto:'', accent:'teal' });
+  hasUnsavedEdits = true;
+  renderMilestones();
+}
+
+function deleteMilestone(i) {
+  timeline.splice(i, 1);
+  hasUnsavedEdits = true;
+  renderMilestones();
+}
+
+// ── PERSIST ───────────────────────────────────────────────────────────────────
+const _origCollectTL = collectInputs;
+collectInputs = function() {
+  const data = _origCollectTL();
+  data._timeline = JSON.parse(JSON.stringify(timeline));
+  return data;
+};
+
+const _origApplyTL = applyInputs;
+applyInputs = function(data) {
+  _origApplyTL(data);
+  if (Array.isArray(data._timeline) && data._timeline.length) timeline = data._timeline;
+  renderMilestones();
+};
+
+const _origSwitchTL = switchTab;
+switchTab = function(id, btn) {
+  _origSwitchTL(id, btn);
+  if (id === 'timeline') renderMilestones();
+};
+
+window.addEventListener('DOMContentLoaded', ()=>{ setTimeout(renderMilestones, 650); });
 </script>
 
 <script>
