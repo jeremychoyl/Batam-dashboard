@@ -2784,7 +2784,9 @@ applyInputs = function(data) {
   _origApplyTR(data);
   if (data._p1Rows)   p1Rows   = data._p1Rows;
   if (data._p2Rows)   p2Rows   = data._p2Rows;
-  if (data._rooms)    rooms    = data._rooms;
+  // Rooms saved before the K/L/M columns were removed still carry those fields;
+  // drop them on load so the next save writes them out of the stored JSON.
+  if (data._rooms)    rooms    = data._rooms.map(r => { const {colK, colL, colM, ...rest} = r; return rest; });
   if (data._payments) payments = data._payments;
   if (data._archived !== undefined) archived = data._archived;
   const trFX = document.getElementById('tr-fx');
