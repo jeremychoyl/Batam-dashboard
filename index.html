@@ -139,7 +139,13 @@
   .tl-btn { background:var(--surface); color:var(--teal); border:1px solid var(--border); border-radius:7px; padding:6px 12px; font-family:'Inter',sans-serif; font-size:11px; font-weight:600; cursor:pointer; transition:border-color .15s; }
   .tl-btn:hover { border-color:var(--teal); }
   .timeline-edit { display:flex; flex-direction:column; gap:12px; }
-  .tl-auto-note { font-size:11px; color:var(--muted); font-style:italic; text-align:right; }
+  /* Fixed label column so every field lines up and the inputs take the rest of
+     the card instead of truncating their text. */
+  .timeline-edit .input-label { flex:none; width:52px; }
+  .timeline-edit .tr-input, .timeline-edit .field-date { flex:1; min-width:0; }
+  .timeline-edit .tr-del { color:var(--muted); }
+  .timeline-edit .tr-del:hover { color:var(--red); }
+  .tl-auto-note { font-size:11px; color:var(--muted); font-style:italic; flex:1; }
   .tl-accent { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); cursor:pointer; flex:1; }
 
   /* BENCH BAR */
@@ -2840,15 +2846,15 @@ function tlViewRow(it) {
 function tlEditRow(it, i) {
   const detailCell = it.auto
     ? `<span class="tl-auto-note">auto-calculated from the model inputs</span>`
-    : `<input class="tr-input" style="max-width:190px" value="${htmlAttr(it.detail||'')}" placeholder="Supporting detail" oninput="timeline[${i}].detail=this.value">`;
+    : `<input class="tr-input" value="${htmlAttr(it.detail||'')}" placeholder="Supporting detail" oninput="timeline[${i}].detail=this.value">`;
   return `<div class="input-group">
     <div class="input-group-title">Milestone ${i+1}</div>
     <div class="input-row"><span class="input-label">Month</span>
       <input type="month" class="field-date" value="${it.month||''}" title="Tap to pick a month" onchange="setMilestoneMonth(${i}, this.value)"></div>
     <div class="input-row"><span class="input-label">Label</span>
-      <input class="tr-input" style="max-width:190px" value="${htmlAttr(it.label||'')}" placeholder="${htmlAttr(fmtMonth(it.month)||'e.g. Phase 2 (Future)')}" title="Overrides the month above — leave blank to show the picked month" oninput="timeline[${i}].label=this.value"></div>
+      <input class="tr-input" value="${htmlAttr(it.label||'')}" placeholder="${htmlAttr(fmtMonth(it.month)||'e.g. Phase 2 (Future)')}" title="Overrides the month above — leave blank to show the picked month" oninput="timeline[${i}].label=this.value"></div>
     <div class="input-row"><span class="input-label">Event</span>
-      <input class="tr-input" style="max-width:190px" value="${htmlAttr(it.event||'')}" placeholder="What happens" oninput="timeline[${i}].event=this.value"></div>
+      <input class="tr-input" value="${htmlAttr(it.event||'')}" placeholder="What happens" oninput="timeline[${i}].event=this.value"></div>
     <div class="input-row"><span class="input-label">Detail</span>${detailCell}</div>
     <div class="input-row" style="border-top:1px solid var(--border);padding-top:9px;margin-top:2px">
       <label class="tl-accent"><input type="checkbox" ${it.accent==='blue'?'checked':''} style="accent-color:var(--blue);cursor:pointer" onchange="timeline[${i}].accent=this.checked?'blue':'teal'"> Highlight in blue</label>
