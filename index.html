@@ -213,10 +213,13 @@
   input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
   input[type="date"]::-webkit-date-and-time-value { text-align:left; }
   /* Accounts period / date selectors */
-  .acc-period-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 16px; font-size:12px; color:var(--subtle); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-  .acc-date { background:transparent; border:none; border-bottom:1px solid var(--border); color:var(--teal); font-family:'JetBrains Mono',monospace; font-size:12px; padding:2px 0; outline:none; width:148px; }
+  .acc-period-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 16px; font-size:12px; color:var(--subtle); display:flex; flex-direction:column; gap:6px; min-width:196px; }
+  .acc-period-label { font-size:12px; color:var(--subtle); margin-bottom:2px; }
+  .acc-period-label strong { color:#f1f5f9; }
+  .acc-date-row { display:flex; align-items:center; gap:8px; }
+  .acc-date-lbl { color:var(--muted); font-size:11px; width:36px; flex:none; }
+  .acc-date { background:transparent; border:none; border-bottom:1px solid var(--border); color:var(--teal); font-family:'JetBrains Mono',monospace; font-size:12px; padding:2px 0; outline:none; width:148px; flex:none; }
   .acc-date:focus { border-bottom-color:var(--teal); }
-  .acc-date-arrow { color:var(--muted); font-size:12px; }
   .tr-del { background:none; border:none; color:#334155; font-size:15px; cursor:pointer; padding:3px 7px; border-radius:4px; transition:color .15s; }
   .tr-del:hover { color:var(--red); }
   #tr-body tr { border-bottom:1px solid var(--border); }
@@ -683,20 +686,18 @@
     <!-- Period selectors -->
     <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
       <div class="acc-period-card">
-        📅 <strong style="color:#f1f5f9">P&amp;L Period:</strong>
-        <input type="date" id="acc-pl-from" class="acc-date" value="2026-07-01" title="Period start — tap to pick" onchange="recalcAccounts()">
-        <span class="acc-date-arrow">→</span>
-        <input type="date" id="acc-pl-to" class="acc-date" value="2026-07-30" title="Period end — tap to pick" onchange="recalcAccounts()">
+        <div class="acc-period-label">📅 <strong>P&amp;L Period</strong></div>
+        <div class="acc-date-row"><span class="acc-date-lbl">From</span><input type="date" id="acc-pl-from" class="acc-date" value="2026-07-01" title="Period start — tap to pick" onchange="recalcAccounts()"></div>
+        <div class="acc-date-row"><span class="acc-date-lbl">To</span><input type="date" id="acc-pl-to" class="acc-date" value="2026-07-30" title="Period end — tap to pick" onchange="recalcAccounts()"></div>
       </div>
       <div class="acc-period-card">
-        📅 <strong style="color:#f1f5f9">Cash Flow Period:</strong>
-        <input type="date" id="acc-cf-from" class="acc-date" value="2026-05-01" title="Period start — tap to pick" onchange="recalcAccounts()">
-        <span class="acc-date-arrow">→</span>
-        <input type="date" id="acc-cf-to" class="acc-date" value="2026-07-31" title="Period end — tap to pick" onchange="recalcAccounts()">
+        <div class="acc-period-label">📅 <strong>Cash Flow Period</strong></div>
+        <div class="acc-date-row"><span class="acc-date-lbl">From</span><input type="date" id="acc-cf-from" class="acc-date" value="2026-05-01" title="Period start — tap to pick" onchange="recalcAccounts()"></div>
+        <div class="acc-date-row"><span class="acc-date-lbl">To</span><input type="date" id="acc-cf-to" class="acc-date" value="2026-07-31" title="Period end — tap to pick" onchange="recalcAccounts()"></div>
       </div>
       <div class="acc-period-card">
-        📅 <strong style="color:#f1f5f9">Balance Sheet Date:</strong>
-        <input type="date" id="acc-bs-date" class="acc-date" value="2026-07-30" title="Tap to pick a date" onchange="recalcAccounts()">
+        <div class="acc-period-label">📅 <strong>Balance Sheet Date</strong></div>
+        <div class="acc-date-row"><span class="acc-date-lbl">As of</span><input type="date" id="acc-bs-date" class="acc-date" value="2026-07-30" title="Tap to pick a date" onchange="recalcAccounts()"></div>
       </div>
     </div>
 
