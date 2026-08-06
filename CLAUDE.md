@@ -42,6 +42,12 @@ Part 1's closing balance, IDR+SGD), **Part 3 — Room Management** (7-room table
 archiving). Replaced the old single flat `_transfers` ledger; the live-FX puller
 still refreshes it via a `renderTransferDerived()` alias.
 
+### Dates
+All date entry uses native `<input type="date">` (tap = OS calendar picker).
+The *stored* value stays `DD/MM/YYYY` — `toISO()` / `fromISO()` / `fmtLongDate()`
+(top of the first `<script>`) convert at the edges, so legacy saved rows and the
+delinquency parser keep working. Keep that convention for any new date field.
+
 ## Working rules for this repo
 - **Change flow: branch → PR → Vercel preview → owner approves → merge to main.**
   Never push straight to `main` for anything non-trivial.

@@ -203,7 +203,15 @@
   .tr-input { background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; color:#e2e8f0; font-family:'Inter',sans-serif; font-size:12px; padding:4px 7px; outline:none; width:100%; transition:border-color .15s; }
   .tr-input:focus { border-color:var(--teal); }
   .tr-input.mono { font-family:'JetBrains Mono',monospace; text-align:right; color:#60d4ff; }
-  .tr-input.date { width:100px; }
+  .tr-input.date { width:132px; min-width:132px; }
+  /* Native date pickers — dark UI + a visible, tappable calendar button */
+  input[type="date"] { color-scheme:dark; font-family:'JetBrains Mono',monospace; }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter:invert(72%) sepia(45%) saturate(1200%) hue-rotate(140deg);
+    cursor:pointer; opacity:.9; padding:2px; margin-left:2px;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
+  input[type="date"]::-webkit-date-and-time-value { text-align:left; }
   .tr-del { background:none; border:none; color:#334155; font-size:15px; cursor:pointer; padding:3px 7px; border-radius:4px; transition:color .15s; }
   .tr-del:hover { color:var(--red); }
   #tr-body tr { border-bottom:1px solid var(--border); }
@@ -679,7 +687,7 @@
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;color:var(--subtle)">
         📅 <strong style="color:#f1f5f9">Balance Sheet Date:</strong>
-        <input type="text" id="acc-bs-date" value="30 Jul 2026" oninput="recalcAccounts()" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;width:130px;margin-left:6px">
+        <input type="date" id="acc-bs-date" value="2026-07-30" title="Tap to pick a date" onchange="recalcAccounts()" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;width:150px;margin-left:6px">
       </div>
     </div>
 
@@ -843,16 +851,16 @@
     <!-- Section A: Room Details -->
     <div class="card mb16" style="overflow-x:auto">
       <div style="font-size:13px;font-weight:600;color:#f1f5f9;margin-bottom:14px">Section A — Room Details</div>
-      <table style="font-size:12px;min-width:700px">
+      <table style="font-size:12px;min-width:760px">
         <thead>
           <tr>
             <th style="width:8%">Room</th>
             <th style="width:8%">Status</th>
-            <th style="width:22%">Tenant Name</th>
-            <th style="width:14%">Check-In Date</th>
+            <th style="width:20%">Tenant Name</th>
+            <th style="width:18%">Check-In Date</th>
             <th style="width:12%">Due Date</th>
             <th style="width:12%">Category</th>
-            <th style="width:24%">Remarks</th>
+            <th style="width:22%">Remarks</th>
           </tr>
         </thead>
         <tbody id="room-body"></tbody>
@@ -1192,6 +1200,39 @@ function switchTab(id, btn) {
 </script>
 
 <script>
+// ── DATE HELPERS ────────────────────────────────────────────────────────────
+// Every date field renders as a native <input type="date"> (tap = calendar
+// picker) but the value we STORE stays DD/MM/YYYY, so old saved rows and the
+// delinquency parser keep working. These convert between the two.
+const _MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// anything we might have stored → YYYY-MM-DD (what the picker needs)
+function toISO(s) {
+  s = (s||'').trim();
+  if (!s) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;                 // already ISO
+  let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);          // DD/MM/YYYY
+  if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  m = s.match(/^(\d{1,2})\s+([A-Za-z]{3})[a-z]*\s+(\d{4})$/);  // 30 Jul 2026
+  if (m) {
+    const mi = _MONS.findIndex(x => x.toLowerCase() === m[2].toLowerCase());
+    if (mi >= 0) return `${m[3]}-${String(mi+1).padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  }
+  return '';
+}
+
+// YYYY-MM-DD (from the picker) → DD/MM/YYYY (what we store)
+function fromISO(s) {
+  const m = (s||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : '';
+}
+
+// YYYY-MM-DD → "30 Jul 2026" (for display-only headings)
+function fmtLongDate(s) {
+  const m = (s||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? `${Number(m[3])} ${_MONS[Number(m[2])-1]} ${m[1]}` : (s||'');
+}
+
 // ── SUPABASE CONFIG ─────────────────────────────────────────────────────────
 const SUPA_URL = "https://kkhkqxsndinsawvagxhx.supabase.co";
 const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtraGtxeHNuZGluc2F3dmFneGh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA1NDksImV4cCI6MjEwMDQ0NjU0OX0.jDhzsXM-vi9MrY2WjTyQgKritNMxkWW1SCgqlWJum-o";
@@ -2172,7 +2213,7 @@ function updateAccDerived() {
   const g = id => document.getElementById(id);
   setText('acc-pl-title', g('acc-pl-period') ? g('acc-pl-period').value : '');
   setText('acc-cf-title', g('acc-cf-period') ? g('acc-cf-period').value : '');
-  setText('acc-bs-title', 'As of ' + (g('acc-bs-date') ? g('acc-bs-date').value : ''));
+  setText('acc-bs-title', 'As of ' + (g('acc-bs-date') ? fmtLongDate(g('acc-bs-date').value) : ''));
 }
 
 // Called by the FX and period inputs — derived values only, no rebuild.
@@ -2200,7 +2241,9 @@ applyInputs = function(data) {
   ['acc-pl-period','acc-cf-period','acc-bs-date'].forEach(id => {
     const el = document.getElementById(id);
     const key = '_' + id.replace(/-/g,'_');
-    if (el && data[key] !== undefined) el.value = data[key];
+    if (!el || data[key] === undefined) return;
+    // acc-bs-date is now a date picker — coerce legacy "30 Jul 2026" values
+    el.value = id === 'acc-bs-date' ? (toISO(data[key]) || el.value) : data[key];
   });
   ACC_FIELD_IDS.forEach(id => {
     accValues[id] = data['_acc_' + id] !== undefined ? data['_acc_' + id] : ACC_DEFAULTS[id];
@@ -2297,7 +2340,7 @@ function renderP1() {
     const catOpts = cats.map(c=>`<option ${r.category===c?'selected':''}>${c}</option>`).join('');
 
     html += `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:6px 4px"><input class="tr-input date" value="${r.date}" placeholder="DD/MM/YYYY" oninput="p1Rows[${i}].date=this.value;renderTransfers()"></td>
+      <td style="padding:6px 4px"><input type="date" class="tr-input date" value="${toISO(r.date)}" title="Tap to pick a date" onchange="p1Rows[${i}].date=fromISO(this.value);renderTransfers()"></td>
       <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${begin<0?'var(--red)':'var(--muted)'}"><input class="tr-input mono" style="width:110px" value="${begin||''}" readonly tabindex="-1" style="background:transparent;border-color:transparent;cursor:default"></td>
       <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${spent||''}" placeholder="0" oninput="p1Rows[${i}].spent=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
       <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${dep||''}" placeholder="0" oninput="p1Rows[${i}].deposited=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
@@ -2352,7 +2395,7 @@ function renderP2(carryOver) {
     const runClass = running >= 0 ? 'color:var(--teal)' : 'color:var(--red)';
 
     html += `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:6px 4px"><input class="tr-input date" value="${r.date}" placeholder="DD/MM/YYYY" oninput="p2Rows[${i}].date=this.value"></td>
+      <td style="padding:6px 4px"><input type="date" class="tr-input date" value="${toISO(r.date)}" title="Tap to pick a date" onchange="p2Rows[${i}].date=fromISO(this.value)"></td>
       <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${open>=0?'var(--teal)':'var(--red)'}">${fmtRP(open)}</td>
       <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${col||''}" placeholder="0" oninput="p2Rows[${i}].collected=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
       <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${exp||''}" placeholder="0" oninput="p2Rows[${i}].expenses=parseFloat(this.value)||0;renderTransfers()" style="width:100px"></td>
@@ -2416,7 +2459,7 @@ function renderRooms() {
         <button onclick="toggleRoomStatus(${i})" style="background:none;border:none;font-size:18px;cursor:pointer;line-height:1" title="Click to toggle">${statusIcon}</button>
       </td>
       <td style="padding:7px 4px"><input class="tr-input" value="${r.tenant.replace(/"/g,'&quot;')}" placeholder="${isVacant?'VACANT':'Tenant name'}" oninput="rooms[${i}].tenant=this.value;renderDelinquency()"></td>
-      <td style="padding:7px 4px"><input class="tr-input date" value="${r.checkIn}" placeholder="DD/MM/YYYY" oninput="rooms[${i}].checkIn=this.value;renderDelinquency()"></td>
+      <td style="padding:7px 4px"><input type="date" class="tr-input date" value="${toISO(r.checkIn)}" title="Tap to pick a check-in date" onchange="rooms[${i}].checkIn=fromISO(this.value);renderRooms()"></td>
       <td style="padding:7px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--subtle)">${r.dueDay ? r.dueDay+'th' : '—'}</td>
       <td style="padding:7px 4px"><select class="tr-input" style="width:100px" oninput="rooms[${i}].category=this.value;renderDelinquency()">${catOpts}</select></td>
       <td style="padding:7px 4px"><input class="tr-input" value="${(r.remarks||'').replace(/"/g,'&quot;')}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
