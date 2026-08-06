@@ -24,7 +24,7 @@ Live: **https://batam-dashboard.vercel.app/**
   - table `inputs`, single row `id=1`, column `data` (JSON) holds ALL state:
     the model inputs (`in-*`), plus `_renoRows`, the Accounts figures (`_acc_*`),
     and the Cash-Transfers data (`_p1Rows`, `_p2Rows`, `_rooms`, `_payments`,
-    `_archived`, `_tr_fx`, `_colK/L/M`). Saved via PATCH; polled every 15s so
+    `_archived`, `_tr_fx`). Saved via PATCH; polled every 15s so
     partners' edits appear live.
   - table `snapshots` — named version history (Save Snapshot / Restore / Preview).
 

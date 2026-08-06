@@ -843,19 +843,16 @@
     <!-- Section A: Room Details -->
     <div class="card mb16" style="overflow-x:auto">
       <div style="font-size:13px;font-weight:600;color:#f1f5f9;margin-bottom:14px">Section A — Room Details</div>
-      <table style="font-size:12px;min-width:900px">
+      <table style="font-size:12px;min-width:700px">
         <thead>
           <tr>
-            <th style="width:7%">Room</th>
-            <th style="width:7%">Status</th>
-            <th style="width:14%">Tenant Name</th>
-            <th style="width:9%">Check-In Date</th>
-            <th style="width:8%">Due Date</th>
-            <th style="width:9%" id="col-k-header-th"><input class="tr-input" id="col-k-header" value="" placeholder="Column K" oninput="renderPaymentGrid()" style="width:90px;font-size:11px;font-weight:600;color:var(--amber)"></th>
-            <th style="width:9%" id="col-l-header-th"><input class="tr-input" id="col-l-header" value="" placeholder="Column L" oninput="renderPaymentGrid()" style="width:90px;font-size:11px;font-weight:600;color:var(--amber)"></th>
-            <th style="width:9%" id="col-m-header-th"><input class="tr-input" id="col-m-header" value="" placeholder="Column M" oninput="renderPaymentGrid()" style="width:90px;font-size:11px;font-weight:600;color:var(--amber)"></th>
-            <th style="width:9%">Category</th>
-            <th style="width:15%">Remarks</th>
+            <th style="width:8%">Room</th>
+            <th style="width:8%">Status</th>
+            <th style="width:22%">Tenant Name</th>
+            <th style="width:14%">Check-In Date</th>
+            <th style="width:12%">Due Date</th>
+            <th style="width:12%">Category</th>
+            <th style="width:24%">Remarks</th>
           </tr>
         </thead>
         <tbody id="room-body"></tbody>
@@ -2248,13 +2245,13 @@ const DEFAULT_P2 = [
 
 // ── ROOM DATA ─────────────────────────────────────────────────────────────────
 const DEFAULT_ROOMS = [
-  { room:'Room 1', status:'occupied', tenant:'Uci & Rara',    checkIn:'15/05/2026', dueDay:15, colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
-  { room:'Room 2', status:'occupied', tenant:'Erna & ???',    checkIn:'06/05/2026', dueDay:6,  colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
-  { room:'Room 3', status:'occupied', tenant:'Dahlia (Staff)',checkIn:'01/05/2026', dueDay:1,  colK:'', colL:'', colM:'', category:'Non-Revenue', remarks:'Staff room — salary offset. Will be converted to revenue room once Ace Hotel is acquired.' },
-  { room:'Room 4', status:'occupied', tenant:'Dewa & Sherly', checkIn:'05/05/2026', dueDay:5,  colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
-  { room:'Room 5', status:'occupied', tenant:'Olivia & Fitri',checkIn:'15/05/2026', dueDay:15, colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
-  { room:'Room 6', status:'vacant',   tenant:'',              checkIn:'',           dueDay:0,  colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
-  { room:'Room 7', status:'occupied', tenant:'Ara',           checkIn:'10/05/2026', dueDay:10, colK:'', colL:'', colM:'', category:'Revenue',     remarks:'' },
+  { room:'Room 1', status:'occupied', tenant:'Uci & Rara',    checkIn:'15/05/2026', dueDay:15, category:'Revenue',     remarks:'' },
+  { room:'Room 2', status:'occupied', tenant:'Erna & ???',    checkIn:'06/05/2026', dueDay:6,  category:'Revenue',     remarks:'' },
+  { room:'Room 3', status:'occupied', tenant:'Dahlia (Staff)',checkIn:'01/05/2026', dueDay:1,  category:'Non-Revenue', remarks:'Staff room — salary offset. Will be converted to revenue room once Ace Hotel is acquired.' },
+  { room:'Room 4', status:'occupied', tenant:'Dewa & Sherly', checkIn:'05/05/2026', dueDay:5,  category:'Revenue',     remarks:'' },
+  { room:'Room 5', status:'occupied', tenant:'Olivia & Fitri',checkIn:'15/05/2026', dueDay:15, category:'Revenue',     remarks:'' },
+  { room:'Room 6', status:'vacant',   tenant:'',              checkIn:'',           dueDay:0,  category:'Revenue',     remarks:'' },
+  { room:'Room 7', status:'occupied', tenant:'Ara',           checkIn:'10/05/2026', dueDay:10, category:'Revenue',     remarks:'' },
 ];
 
 // Payment grid: rooms × 12 months. State: 0=unpaid, 1=paid, 2=late, 3=na
@@ -2421,9 +2418,6 @@ function renderRooms() {
       <td style="padding:7px 4px"><input class="tr-input" value="${r.tenant.replace(/"/g,'&quot;')}" placeholder="${isVacant?'VACANT':'Tenant name'}" oninput="rooms[${i}].tenant=this.value;renderDelinquency()"></td>
       <td style="padding:7px 4px"><input class="tr-input date" value="${r.checkIn}" placeholder="DD/MM/YYYY" oninput="rooms[${i}].checkIn=this.value;renderDelinquency()"></td>
       <td style="padding:7px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--subtle)">${r.dueDay ? r.dueDay+'th' : '—'}</td>
-      <td style="padding:7px 4px"><input class="tr-input" value="${(r.colK||'').replace(/"/g,'&quot;')}" placeholder="—" oninput="rooms[${i}].colK=this.value"></td>
-      <td style="padding:7px 4px"><input class="tr-input" value="${(r.colL||'').replace(/"/g,'&quot;')}" placeholder="—" oninput="rooms[${i}].colL=this.value"></td>
-      <td style="padding:7px 4px"><input class="tr-input" value="${(r.colM||'').replace(/"/g,'&quot;')}" placeholder="—" oninput="rooms[${i}].colM=this.value"></td>
       <td style="padding:7px 4px"><select class="tr-input" style="width:100px" oninput="rooms[${i}].category=this.value;renderDelinquency()">${catOpts}</select></td>
       <td style="padding:7px 4px"><input class="tr-input" value="${(r.remarks||'').replace(/"/g,'&quot;')}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
     </tr>`;
@@ -2608,9 +2602,6 @@ collectInputs = function() {
   data._payments = JSON.parse(JSON.stringify(payments));
   data._archived = archived;
   data._tr_fx    = parseFloat(document.getElementById('tr-fx')?.value)||13936;
-  data._colK     = document.getElementById('col-k-header')?.value||'';
-  data._colL     = document.getElementById('col-l-header')?.value||'';
-  data._colM     = document.getElementById('col-m-header')?.value||'';
   return data;
 };
 
@@ -2624,12 +2615,6 @@ applyInputs = function(data) {
   if (data._archived !== undefined) archived = data._archived;
   const trFX = document.getElementById('tr-fx');
   if (trFX && data._tr_fx) trFX.value = data._tr_fx;
-  const kh = document.getElementById('col-k-header');
-  const lh = document.getElementById('col-l-header');
-  const mh = document.getElementById('col-m-header');
-  if (kh && data._colK) kh.value = data._colK;
-  if (lh && data._colL) lh.value = data._colL;
-  if (mh && data._colM) mh.value = data._colM;
   renderTransfers();
 };
 
