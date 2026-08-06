@@ -472,9 +472,15 @@
     <div style="margin-top:24px;" class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px">
         <div class="sh" style="margin-bottom:0"><h2>📸 Version History</h2><p>Save named snapshots of the model at any point. Restore any version with one tap.</p></div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <input id="snapshot-name" type="text" placeholder="e.g. Phase 1 baseline" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:13px;padding:8px 12px;width:200px;outline:none"/>
-          <button onclick="saveSnapshot()" style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:9px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer">📸 Save Snapshot</button>
+        <div class="input-group compact">
+          <div class="input-group-title">New Snapshot</div>
+          <div class="input-row">
+            <span class="input-label">Name</span>
+            <input id="snapshot-name" type="text" class="tr-input" placeholder="e.g. Phase 1 baseline" style="width:190px;flex:none"/>
+          </div>
+          <div class="input-row" style="justify-content:flex-end;margin-top:2px">
+            <button onclick="saveSnapshot()" style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:8px 16px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">📸 Save Snapshot</button>
+          </div>
         </div>
       </div>
       <div id="snapshot-list"><div style="color:var(--muted);font-size:13px">Loading snapshots...</div></div>
