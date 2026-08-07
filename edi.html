@@ -482,7 +482,6 @@ const SUPA_URL = "https://kkhkqxsndinsawvagxhx.supabase.co";
 const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtraGtxeHNuZGluc2F3dmFneGh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA1NDksImV4cCI6MjEwMDQ0NjU0OX0.jDhzsXM-vi9MrY2WjTyQgKritNMxkWW1SCgqlWJum-o";
 const SUPA_READ_HEADERS = { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY };
 const ROW_ID   = 2;
-const SAVE_FN  = 'save_edi_model';       // created by the one-time setup SQL
 
 /* ── DATE HELPERS (same contract as the main dashboard) ──────────────────── */
 const _MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -948,53 +947,6 @@ function applyInputs(d){
   renderAll();
 }
 
-/* ── EDIT PASSWORD (shared with the Ace Hotel dashboard, same origin) ────── */
-const PW_KEY='batam_edit_pw';
-const getStoredPassword=()=>localStorage.getItem(PW_KEY);
-const storePassword=pw=>localStorage.setItem(PW_KEY,pw);
-const forgetStoredPassword=()=>localStorage.removeItem(PW_KEY);
-
-function askPassword(message){
-  return new Promise(resolve=>{
-    document.getElementById('pw-modal')?.remove();
-    const m=document.createElement('div'); m.id='pw-modal';
-    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
-    m.innerHTML=`<div style="background:#0e1929;border:1px solid var(--teal);border-radius:14px;padding:28px;max-width:380px;width:100%">
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#f1f5f9;margin-bottom:8px">🔒 Edit password</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">${message||'Enter the password to save changes.'}</div>
-      <input id="pw-input" type="password" autocomplete="current-password" placeholder="Password" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;width:100%;outline:none">
-      <div style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end">
-        <button id="pw-cancel" style="background:none;border:1px solid var(--border);border-radius:8px;padding:8px 16px;color:var(--muted);font-size:13px;cursor:pointer">Cancel</button>
-        <button id="pw-ok" style="background:var(--teal);border:none;border-radius:8px;padding:8px 18px;color:#07101f;font-size:13px;font-weight:700;cursor:pointer">Unlock</button>
-      </div></div>`;
-    document.body.appendChild(m);
-    const input=m.querySelector('#pw-input'); input.focus();
-    const done=v=>{m.remove();resolve(v);};
-    m.querySelector('#pw-ok').onclick=()=>done(input.value||null);
-    m.querySelector('#pw-cancel').onclick=()=>done(null);
-    input.onkeydown=e=>{ if(e.key==='Enter')done(input.value||null); if(e.key==='Escape')done(null); };
-  });
-}
-async function callSecure(fn,args,retryMessage){
-  let pw=getStoredPassword();
-  if(!pw){ pw=await askPassword(retryMessage); if(!pw) return {ok:false,cancelled:true}; storePassword(pw); }
-  try{
-    const res=await fetch(SUPA_URL+'/rest/v1/rpc/'+fn,{method:'POST',
-      headers:{...SUPA_READ_HEADERS,'Content-Type':'application/json'},
-      body:JSON.stringify({pw,...args})});
-    if(res.ok) return {ok:true,value:await res.json().catch(()=>null)};
-    const body=await res.text();
-    if(/wrong password/i.test(body)){
-      forgetStoredPassword();
-      const retry=await askPassword('That password was not correct. Try again.');
-      if(!retry) return {ok:false,cancelled:true};
-      storePassword(retry);
-      return callSecure(fn,args);
-    }
-    return {ok:false,error:'HTTP '+res.status+' — '+body};
-  }catch(e){ return {ok:false,error:e.message}; }
-}
-
 function setSyncStatus(msg,color){ const el=document.getElementById('sync-status'); if(el){el.textContent=msg;el.style.color=color||'var(--teal)';} }
 function setLastSaved(ts){
   const el=document.getElementById('last-saved'); if(!el||!ts) return;
@@ -1004,23 +956,39 @@ function setLastSaved(ts){
   if(f) f.textContent='Live model saved: '+d.toLocaleDateString('en-SG',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
 
+// No password on this page by choice — Edi saves straight to row 2 with the
+// anon key. `return=representation` matters: a write that RLS filters out comes
+// back 200 with ZERO rows, which would otherwise look exactly like success.
 async function saveToSupabase(){
   const btn=document.getElementById('save-btn');
   btn.textContent='Saving...'; btn.style.opacity='.6';
-  const r=await callSecure(SAVE_FN,{payload:collectInputs()},'Enter the password to save Edi’s tracker.');
-  btn.style.opacity='1'; btn.textContent='💾 Save Changes';
-  if(r.ok){
+  const restore=()=>{ btn.style.opacity='1'; btn.textContent='💾 Save Changes'; };
+  try{
+    const res=await fetch(SUPA_URL+`/rest/v1/inputs?id=eq.${ROW_ID}`,{
+      method:'PATCH',
+      headers:{...SUPA_READ_HEADERS,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({ data:collectInputs(), updated_at:new Date().toISOString() })
+    });
+    restore();
+    if(!res.ok){
+      const body=await res.text();
+      setSyncStatus('⚠ save failed','var(--red)');
+      alert('Save failed — nothing was written.\n\n'+res.status+' '+body+'\n\nYour edits are still on screen; do not reload.');
+      return;
+    }
+    const rowsOut=await res.json().catch(()=>[]);
+    if(!rowsOut.length){
+      setSyncStatus('⚠ cloud setup not run yet','var(--amber)');
+      alert('Nothing was saved — Edi’s row does not exist yet (or writes to it are blocked).\n\nRun SETUP-EDI.sql in Supabase, then press Save again. Your edits are still on screen; do not reload.');
+      return;
+    }
     hasUnsavedEdits=false;
     setSyncStatus('✓ saved','var(--teal)');
-    setLastSaved(new Date().toISOString());
-  } else if(r.cancelled){
-    setSyncStatus('not saved','var(--amber)');
-  } else if(/save_edi_model|PGRST202|404/.test(r.error||'')){
-    setSyncStatus('⚠ cloud setup not run yet','var(--amber)');
-    alert('Cloud saving is not set up yet.\n\nRun the one-time setup SQL in Supabase (it creates row 2 and the save_edi_model function), then try again. Your edits are still on screen — do not reload.');
-  } else {
+    setLastSaved(rowsOut[0].updated_at || new Date().toISOString());
+  }catch(e){
+    restore();
     setSyncStatus('⚠ save failed','var(--red)');
-    alert('Save failed: '+r.error);
+    alert('Save failed: '+e.message+'\n\nYour edits are still on screen; do not reload.');
   }
 }
 
@@ -1047,8 +1015,8 @@ async function loadFromSupabase(){
 }
 
 /* dirty tracking + 15s poll, same contract as the main dashboard */
-document.addEventListener('input',e=>{ const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT')&&t.id!=='pw-input') hasUnsavedEdits=true; });
-document.addEventListener('change',e=>{ const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT')&&t.id!=='pw-input') hasUnsavedEdits=true; });
+document.addEventListener('input',e=>{ const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT')) hasUnsavedEdits=true; });
+document.addEventListener('change',e=>{ const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT')) hasUnsavedEdits=true; });
 window.addEventListener('beforeunload',e=>{ if(hasUnsavedEdits){ e.preventDefault(); e.returnValue=''; } });
 
 setInterval(async ()=>{

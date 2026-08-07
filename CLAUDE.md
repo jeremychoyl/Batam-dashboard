@@ -14,9 +14,12 @@ context, credentials, or deployments between them.** Sibling repo:
   Edi's rents differ per room and change over time. Seeded from his 2026 book
   (Januari–Agustus); tenancy spans were derived from the month-by-month tenant
   names and verified to reproduce all 152 room-months exactly.
-  Its cloud state is **Supabase row `id=2`**, saved via `save_edi_model` — see
-  `SETUP-EDI.sql`, which must be run once by the project owner (anon INSERT is
-  blocked by RLS). `vercel.json` sets `cleanUrls` so `/edi` works without `.html`.
+  Its cloud state is **Supabase row `id=2`**, saved by a plain PATCH with **no
+  password** (deliberate — Edi updates his own rent collection). See
+  `SETUP-EDI.sql`: row 2 must be created once by the project owner, since anon
+  INSERT is blocked by RLS. The save checks `return=representation` because an
+  RLS-filtered write returns 200 with zero rows and would otherwise look like
+  success. `vercel.json` sets `cleanUrls` so `/edi` works without `.html`.
   Month index 0 = Jan 2026 there, vs May 2026 in `index.html` — check which page
   you're in before touching month maths.
 
