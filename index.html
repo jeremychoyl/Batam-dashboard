@@ -2682,28 +2682,30 @@ function renderPaymentGrid() {
       <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${isVacant?'<span style="color:var(--red)">VACANT</span>':r.tenant||'—'}</td>`;
 
     MONTHS_12.forEach((_, mi) => {
-      const state = payments[ri][mi];
+      const state  = payments[ri][mi];
       // A room that is vacant or non-revenue TODAY owes nothing going forward,
       // but months it already paid still count — otherwise a tenant moving out
-      // erases their rent from the tracker and it stops matching Part 2.
-      if ((isVacant || isNonRev) && state !== 1) {
-        html += `<td style="padding:7px 4px;text-align:center;color:var(--muted)" title="${isVacant?'Vacant — no rent due':'Non-Revenue — no rent due'}">—</td>`;
-        return;
-      }
+      // erases their rent from the tracker and it stops matching Part 2. Their
+      // other months read as N/A yet stay tappable, so history can still be
+      // entered for a room that has since emptied or gone non-revenue.
+      const exempt = isVacant || isNonRev;
       // 2 is display-only: an unpaid month that is now more than 30 days overdue
-      const shown = state === 1 ? 1 : state === 3 ? 3
+      const shown = state === 1 ? 1
+                  : exempt || state === 3 ? 3
                   : (isMonthOverdue(r, mi, today) ? 2 : 0);
       const icon  = PAYMENT_STATES[shown];
       const bg    = shown===1?'rgba(0,212,184,0.1)':shown===2?'rgba(239,68,68,0.12)':'';
       const border= shown===2?'1px solid var(--red)':'1px solid transparent';
+      const hint  = exempt ? (isVacant?'Vacant — no rent due. Tap to record a payment anyway'
+                                      :'Non-Revenue — no rent due. Tap to record a payment anyway')
+                           : 'Click to toggle';
       if (state === 1) { paid++; monthTotals[mi] += RENT; }
-      else if (state !== 3) outstanding++;   // paid + outstanding + N/A always = 12
+      else if (!exempt && state !== 3) outstanding++;  // paid + outstanding + N/A = 12
       html += `<td style="padding:4px;text-align:center">
-        <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:38px;transition:all .15s" title="Click to toggle">${icon}</button>
+        <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:38px;opacity:${exempt&&shown!==1?'.5':'1'};transition:all .15s" title="${hint}">${icon}</button>
       </td>`;
     });
 
-    if (isVacant || isNonRev) outstanding = 0;   // paid history only, never owing
     paidCells += paid;
     const paidAmt   = paid * RENT;
     const outAmt    = outstanding * RENT;
