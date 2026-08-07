@@ -16,10 +16,12 @@ context, credentials, or deployments between them.** Sibling repo:
   names and verified to reproduce all 152 room-months exactly.
   Its cloud state is **Supabase row `id=2`**, saved by a plain PATCH with **no
   password** (deliberate — Edi updates his own rent collection). See
-  `SETUP-EDI.sql`: row 2 must be created once by the project owner, since anon
-  INSERT is blocked by RLS. The save checks `return=representation` because an
-  RLS-filtered write returns 200 with zero rows and would otherwise look like
-  success. `vercel.json` sets `cleanUrls` so `/edi` works without `.html`.
+  `SETUP-EDI.sql` — **already applied 7 Aug 2026**: row 2 created by the owner
+  (anon INSERT is blocked by RLS) plus policy `anon_write_edi_row` granting the
+  anon key UPDATE on `id = 2` only. Reads needed nothing — the SELECT policy
+  isn't id-scoped. The save sends `return=representation` and treats zero
+  returned rows as failure, because an RLS-blocked write returns 200 with an
+  empty array and is otherwise indistinguishable from success. `vercel.json` sets `cleanUrls` so `/edi` works without `.html`.
   Month index 0 = Jan 2026 there, vs May 2026 in `index.html` — check which page
   you're in before touching month maths.
 
