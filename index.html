@@ -2417,7 +2417,7 @@ const DEFAULT_PAYMENTS = DEFAULT_ROOMS.map(() => Array(12).fill(0));
 
 let p1Rows    = JSON.parse(JSON.stringify(DEFAULT_P1));
 let p2Rows    = JSON.parse(JSON.stringify(DEFAULT_P2));
-let rooms     = JSON.parse(JSON.stringify(DEFAULT_ROOMS));
+let rooms     = JSON.parse(JSON.stringify(DEFAULT_ROOMS));   // tenancies seeded on first render
 let payments  = JSON.parse(JSON.stringify(DEFAULT_PAYMENTS));
 let archived  = null; // stores archived 12-month summary
 
@@ -2542,10 +2542,112 @@ function renderP2(carryOver) {
   set('p2-current-bal-sgd', fmtSGDtr(running));
 }
 
+// ── TENANCIES ─────────────────────────────────────────────────────────────────
+// A room used to hold ONE tenant name + check-in date, so every new tenant
+// erased the previous one and past months were mislabelled with whoever lives
+// there now. A room now holds a list of tenancies { tenant, from, to } (dates
+// DD/MM/YYYY, empty `to` = still living there). `r.tenant` / `r.checkIn` are
+// kept in sync with the open tenancy so the rest of the model is unaffected.
+
+let expandedRooms = new Set();   // rooms whose history sub-row is open
+
+function migrateTenancies(list) {
+  (list || []).forEach(r => {
+    if (Array.isArray(r.tenancies)) return;
+    // Only seed a tenancy if there is actually somebody to record.
+    r.tenancies = r.tenant ? [{ tenant: r.tenant, from: r.checkIn || '', to: '' }] : [];
+  });
+  return list;
+}
+
+// The tenancy still running (no end date), else the most recent one.
+function openTenancy(r) {
+  const t = (r.tenancies || []).filter(x => !x.to);
+  return t.length ? t[t.length - 1] : null;
+}
+
+// Mirror the open tenancy back onto the flat fields the rest of the model uses.
+function syncRoomFromTenancy(r) {
+  const t = openTenancy(r);
+  r.tenant  = t ? (t.tenant || '') : '';
+  r.checkIn = t ? (t.from   || '') : r.checkIn;
+}
+
+function parseDMY(s) {
+  const m = (s || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null;
+}
+
+// Who was in this room when that month's rent fell due? Empty if nobody.
+function tenantForMonth(r, mi) {
+  const due = monthDueDate(r, mi);
+  for (const t of (r.tenancies || [])) {
+    const from = parseDMY(t.from), to = parseDMY(t.to);
+    if (from && due < from) continue;
+    if (to   && due > to)   continue;
+    if (!from && !to)       continue;
+    return t.tenant || '';
+  }
+  return '';
+}
+
+// Distinct tenants across the 12 tracked months, in order — "Ara → Olivia".
+function tenantsAcrossYear(r) {
+  const seen = [];
+  MONTHS_12.forEach((_, mi) => {
+    const n = tenantForMonth(r, mi);
+    if (n && !seen.includes(n)) seen.push(n);
+  });
+  return seen;
+}
+
+function toggleRoomHistory(i) {
+  expandedRooms.has(i) ? expandedRooms.delete(i) : expandedRooms.add(i);
+  renderRooms();
+}
+
+function addTenancy(i) {
+  rooms[i].tenancies = rooms[i].tenancies || [];
+  rooms[i].tenancies.push({ tenant: '', from: '', to: '' });
+  expandedRooms.add(i);
+  hasUnsavedEdits = true;
+  renderRooms();
+}
+
+function updateTenancy(i, ti, field, value) {
+  const t = rooms[i].tenancies?.[ti];
+  if (!t) return;
+  t[field] = field === 'tenant' ? value : fromISO(value);
+  syncRoomFromTenancy(rooms[i]);
+  renderRooms();
+  renderPaymentGrid();
+}
+
+function deleteTenancy(i, ti) {
+  rooms[i].tenancies.splice(ti, 1);
+  syncRoomFromTenancy(rooms[i]);
+  hasUnsavedEdits = true;
+  renderRooms();
+  renderPaymentGrid();
+}
+
+// Editing the Section A tenant name edits the OPEN tenancy, creating one if the
+// room had none (e.g. a room that was vacant).
+function setRoomTenant(i, name) {
+  const r = rooms[i];
+  r.tenancies = r.tenancies || [];
+  let t = openTenancy(r);
+  if (!t) { t = { tenant: '', from: r.checkIn || '', to: '' }; r.tenancies.push(t); }
+  t.tenant = name;
+  r.tenant = name;
+  renderDelinquency();
+}
+
 // ── PART 3A: ROOM DETAILS ─────────────────────────────────────────────────────
 function renderRooms() {
   const tbody = document.getElementById('room-body');
   if (!tbody) return;
+  migrateTenancies(rooms);   // idempotent — covers defaults and any load path
 
   const today = new Date();
   let delinquent = [];
@@ -2571,28 +2673,65 @@ function renderRooms() {
       Array.from({length:31}, (_,n) =>
         `<option value="${n+1}" ${dueDay===n+1?'selected':''}>${ordinal(n+1)}</option>`).join('');
 
-    return `<tr style="border-bottom:1px solid var(--border);${isVacant?'background:rgba(239,68,68,0.04)':''}">
+    const past     = (r.tenancies || []).filter(t => t.to).length;
+    const open     = expandedRooms.has(i);
+    const histLbl  = past ? `${past} past` : 'history';
+
+    return `<tr style="border-bottom:${open?'none':'1px solid var(--border)'};${isVacant?'background:rgba(239,68,68,0.04)':''}">
       <td style="padding:7px 4px;font-weight:700;color:#f1f5f9;font-size:12px">${r.room}</td>
       <td style="padding:7px 4px;text-align:center">
         <button onclick="toggleRoomStatus(${i})" style="background:none;border:none;font-size:18px;cursor:pointer;line-height:1" title="Click to toggle">${statusIcon}</button>
       </td>
-      <td style="padding:7px 4px"><input class="tr-input" value="${r.tenant.replace(/"/g,'&quot;')}" placeholder="${isVacant?'VACANT':'Tenant name'}" oninput="rooms[${i}].tenant=this.value;renderDelinquency()"></td>
+      <td style="padding:7px 4px">
+        <div style="display:flex;align-items:center;gap:5px">
+          <input class="tr-input" value="${htmlAttr(r.tenant||'')}" placeholder="${isVacant?'VACANT':'Tenant name'}" oninput="setRoomTenant(${i}, this.value)">
+          <button onclick="toggleRoomHistory(${i})" title="Previous tenants of this room" style="background:none;border:1px solid var(--border);border-radius:5px;color:${past?'var(--amber)':'var(--muted)'};font-size:10px;padding:3px 6px;cursor:pointer;white-space:nowrap">${open?'▾':'▸'} ${histLbl}</button>
+        </div>
+      </td>
       <td style="padding:7px 4px"><input type="date" class="tr-input date" value="${toISO(r.checkIn)}" title="Tap to pick a check-in date" onchange="setCheckIn(${i}, this.value)"></td>
       <td style="padding:7px 4px;text-align:center"><select class="tr-input" style="width:78px" title="Day of the month rent falls due" onchange="setDueDay(${i}, this.value)">${dayOpts}</select></td>
       <td style="padding:7px 4px"><select class="tr-input" style="width:100px" oninput="rooms[${i}].category=this.value;renderDelinquency()">${catOpts}</select></td>
-      <td style="padding:7px 4px"><input class="tr-input" value="${(r.remarks||'').replace(/"/g,'&quot;')}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
-    </tr>`;
+      <td style="padding:7px 4px"><input class="tr-input" value="${htmlAttr(r.remarks||'')}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
+    </tr>${open ? tenancyRow(r, i) : ''}`;
   }).join('');
 
   renderDelinquency(delinquent);
 }
 
+// The expandable "who lived here before" sub-row under a room.
+function tenancyRow(r, i) {
+  const list = r.tenancies || [];
+  const rows = list.map((t, ti) => `
+    <div class="input-row" style="gap:6px;flex-wrap:wrap">
+      <input class="tr-input" style="width:150px;flex:none" value="${htmlAttr(t.tenant||'')}" placeholder="Tenant name"
+        oninput="rooms[${i}].tenancies[${ti}].tenant=this.value" onchange="updateTenancy(${i},${ti},'tenant',this.value)">
+      <span class="field-lbl" style="width:auto">from</span>
+      <input type="date" class="field-date" value="${toISO(t.from)}" title="Check-in" onchange="updateTenancy(${i},${ti},'from',this.value)">
+      <span class="field-lbl" style="width:auto">to</span>
+      <input type="date" class="field-date" value="${toISO(t.to)}" title="Check-out — leave blank if still living here" onchange="updateTenancy(${i},${ti},'to',this.value)">
+      <span style="font-size:10px;color:${t.to?'var(--muted)':'var(--teal)'}">${t.to?'moved out':'current'}</span>
+      <button class="tr-del" title="Delete this tenancy" onclick="deleteTenancy(${i},${ti})">✕</button>
+    </div>`).join('');
+  return `<tr style="border-bottom:1px solid var(--border);background:rgba(148,163,184,0.04)">
+    <td colspan="7" style="padding:4px 10px 12px 10px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Tenancy history — ${r.room}. Leave the end date blank for whoever lives there now; the tracker labels each month from these dates.</div>
+      ${rows || '<div style="font-size:11px;color:var(--muted);margin-bottom:6px">No tenancies recorded yet.</div>'}
+      <button onclick="addTenancy(${i})" class="tl-btn" style="margin-top:8px">+ Add tenant</button>
+    </td>
+  </tr>`;
+}
+
 function setCheckIn(i, iso) {
-  rooms[i].checkIn = fromISO(iso);
+  const r = rooms[i];
+  r.checkIn = fromISO(iso);
+  // Keep the open tenancy's start date in step with the Check-In column.
+  const t = openTenancy(r);
+  if (t) t.from = r.checkIn;
   // First time a check-in is set, default the rent due day to that day of month.
   // An explicitly chosen due day is never overwritten.
-  if (!Number(rooms[i].dueDay)) rooms[i].dueDay = Number(iso.slice(8,10)) || 0;
+  if (!Number(r.dueDay)) r.dueDay = Number(iso.slice(8,10)) || 0;
   renderRooms();
+  renderPaymentGrid();
 }
 
 function setDueDay(i, v) {
@@ -2600,9 +2739,21 @@ function setDueDay(i, v) {
   renderRooms();
 }
 
+function todayDMY() {
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
 function toggleRoomStatus(i) {
-  rooms[i].status = rooms[i].status === 'occupied' ? 'vacant' : 'occupied';
-  if (rooms[i].status === 'vacant') rooms[i].tenant = '';
+  const r = rooms[i];
+  r.status = r.status === 'occupied' ? 'vacant' : 'occupied';
+  if (r.status === 'vacant') {
+    // Close the tenancy instead of erasing the name — the months that tenant
+    // paid still belong to them. Adjust the end date in the history row.
+    const t = openTenancy(r);
+    if (t && !t.to) t.to = todayDMY();
+    r.tenant = '';
+  }
   renderRooms();
   renderPaymentGrid();
 }
@@ -2648,6 +2799,7 @@ function rentPerRoom() {
 function renderPaymentGrid() {
   const wrap = document.getElementById('payment-grid-wrap');
   if (!wrap) return;
+  migrateTenancies(rooms);
 
   const today = new Date();
   const RENT  = rentPerRoom();
@@ -2675,11 +2827,15 @@ function renderPaymentGrid() {
   rooms.forEach((r, ri) => {
     const isVacant = r.status === 'vacant';
     const isNonRev = r.category === 'Non-Revenue';
+    const whoAll   = tenantsAcrossYear(r);      // e.g. ['Ara','Olivia & Fitri']
+    const multi    = whoAll.length > 1;         // label the cells when it changed hands
     let paid = 0, outstanding = 0;
 
     html += `<tr style="border-bottom:1px solid var(--border)">
       <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${r.room}</td>
-      <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${isVacant?'<span style="color:var(--red)">VACANT</span>':r.tenant||'—'}</td>`;
+      <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${
+        whoAll.length ? whoAll.map(n=>htmlAttr(n)).join(' <span style="color:var(--muted)">→</span> ')
+        : isVacant ? '<span style="color:var(--red)">VACANT</span>' : (htmlAttr(r.tenant||'') || '—')}</td>`;
 
     MONTHS_12.forEach((_, mi) => {
       const state  = payments[ri][mi];
@@ -2696,13 +2852,19 @@ function renderPaymentGrid() {
       const icon  = PAYMENT_STATES[shown];
       const bg    = shown===1?'rgba(0,212,184,0.1)':shown===2?'rgba(239,68,68,0.12)':'';
       const border= shown===2?'1px solid var(--red)':'1px solid transparent';
-      const hint  = exempt ? (isVacant?'Vacant — no rent due. Tap to record a payment anyway'
-                                      :'Non-Revenue — no rent due. Tap to record a payment anyway')
-                           : 'Click to toggle';
+      const who   = tenantForMonth(r, mi);
+      const words = shown===1?'paid':shown===2?'overdue':shown===3?'no rent due':'unpaid';
+      const hint  = `${MONTHS_12[mi]} · ${who || 'no tenant recorded'} · ${words}`
+                  + (exempt ? '. Tap to record a payment anyway' : '');
+      // When a room changed hands during the year, name the tenant under each
+      // cell so an old tenant's months aren't read as the current tenant's.
+      const label = multi && who
+        ? `<div style="font-size:9px;color:var(--muted);margin-top:2px;max-width:50px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${htmlAttr(who.split(/[\s&,]+/)[0])}</div>`
+        : '';
       if (state === 1) { paid++; monthTotals[mi] += RENT; }
       else if (!exempt && state !== 3) outstanding++;  // paid + outstanding + N/A = 12
       html += `<td style="padding:4px;text-align:center">
-        <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:38px;opacity:${exempt&&shown!==1?'.5':'1'};transition:all .15s" title="${hint}">${icon}</button>
+        <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:38px;opacity:${exempt&&shown!==1?'.5':'1'};transition:all .15s" title="${htmlAttr(hint)}">${icon}</button>${label}
       </td>`;
     });
 
@@ -2820,7 +2982,8 @@ applyInputs = function(data) {
   if (data._p2Rows)   p2Rows   = data._p2Rows;
   // Rooms saved before the K/L/M columns were removed still carry those fields;
   // drop them on load so the next save writes them out of the stored JSON.
-  if (data._rooms)    rooms    = data._rooms.map(r => { const {colK, colL, colM, ...rest} = r; return rest; });
+  if (data._rooms)    rooms    = migrateTenancies(
+                                   data._rooms.map(r => { const {colK, colL, colM, ...rest} = r; return rest; }));
   // Cells saved as 2 ("late") by the old auto-flagging renderer come back as
   // plain unpaid — they still show 🔴 while overdue, but now they can be tapped
   // to ✅ instead of being stuck.
