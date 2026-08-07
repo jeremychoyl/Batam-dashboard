@@ -276,7 +276,15 @@
   </div>
 </div>
 
+<!-- TABS — one link to Edi forever; the laundry slots in beside the hostel -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('hostel', this)">🏠 Hostel</button>
+  <button class="tab" onclick="switchTab('laundry', this)">🧺 Laundry</button>
+</div>
+
 <div class="content">
+
+<div id="panel-hostel" class="panel active">
 
   <!-- ── PART 1 — CAPITAL EXPENDITURE ─────────────────────── -->
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
@@ -433,6 +441,25 @@
     <div id="occ-ranking"></div>
     <div id="occ-table" style="display:none"></div>
   </div>
+
+</div><!-- /panel-hostel -->
+
+<div id="panel-laundry" class="panel">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <div style="background:#1a2d45;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:10px 18px;flex:1">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9">Laundry Business</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">Not set up yet</div>
+    </div>
+  </div>
+  <div class="card" style="text-align:center;padding:40px 24px">
+    <div style="font-size:32px;margin-bottom:12px">🧺</div>
+    <div style="font-size:14px;font-weight:600;color:#f1f5f9;margin-bottom:6px">Edi's laundry business will appear here</div>
+    <div style="font-size:12px;color:var(--muted);max-width:440px;margin:0 auto;line-height:1.7">
+      This tab is reserved so the link never has to change — the laundry slots in
+      beside the hostel once its figures are ready. Nothing here yet.
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -874,6 +901,15 @@ function toggleOccTable(){
   const show = el.style.display==='none';
   el.style.display = show?'block':'none';
   b.textContent = show?'▤ Hide table':'▤ Table';
+}
+
+/* ── TABS ────────────────────────────────────────────────────────────────── */
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id)?.classList.add('active');
+  if (id === 'hostel') renderAll();     // re-measure the timeline after unhiding
 }
 
 /* ── ROW ADDERS ──────────────────────────────────────────────────────────── */
