@@ -2653,7 +2653,12 @@ function renderPaymentGrid() {
   const RENT  = rentPerRoom();
 
   // Check if should archive (all 12 months filled for all rooms)
-  const allFilled = payments.every(row => row.every(c => c !== 0));
+  // Ready to archive once no ROOM THAT OWES RENT still has an unresolved month.
+  const allFilled = payments.every((row, ri) => {
+    const r = rooms[ri];
+    if (!r || r.status === 'vacant' || r.category === 'Non-Revenue') return true;
+    return row.every(c => c !== 0 && c !== 2);
+  });
 
   let html = `<div style="overflow-x:auto"><table style="font-size:12px;min-width:900px;border-collapse:collapse">
     <thead><tr>
@@ -2665,6 +2670,7 @@ function renderPaymentGrid() {
     </tr></thead><tbody>`;
 
   let monthTotals = Array(12).fill(0);
+  let paidCells   = 0;
 
   rooms.forEach((r, ri) => {
     const isVacant = r.status === 'vacant';
@@ -2676,15 +2682,14 @@ function renderPaymentGrid() {
       <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${isVacant?'<span style="color:var(--red)">VACANT</span>':r.tenant||'—'}</td>`;
 
     MONTHS_12.forEach((_, mi) => {
-      if (isVacant) {
-        html += `<td style="padding:7px 4px;text-align:center;color:var(--muted)">—</td>`;
-        return;
-      }
-      if (isNonRev) {
-        html += `<td style="padding:7px 4px;text-align:center;color:var(--muted)" title="Non-Revenue">—</td>`;
-        return;
-      }
       const state = payments[ri][mi];
+      // A room that is vacant or non-revenue TODAY owes nothing going forward,
+      // but months it already paid still count — otherwise a tenant moving out
+      // erases their rent from the tracker and it stops matching Part 2.
+      if ((isVacant || isNonRev) && state !== 1) {
+        html += `<td style="padding:7px 4px;text-align:center;color:var(--muted)" title="${isVacant?'Vacant — no rent due':'Non-Revenue — no rent due'}">—</td>`;
+        return;
+      }
       // 2 is display-only: an unpaid month that is now more than 30 days overdue
       const shown = state === 1 ? 1 : state === 3 ? 3
                   : (isMonthOverdue(r, mi, today) ? 2 : 0);
@@ -2698,9 +2703,11 @@ function renderPaymentGrid() {
       </td>`;
     });
 
+    if (isVacant || isNonRev) outstanding = 0;   // paid history only, never owing
+    paidCells += paid;
     const paidAmt   = paid * RENT;
     const outAmt    = outstanding * RENT;
-    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${isVacant||isNonRev?'—':fmtRP(paidAmt)}</td>`;
+    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${paid?fmtRP(paidAmt):'—'}</td>`;
     html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${outAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${isVacant||isNonRev?'—':outAmt>0?fmtRP(outAmt):'✅ Clear'}</td>`;
     html += `</tr>`;
   });
@@ -2714,6 +2721,22 @@ function renderPaymentGrid() {
   </tr>`;
 
   html += `</tbody></table></div>`;
+
+  // Reconciliation — the tracker and Part 2 describe the same money, so say so
+  // out loud instead of leaving it to be worked out by hand.
+  const trackerTotal = monthTotals.reduce((a,b)=>a+b,0);
+  const p2Total      = p2Rows.reduce((s,r)=>s+(parseFloat(r.collected)||0), 0);
+  const diff         = trackerTotal - p2Total;
+  const diffMonths   = RENT ? Math.abs(diff)/RENT : 0;
+  const ok           = Math.abs(diff) < 1;
+  html += `<div style="margin-top:14px;padding:10px 14px;border-radius:8px;font-size:11px;line-height:1.7;
+      border:1px solid ${ok?'var(--teal)':'var(--amber)'};background:${ok?'rgba(0,212,184,0.07)':'rgba(245,158,11,0.08)'};color:var(--subtle)">
+    ${ok?'✅':'⚠️'} Tracker <strong style="color:var(--teal)">${fmtRP(trackerTotal)}</strong>
+    (${paidCells} paid month${paidCells===1?'':'s'} × ${fmtRP(RENT)})
+    · Part 2 collected <strong style="color:var(--teal)">${fmtRP(p2Total)}</strong>
+    ${ok ? '· <span style="color:var(--teal)">balanced</span>'
+         : `· <span style="color:var(--amber)">out by ${fmtRP(Math.abs(diff))}${Number.isInteger(diffMonths)?` = ${diffMonths} month${diffMonths===1?'':'s'}`:''} ${diff>0?'ticked but not collected':'collected but not yet ticked'}</span>`}
+  </div>`;
 
   // Archive button if all 12 months done
   if (allFilled && !archived) {
