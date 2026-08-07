@@ -2979,6 +2979,7 @@ function occupancyStats() {
     const days   = spans.reduce((a, s) => a + (s.end - s.start) / DAY, 0);
     const guests = [...new Set(spans.map(s => s.tenant).filter(Boolean))];
     return { i, room: r.room, spans, guests,
+             nonRev: r.category === 'Non-Revenue',
              days: Math.round(days),
              pct: Math.min(1, days / windowDays),
              months: (payments[i] || []).filter(c => c === 1).length };
@@ -3005,12 +3006,13 @@ function renderOccupancy() {
     return;
   }
 
-  // Lede — answer the question in words, not just in marks.
+  // Lede — answer the question in words, not just in marks. A staff room is not
+  // "popular with guests", so the headline is drawn from revenue rooms only.
   const ranked = [...stats].sort((a, b) => b.days - a.days || b.guests.length - a.guests.length);
-  const top = ranked[0];
+  const top  = ranked.find(s => !s.nonRev && s.days) || ranked[0];
   const idle = stats.filter(s => !s.days).map(s => s.room);
   document.getElementById('occ-lede').innerHTML =
-    `Most let: <strong style="color:#f1f5f9">${htmlAttr(top.room)}</strong> — ${Math.round(top.pct*100)}% of the period, `
+    `Most popular with guests: <strong style="color:#f1f5f9">${htmlAttr(top.room)}</strong> — ${Math.round(top.pct*100)}% of the period, `
     + `${top.days} days, ${top.guests.length} guest${top.guests.length===1?'':'s'}`
     + (idle.length ? ` · never let: <span style="color:var(--muted)">${idle.map(htmlAttr).join(', ')}</span>` : '');
 
@@ -3039,8 +3041,9 @@ function renderOccupancy() {
           return `<div class="occ-bar" style="left:${left}%;width:${width}%" title="${htmlAttr(
             `${s.room} · ${sp.tenant || 'unnamed guest'} · ${days} days${sp.ongoing ? ' · still living here' : ''}`)}">${label}</div>`;
         }).join('');
+        const who = s.guests.length ? htmlAttr(s.guests.join(' → ')) : 'never let';
         return `<div class="occ-row">
-          <div class="occ-name">${htmlAttr(s.room)}<small>${s.guests.length ? htmlAttr(s.guests.join(' → ')) : 'never let'}</small></div>
+          <div class="occ-name">${htmlAttr(s.room)}<small>${who}${s.nonRev ? ' · staff' : ''}</small></div>
           <div class="occ-track">${ticks}${bars}${todayMark}</div>
         </div>`;
       }).join('')}
@@ -3054,7 +3057,7 @@ function renderOccupancy() {
     <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Most-let room first. Longer bar = more of the last ${windowDays} days with a paying guest in it.</div>
     <div class="occ-scroll"><div style="min-width:520px">
     ${ranked.map(s => `<div class="occ-barrow">
-        <div class="occ-name">${htmlAttr(s.room)}</div>
+        <div class="occ-name">${htmlAttr(s.room)}${s.nonRev ? '<small>staff room</small>' : ''}</div>
         <div><div class="occ-mag" style="width:${Math.max(s.pct*100, s.days?1:0)}%" title="${htmlAttr(`${s.room} · ${s.days} of ${windowDays} days`)}"></div></div>
         <div class="occ-val">${Math.round(s.pct*100)}% · ${s.days}d</div>
       </div>`).join('')}
