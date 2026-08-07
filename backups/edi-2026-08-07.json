@@ -1,0 +1,943 @@
+{
+ "data": {
+  "_fx": 13936,
+  "_rent": [
+   [
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1300000,
+    1300000,
+    1300000,
+    1300000,
+    1300000,
+    1300000,
+    1300000,
+    1300000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1600000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1000000,
+    0,
+    0,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1600000,
+    0,
+    1700000,
+    1700000,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    900000,
+    0,
+    900000,
+    900000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1600000,
+    1700000,
+    1700000,
+    0,
+    0,
+    0,
+    1700000,
+    1700000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    0,
+    0,
+    900000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    1700000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    900000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    1600000,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1600000,
+    1600000,
+    1600000,
+    1700000,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1600000,
+    0,
+    1700000,
+    1700000,
+    1700000,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  ],
+  "_rooms": [
+   {
+    "rent": 900000,
+    "room": "Room 1",
+    "dueDay": 10,
+    "status": "occupied",
+    "tenant": "Bu Nur",
+    "checkIn": "10/01/2026",
+    "deposit": 0,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "10/01/2026",
+      "tenant": "Bu Nur"
+     }
+    ]
+   },
+   {
+    "rent": 1300000,
+    "room": "Room 2",
+    "dueDay": 12,
+    "status": "occupied",
+    "tenant": "Kenzi Ramoksa",
+    "checkIn": "14/01/2026",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "14/01/2026",
+      "tenant": "Kenzi Ramoksa"
+     }
+    ]
+   },
+   {
+    "rent": 1000000,
+    "room": "Room 3",
+    "dueDay": 19,
+    "status": "occupied",
+    "tenant": "Wahyu",
+    "checkIn": "19/01/2026",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "19/01/2026",
+      "tenant": "Wahyu"
+     }
+    ]
+   },
+   {
+    "rent": 1000000,
+    "room": "Room 5",
+    "dueDay": 6,
+    "status": "occupied",
+    "tenant": "Riski Nofiani",
+    "checkIn": "06/04/2026",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "25/02/2026",
+      "from": "25/01/2026",
+      "tenant": "Pelita"
+     },
+     {
+      "to": "",
+      "from": "06/04/2026",
+      "tenant": "Riski Nofiani"
+     }
+    ]
+   },
+   {
+    "rent": 1700000,
+    "room": "Room 6",
+    "dueDay": 30,
+    "status": "vacant",
+    "tenant": "",
+    "checkIn": "",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "20/02/2026",
+      "from": "20/01/2026",
+      "tenant": "Sundairi"
+     },
+     {
+      "to": "30/04/2026",
+      "from": "30/03/2026",
+      "tenant": "Oki Febriantama"
+     }
+    ]
+   },
+   {
+    "rent": 1000000,
+    "room": "Room 7",
+    "dueDay": 19,
+    "status": "occupied",
+    "tenant": "Dessy",
+    "checkIn": "19/06/2026",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "28/02/2026",
+      "from": "30/01/2026",
+      "tenant": "Alvin"
+     },
+     {
+      "to": "06/06/2026",
+      "from": "06/03/2026",
+      "tenant": "Tia"
+     },
+     {
+      "to": "",
+      "from": "19/06/2026",
+      "tenant": "Dessy"
+     }
+    ]
+   },
+   {
+    "rent": 1700000,
+    "room": "Room 8",
+    "dueDay": 4,
+    "status": "occupied",
+    "tenant": "Agnes",
+    "checkIn": "04/07/2026",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "11/02/2026",
+      "from": "11/01/2026",
+      "tenant": "Yuleha"
+     },
+     {
+      "to": "26/04/2026",
+      "from": "26/02/2026",
+      "tenant": "M. Agung Nurman"
+     },
+     {
+      "to": "",
+      "from": "04/07/2026",
+      "tenant": "Agnes"
+     }
+    ]
+   },
+   {
+    "rent": 1600000,
+    "room": "Room 9",
+    "dueDay": 30,
+    "status": "occupied",
+    "tenant": "Dewi",
+    "checkIn": "30/04/2026",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "18/04/2026",
+      "from": "18/01/2026",
+      "tenant": "Nisa Wulandari"
+     },
+     {
+      "to": "",
+      "from": "30/04/2026",
+      "tenant": "Dewi"
+     }
+    ]
+   },
+   {
+    "rent": 1600000,
+    "room": "Room 10",
+    "dueDay": 13,
+    "status": "vacant",
+    "tenant": "",
+    "checkIn": "",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "13/05/2026",
+      "from": "13/01/2026",
+      "tenant": "Weni"
+     }
+    ]
+   },
+   {
+    "rent": 900000,
+    "room": "Room 11",
+    "dueDay": 19,
+    "status": "occupied",
+    "tenant": "Hesty",
+    "checkIn": "19/01/2026",
+    "deposit": 0,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "19/01/2026",
+      "tenant": "Hesty"
+     }
+    ]
+   },
+   {
+    "rent": 1600000,
+    "room": "Room 12",
+    "dueDay": 26,
+    "status": "occupied",
+    "tenant": "Macho",
+    "checkIn": "26/01/2026",
+    "deposit": 0,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "26/01/2026",
+      "tenant": "Macho"
+     }
+    ]
+   },
+   {
+    "rent": 1700000,
+    "room": "Room 13",
+    "dueDay": 29,
+    "status": "occupied",
+    "tenant": "Suci",
+    "checkIn": "29/05/2026",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "18/05/2026",
+      "from": "18/01/2026",
+      "tenant": "Muhammad Hanafi"
+     },
+     {
+      "to": "",
+      "from": "29/05/2026",
+      "tenant": "Suci"
+     }
+    ]
+   },
+   {
+    "rent": 900000,
+    "room": "Room 14",
+    "dueDay": 13,
+    "status": "occupied",
+    "tenant": "Lisa",
+    "checkIn": "13/01/2026",
+    "deposit": 0,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "13/01/2026",
+      "tenant": "Lisa"
+     }
+    ]
+   },
+   {
+    "rent": 900000,
+    "room": "Room 15",
+    "dueDay": 4,
+    "status": "occupied",
+    "tenant": "Doni",
+    "checkIn": "04/08/2026",
+    "deposit": 0,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "19/06/2026",
+      "from": "19/01/2026",
+      "tenant": "Bu Nur"
+     },
+     {
+      "to": "",
+      "from": "04/08/2026",
+      "tenant": "Doni"
+     }
+    ]
+   },
+   {
+    "rent": 1700000,
+    "room": "Room 16",
+    "dueDay": 25,
+    "status": "occupied",
+    "tenant": "Puspitasari",
+    "checkIn": "25/01/2026",
+    "deposit": 0,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "25/01/2026",
+      "tenant": "Puspitasari"
+     }
+    ]
+   },
+   {
+    "rent": 900000,
+    "room": "Room 17",
+    "dueDay": 12,
+    "status": "occupied",
+    "tenant": "Dandi",
+    "checkIn": "12/01/2026",
+    "deposit": 0,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "12/01/2026",
+      "tenant": "Dandi"
+     }
+    ]
+   },
+   {
+    "rent": 1600000,
+    "room": "Room 18",
+    "dueDay": 26,
+    "status": "occupied",
+    "tenant": "Rosika",
+    "checkIn": "25/01/2026",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "",
+      "from": "25/01/2026",
+      "tenant": "Rosika"
+     }
+    ]
+   },
+   {
+    "rent": 1700000,
+    "room": "Room 19",
+    "dueDay": 29,
+    "status": "vacant",
+    "tenant": "",
+    "checkIn": "",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "17/04/2026",
+      "from": "17/01/2026",
+      "tenant": "Dessy Anak Bu Nur"
+     },
+     {
+      "to": "29/05/2026",
+      "from": "29/04/2026",
+      "tenant": "Susi"
+     }
+    ]
+   },
+   {
+    "rent": 1700000,
+    "room": "Room 20",
+    "dueDay": 5,
+    "status": "vacant",
+    "tenant": "",
+    "checkIn": "",
+    "deposit": 200000,
+    "remarks": "",
+    "category": "Revenue",
+    "tenancies": [
+     {
+      "to": "20/03/2026",
+      "from": "20/02/2026",
+      "tenant": "Sundairi"
+     },
+     {
+      "to": "05/07/2026",
+      "from": "05/04/2026",
+      "tenant": "Abu Thalib"
+     }
+    ]
+   }
+  ],
+  "_p1Rows": [],
+  "_p2Rows": [],
+  "_payments": [
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  ]
+ },
+ "updated_at": "2026-08-07T11:45:01.185612+00:00"
+}

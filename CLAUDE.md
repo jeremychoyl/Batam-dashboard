@@ -24,6 +24,9 @@ context, credentials, or deployments between them.** Sibling repo:
   empty array and is otherwise indistinguishable from success. `vercel.json` sets `cleanUrls` so `/edi` works without `.html`.
   Month index 0 = Jan 2026 there, vs May 2026 in `index.html` — check which page
   you're in before touching month maths.
+  **No snapshot feature on `/edi`** — `index.html`'s Save Snapshot writes the
+  `snapshots` table for row 1 only. Point-in-time copies of Edi's row live in
+  `backups/edi-YYYY-MM-DD.json` instead; restore by PATCHing `data` back to row 2.
 
 ## What this is
 A single-page financial model / investor dashboard for the owner's **Ace Hotel
