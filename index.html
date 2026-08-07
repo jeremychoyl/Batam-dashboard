@@ -912,7 +912,7 @@
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
         <div>
           <div style="font-size:13px;font-weight:600;color:#f1f5f9">Section B — 12-Month Payment Tracker</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px">May 2026 – Apr 2027 · Tap cell to toggle: ⬜ Unpaid → ✅ Paid → 🔴 Late</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">May 2026 – Apr 2027 · Tap cell to toggle: ⬜ Unpaid → ✅ Paid → — N/A · unpaid months turn 🔴 on their own once 30 days overdue</div>
         </div>
         <div style="display:flex;gap:12px;font-size:11px;align-items:center;flex-wrap:wrap">
           <span>⬜ Unpaid</span><span>✅ Paid</span><span>🔴 Late / Overdue</span><span>— N/A</span>
@@ -2619,9 +2619,30 @@ function renderDelinquency(list) {
 // ── PART 3B: PAYMENT GRID ─────────────────────────────────────────────────────
 const PAYMENT_STATES = ['⬜','✅','🔴','—'];
 
+// Stored states are 0 unpaid · 1 paid · 3 N/A. "Late" (2) is NEVER stored — it
+// is how an unpaid cell DISPLAYS once it is more than 30 days past due. Storing
+// it used to make overdue months untoggleable: the cycle wrote 0, the renderer
+// immediately rewrote it to 2, and ✅ could never be reached.
+const NEXT_PAYMENT_STATE = { 0:1, 1:3, 2:1, 3:0 };   // ⬜ → ✅ → — → ⬜
+
 function togglePayment(ri, mi) {
-  payments[ri][mi] = (payments[ri][mi] + 1) % 4;
+  payments[ri][mi] = NEXT_PAYMENT_STATE[payments[ri][mi]] ?? 1;
+  hasUnsavedEdits = true;
   renderPaymentGrid();
+}
+
+// Month index 0 = May 2026 … 11 = Apr 2027
+function monthDueDate(r, mi) {
+  return new Date(mi < 8 ? 2026 : 2027, (mi + 4) % 12, Number(r.dueDay) || 1);
+}
+function isMonthOverdue(r, mi, today) {
+  return Math.floor((today - monthDueDate(r, mi)) / 86400000) > 30;
+}
+
+// Every paid month is valued at the Inputs tab's "Rent per room / month" so the
+// tracker totals move with the model instead of a frozen figure.
+function rentPerRoom() {
+  return parseFloat(document.getElementById('in-laundryRent')?.value) || 1200000;
 }
 
 function renderPaymentGrid() {
@@ -2629,22 +2650,7 @@ function renderPaymentGrid() {
   if (!wrap) return;
 
   const today = new Date();
-  const RENT  = 1200000;
-
-  // Auto-flag late: if today is >30 days past due and cell is still unpaid(0)
-  rooms.forEach((r, ri) => {
-    if (r.status === 'vacant' || r.category === 'Non-Revenue') return;
-    MONTHS_12.forEach((_, mi) => {
-      if (payments[ri][mi] === 0) {
-        // Month index 0 = May 2026
-        const mYear  = mi < 8 ? 2026 : 2027;
-        const mMonth = (mi + 4) % 12; // May=4
-        const dueDate = new Date(mYear, mMonth, r.dueDay || 1);
-        const daysPast = Math.floor((today - dueDate) / 86400000);
-        if (daysPast > 30) payments[ri][mi] = 2; // auto-mark late
-      }
-    });
-  });
+  const RENT  = rentPerRoom();
 
   // Check if should archive (all 12 months filled for all rooms)
   const allFilled = payments.every(row => row.every(c => c !== 0));
@@ -2679,11 +2685,14 @@ function renderPaymentGrid() {
         return;
       }
       const state = payments[ri][mi];
-      const icon  = PAYMENT_STATES[state];
-      const bg    = state===1?'rgba(0,212,184,0.1)':state===2?'rgba(239,68,68,0.12)':'';
-      const border= state===2?'1px solid var(--red)':'1px solid transparent';
+      // 2 is display-only: an unpaid month that is now more than 30 days overdue
+      const shown = state === 1 ? 1 : state === 3 ? 3
+                  : (isMonthOverdue(r, mi, today) ? 2 : 0);
+      const icon  = PAYMENT_STATES[shown];
+      const bg    = shown===1?'rgba(0,212,184,0.1)':shown===2?'rgba(239,68,68,0.12)':'';
+      const border= shown===2?'1px solid var(--red)':'1px solid transparent';
       if (state === 1) { paid++; monthTotals[mi] += RENT; }
-      if (state === 0 || state === 2) outstanding++;
+      else if (state !== 3) outstanding++;   // paid + outstanding + N/A always = 12
       html += `<td style="padding:4px;text-align:center">
         <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:38px;transition:all .15s" title="Click to toggle">${icon}</button>
       </td>`;
@@ -2720,7 +2729,7 @@ function renderPaymentGrid() {
 
 function archivePeriod() {
   if (!confirm('Archive May 2026 – Apr 2027 and start a fresh tracker?')) return;
-  const totalPaid = payments.flat().filter(s=>s===1).length * 1200000;
+  const totalPaid = payments.flat().filter(s=>s===1).length * rentPerRoom();
   archived = { period: 'May 2026 – Apr 2027', totalPaid, rooms: rooms.map((r,i)=>({
     room:r.room, tenant:r.tenant, paid: payments[i].filter(s=>s===1).length
   }))};
@@ -2787,7 +2796,10 @@ applyInputs = function(data) {
   // Rooms saved before the K/L/M columns were removed still carry those fields;
   // drop them on load so the next save writes them out of the stored JSON.
   if (data._rooms)    rooms    = data._rooms.map(r => { const {colK, colL, colM, ...rest} = r; return rest; });
-  if (data._payments) payments = data._payments;
+  // Cells saved as 2 ("late") by the old auto-flagging renderer come back as
+  // plain unpaid — they still show 🔴 while overdue, but now they can be tapped
+  // to ✅ instead of being stuck.
+  if (data._payments) payments = data._payments.map(row => row.map(c => c === 2 ? 0 : c));
   if (data._archived !== undefined) archived = data._archived;
   const trFX = document.getElementById('tr-fx');
   if (trFX && data._tr_fx) trFX.value = data._tr_fx;
