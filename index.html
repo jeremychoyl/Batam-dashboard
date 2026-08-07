@@ -2831,8 +2831,14 @@ function togglePayment(ri, mi) {
 function monthDueDate(r, mi) {
   return new Date(mi < 8 ? 2026 : 2027, (mi + 4) % 12, Number(r.dueDay) || 1);
 }
+// A cell is LATE the day after its rent fell due — that is what "late" means,
+// and it is the whole point of the colour. (renderRooms' delinquency banner
+// keeps a separate, higher bar of 30 days for "seriously overdue"; using 30
+// days here too meant a month only turned red ~30 days after its due day, long
+// after the next month's rent had also fallen due.)
+const GRACE_DAYS = 0;
 function isMonthOverdue(r, mi, today) {
-  return Math.floor((today - monthDueDate(r, mi)) / 86400000) > 30;
+  return Math.floor((today - monthDueDate(r, mi)) / 86400000) > GRACE_DAYS;
 }
 
 // Every paid month is valued at the Inputs tab's "Rent per room / month" so the

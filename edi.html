@@ -530,7 +530,14 @@ function migrateTenancies(list) {
 function openTenancy(r) { const t=(r.tenancies||[]).filter(x=>!x.to); return t.length ? t[t.length-1] : null; }
 function syncRoomFromTenancy(r) { const t=openTenancy(r); r.tenant = t?(t.tenant||''):''; if (t) r.checkIn = t.from||''; }
 function monthDueDate(r, mi) { return new Date(YEAR, mi, Number(r.dueDay)||1); }
-function isMonthOverdue(r, mi, today) { return Math.floor((today - monthDueDate(r,mi))/86400000) > 30; }
+// A cell is LATE the day after its rent fell due — that is what "late" means,
+// and it is the whole point of the colour. (The delinquency banner keeps a
+// separate, higher bar of 30 days for "seriously overdue"; using 30 days here
+// too meant July only turned red in mid-August, a month after it was any use.)
+const GRACE_DAYS = 0;
+function isMonthOverdue(r, mi, today) {
+  return Math.floor((today - monthDueDate(r,mi))/86400000) > GRACE_DAYS;
+}
 // Which month a tenancy belongs to is decided by the RENT PERIOD, not by the
 // day of the month: a tenancy covers every month from the one its first period
 // starts in, up to (but not including) the month its end date falls in — the
