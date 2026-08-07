@@ -250,6 +250,7 @@
   /* Accounts period / date selectors */
   /* Date/month pickers inside an .input-group — same "blue = editable" look as
      every other input on the Inputs tab. */
+  .field-lbl { color:var(--muted); font-size:11px; flex:none; }
   .field-date { background:var(--input-bg); border:1px solid var(--input-border); border-radius:6px; color:#60d4ff; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; padding:4px 8px; outline:none; transition:border-color .15s; }
   .field-date:focus { border-color:var(--teal); }
   .tr-del { background:none; border:none; color:#334155; font-size:15px; cursor:pointer; padding:3px 7px; border-radius:4px; transition:color .15s; }
@@ -2614,14 +2615,20 @@ function parseDMY(s) {
   return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null;
 }
 
-// Who was in this room when that month's rent fell due? Empty if nobody.
+// Which month a tenancy belongs to is decided by the RENT PERIOD, not by the
+// day of the month: it covers every month from the one its first period starts
+// in, up to (but not including) the month its end date falls in — the end date
+// is when the next period would have begun. Resolving by due-date instead
+// silently drops a tenant who checks in later in the month than their due day,
+// and breaks entirely if a room's due day changes over time.
+const monthIdx = d => (d.getFullYear() - 2026) * 12 + d.getMonth() - 4;  // 0 = May 2026
 function tenantForMonth(r, mi) {
-  const due = monthDueDate(r, mi);
   for (const t of (r.tenancies || [])) {
-    const from = parseDMY(t.from), to = parseDMY(t.to);
-    if (from && due < from) continue;
-    if (to   && due > to)   continue;
-    if (!from && !to)       continue;
+    const from = parseDMY(t.from);
+    if (!from) continue;
+    const to = parseDMY(t.to);
+    if (mi < monthIdx(from)) continue;
+    if (to && mi >= monthIdx(to)) continue;
     return t.tenant || '';
   }
   return '';

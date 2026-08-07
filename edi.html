@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edi Haron — Hostel Rent Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #07101f; --surface: #0e1929; --surface2: #0a1422;
+    --border: #1a2d45; --teal: #00d4b8; --teal-dim: rgba(0,212,184,0.1);
+    --blue: #3b9edd; --amber: #f59e0b; --red: #ef4444; --green: #22c55e;
+    --text: #e2e8f0; --muted: #64748b; --subtle: #94a3b8;
+    --input-bg: #0a1f35; --input-border: #1e4060; --input-focus: #00d4b8;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.5; min-height: 100vh; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* HEADER */
+  .header { border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: var(--bg); z-index: 200; }
+  .dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 8px var(--teal); animation: pulse 2s infinite; display: inline-block; margin-right: 6px; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .eyebrow { font-size: 11px; color: var(--teal); letter-spacing: .12em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+  .header-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: #f8fafc; letter-spacing: -.03em; }
+  .header-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .rating-badge { background: var(--teal-dim); border: 1px solid var(--teal); border-radius: 10px; padding: 8px 18px; text-align: center; min-width: 110px; }
+  .rating-grade { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: var(--teal); }
+  .rating-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  /* TABS */
+  .tabs { border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; overflow-x: auto; background: var(--bg); z-index: 99; }
+  .tabs::-webkit-scrollbar { height: 0; }
+  .tab { background: none; border: none; padding: 12px 15px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; transition: color .15s, border-color .15s; pointer-events: auto; position: relative; z-index: 1; }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .tab:hover:not(.active) { color: var(--subtle); }
+
+  /* LAYOUT */
+  .content { padding: 24px 24px 64px; max-width: 1100px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .sh { margin-bottom: 18px; }
+  .sh h2 { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: #f1f5f9; letter-spacing: -.02em; }
+  .sh p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card.teal-border { border-color: var(--teal); }
+  .card.blue-border { border-color: var(--blue); }
+  .card.amber-border { border-color: var(--amber); }
+  .card.red-border { border-color: var(--red); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid-kpi { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+  .mb16 { margin-bottom: 16px; }
+  .mb24 { margin-bottom: 24px; }
+  @media(max-width:680px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* KPI */
+  .kpi-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 7px; }
+  .kpi-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; color: #f1f5f9; line-height: 1; }
+  .kpi-value.teal { color: var(--teal); }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 7px; }
+
+  /* ── INPUTS — the blue-cell magic ── */
+  .inputs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .input-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  /* Same card, sized to its contents — for the boxed controls that sit in a
+     flex row (period selectors, FX rate) rather than in .inputs-grid. */
+  .input-group.compact { padding: 12px 16px; min-width: 212px; }
+  .input-group-title { font-size: 10px; color: var(--teal); text-transform: uppercase; letter-spacing: .12em; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .input-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .input-row:last-child { margin-bottom: 0; }
+  .input-label { font-size: 12px; color: var(--subtle); flex: 1; }
+  .input-field-wrap { display: flex; align-items: center; gap: 4px; }
+  .input-unit { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  input[type="number"] {
+    background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 6px;
+    color: #60d4ff; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
+    padding: 5px 9px; width: 120px; text-align: right; outline: none; transition: border-color .15s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type="number"]:focus { border-color: var(--input-focus); box-shadow: 0 0 0 2px rgba(0,212,184,.15); }
+  .blue-hint { font-size: 11px; color: #60d4ff; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+  .blue-hint::before { content: '💡'; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 7px 0; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; }
+  th.r, td.r { text-align: right; }
+  td { padding: 9px 0; border-bottom: 1px solid var(--border); color: var(--subtle); }
+  td.mono { font-family: 'JetBrains Mono', monospace; }
+  td.teal { color: var(--teal) !important; font-weight: 700; }
+  td.bold { color: #f1f5f9 !important; font-weight: 600; }
+  td.red { color: var(--red); }
+  td.dim { color: var(--muted); }
+
+  /* CHART */
+  .chart-wrap { position: relative; width: 100%; }
+
+  /* PL ROW */
+  .pl-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .pl-row:last-child { border-bottom: none; }
+  .pl-label { color: var(--subtle); }
+  .pl-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+  .pl-val.pos { color: var(--teal); }
+  .pl-val.neg { color: var(--red); }
+  .pl-divider { background: var(--teal-dim); border: 1px solid var(--teal); border-radius: 7px; padding: 10px 12px; display: flex; justify-content: space-between; margin-top: 12px; }
+  .pl-divider span:first-child { color: var(--teal); font-weight: 600; font-size: 13px; }
+  .pl-divider span:last-child { font-family: 'JetBrains Mono', monospace; color: var(--teal); font-weight: 700; }
+
+  /* VERDICT */
+  .verdict { margin-top: 14px; padding: 13px; background: var(--teal-dim); border-radius: 8px; border: 1px solid var(--teal); }
+  .verdict-title { font-size: 10px; color: var(--teal); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 5px; }
+  .verdict-body { font-size: 12px; color: var(--subtle); }
+
+  /* RISK */
+  .risk-row { display: grid; grid-template-columns: 1fr 80px 80px 2fr; gap: 14px; align-items: start; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; }
+  @media(max-width:680px) { .risk-row { grid-template-columns: 1fr 1fr; } }
+  .risk-name { font-weight: 600; color: #f1f5f9; font-size: 13px; }
+  .risk-col-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-n { background: #1e293b; color: var(--subtle); }
+  .badge-h { background: rgba(239,68,68,.15); color: var(--red); }
+  .badge-m { background: rgba(245,158,11,.15); color: var(--amber); }
+  .badge-l { background: rgba(34,197,94,.15); color: var(--green); }
+  .risk-mit { font-size: 12px; color: var(--muted); }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before { content:''; position:absolute; left:5px; top:0; bottom:0; width:2px; background:var(--border); }
+  .tl-item { position:relative; margin-bottom:20px; }
+  .tl-dot { position:absolute; left:-24px; top:5px; width:11px; height:11px; border-radius:50%; background:var(--teal); box-shadow:0 0 7px var(--teal); }
+  .tl-date { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--teal); font-weight:600; margin-bottom:3px; }
+  .tl-event { font-weight:600; color:#f1f5f9; font-size:13px; margin-bottom:2px; }
+  .tl-detail { font-size:12px; color:var(--muted); }
+  .tl-btn { background:var(--surface); color:var(--teal); border:1px solid var(--border); border-radius:7px; padding:6px 12px; font-family:'Inter',sans-serif; font-size:11px; font-weight:600; cursor:pointer; transition:border-color .15s; }
+  .tl-btn:hover { border-color:var(--teal); }
+  /* OCCUPANCY (Section C) — single-hue marks; identity comes from labels, not
+     extra colours, so no categorical palette is in play. */
+  .occ-scroll { overflow-x:auto; padding-top:6px; }
+  .occ-grid { min-width:640px; }
+  .occ-row { display:grid; grid-template-columns:120px 1fr; align-items:center; gap:10px; margin-bottom:7px; }
+  .occ-name { font-size:11px; color:var(--subtle); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .occ-name small { display:block; color:var(--muted); font-weight:400; font-size:10px; }
+  /* the track IS the vacant state — an empty stretch reads as unlet */
+  .occ-track { position:relative; height:22px; background:var(--surface2); border-radius:4px; }
+  .occ-tick { position:absolute; top:0; bottom:0; width:1px; background:var(--border); }   /* hairline, solid */
+  .occ-bar { position:absolute; top:3px; bottom:3px; background:var(--teal); border-radius:4px; display:flex; align-items:center; padding:0 6px; }
+  .occ-bar span { font-size:9px; font-weight:700; color:#07101f; white-space:nowrap; }     /* ink chosen for the fill */
+  .occ-today { position:absolute; top:-5px; bottom:-5px; width:1px; background:var(--subtle); }
+  .occ-months { display:grid; grid-template-columns:120px 1fr; gap:10px; margin-top:2px; }
+  .occ-months div { display:flex; }
+  .occ-months span { flex:1; font-size:9px; color:var(--muted); text-align:left; font-variant-numeric:tabular-nums; }
+  .occ-barrow { display:grid; grid-template-columns:120px 1fr 96px; align-items:center; gap:10px; margin-bottom:6px; }
+  .occ-mag { height:14px; background:var(--teal); border-radius:0 4px 4px 0; }             /* square at baseline */
+  .occ-val { font-size:11px; color:var(--subtle); font-variant-numeric:tabular-nums; text-align:right; }
+  .occ-key { display:flex; gap:14px; flex-wrap:wrap; font-size:10px; color:var(--muted); margin:10px 0 2px 0; align-items:center; }
+  .occ-key i { display:inline-block; width:14px; height:8px; border-radius:2px; vertical-align:middle; margin-right:5px; }
+  .timeline-edit { display:flex; flex-direction:column; gap:12px; }
+  /* Fixed label column so every field lines up and the inputs take the rest of
+     the card instead of truncating their text. */
+  .timeline-edit .input-label { flex:none; width:52px; }
+  .timeline-edit .tr-input, .timeline-edit .field-date { flex:1; min-width:0; }
+  .timeline-edit .tr-del { color:var(--muted); }
+  .timeline-edit .tr-del:hover { color:var(--red); }
+  .tl-auto-note { font-size:11px; color:var(--muted); font-style:italic; flex:1; }
+  .tl-accent { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); cursor:pointer; flex:1; }
+
+  /* BENCH BAR */
+  .bench-bar-wrap { margin-bottom: 12px; }
+  .bench-bar-top { display:flex; justify-content:space-between; margin-bottom:4px; }
+  .bench-bar-label { font-size:12px; color:var(--subtle); }
+  .bench-bar-val { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; }
+  .bench-bar-track { height:7px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .bench-bar-fill { height:100%; border-radius:4px; transition:width .5s ease; }
+
+  .occs-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+  @media(max-width:480px) { .occs-grid { grid-template-columns:1fr; } }
+
+  /* SNAPSHOTS */
+  .snap-row { display:grid; grid-template-columns:1fr auto auto auto; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+  .snap-row:last-child { border-bottom:none; }
+  .snap-name { font-weight:600; color:#f1f5f9; font-size:13px; }
+  .snap-meta { font-size:11px; color:var(--muted); margin-top:2px; }
+  .snap-btn { background:none; border:1px solid var(--border); border-radius:6px; padding:5px 12px; font-size:11px; font-family:'Inter',sans-serif; cursor:pointer; color:var(--subtle); transition:all .15s; white-space:nowrap; }
+  .snap-btn:hover { border-color:var(--teal); color:var(--teal); }
+  .snap-btn.restore { border-color:var(--blue); color:var(--blue); }
+  .snap-btn.restore:hover { background:var(--blue); color:#fff; }
+  .snap-btn.del { border-color:#2d1f1f; color:#64748b; }
+  .snap-btn.del:hover { border-color:var(--red); color:var(--red); }
+  @media(max-width:600px) { .snap-row { grid-template-columns:1fr; } }
+
+  /* RENOVATION TABLE */
+  .reno-input { background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; color:#e2e8f0; font-family:'Inter',sans-serif; font-size:12px; padding:5px 8px; outline:none; width:100%; transition:border-color .15s; }
+  .reno-input:focus { border-color:var(--teal); }
+  .reno-input.mono { font-family:'JetBrains Mono',monospace; text-align:right; color:#60d4ff; }
+  .reno-input.qty { font-family:'JetBrains Mono',monospace; text-align:right; color:#60d4ff; width:60px; }
+  .reno-del { background:none; border:none; color:#334155; font-size:16px; cursor:pointer; padding:4px 8px; border-radius:4px; transition:color .15s; line-height:1; }
+  .reno-del:hover { color:var(--red); }
+  .reno-total-cell { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); text-align:right; white-space:nowrap; }
+  #reno-body tr { border-bottom:1px solid var(--border); }
+  #reno-body td { padding:8px 4px; vertical-align:middle; }
+
+  /* RATINGS */
+  .rat-explanation { padding:16px 0; border-bottom:1px solid var(--border); }
+  .rat-explanation:last-child { border-bottom:none; }
+  .rat-exp-header { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+  .rat-exp-metric { font-weight:700; color:#f1f5f9; font-size:13px; flex:1; }
+  .rat-exp-score { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; padding:3px 10px; border-radius:12px; }
+  .rat-exp-body { font-size:12px; color:var(--subtle); line-height:1.7; }
+  .rat-exp-body strong { color:#f1f5f9; }
+  .score-bar-row { display:flex; align-items:center; gap:12px; }
+  .score-bar-label { font-size:12px; color:var(--subtle); width:160px; flex-shrink:0; }
+  .score-bar-track { flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .score-bar-fill { height:100%; border-radius:4px; transition:width .5s ease; }
+  .score-bar-val { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; width:28px; text-align:right; }
+
+  /* ACCOUNTS */
+  .acc-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .acc-row:last-child { border-bottom:none; }
+  .acc-row.section { padding-top:14px; }
+  .acc-label { color:var(--subtle); flex:1; }
+  .acc-label.bold { color:#f1f5f9; font-weight:600; }
+  .acc-label.indent { color:var(--muted); padding-left:12px; font-size:12px; }
+  .acc-idr { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); text-align:right; min-width:110px; }
+  .acc-sgd { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; color:var(--teal); text-align:right; min-width:80px; }
+  .acc-sgd.neg { color:var(--red); }
+  .acc-sgd.bold { color:#f1f5f9; font-weight:700; }
+  .acc-total { background:var(--teal-dim); border-radius:6px; padding:10px 12px; display:flex; justify-content:space-between; margin-top:10px; }
+  .acc-input-idr { background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; color:#60d4ff; font-family:'JetBrains Mono',monospace; font-size:12px; padding:3px 7px; width:110px; text-align:right; outline:none; transition:border-color .15s; -moz-appearance:textfield; }
+  .acc-input-idr:focus { border-color:var(--teal); }
+  .acc-input-idr::-webkit-outer-spin-button, .acc-input-idr::-webkit-inner-spin-button { -webkit-appearance:none; }
+
+  /* TRANSFERS */
+  .tr-input { background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; color:#e2e8f0; font-family:'Inter',sans-serif; font-size:12px; padding:4px 7px; outline:none; width:100%; transition:border-color .15s; }
+  .tr-input:focus { border-color:var(--teal); }
+  .tr-input.mono { font-family:'JetBrains Mono',monospace; text-align:right; color:#60d4ff; }
+  .tr-input.date { width:132px; min-width:132px; }
+  /* Native date pickers — dark UI + a visible, tappable calendar button */
+  input[type="date"] { color-scheme:dark; font-family:'JetBrains Mono',monospace; }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter:invert(72%) sepia(45%) saturate(1200%) hue-rotate(140deg);
+    cursor:pointer; opacity:.9; padding:2px; margin-left:2px;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
+  input[type="date"]::-webkit-date-and-time-value { text-align:left; }
+  /* Accounts period / date selectors */
+  /* Date/month pickers inside an .input-group — same "blue = editable" look as
+     every other input on the Inputs tab. */
+  .field-lbl { color:var(--muted); font-size:11px; flex:none; }
+  .field-date { background:var(--input-bg); border:1px solid var(--input-border); border-radius:6px; color:#60d4ff; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; padding:4px 8px; outline:none; transition:border-color .15s; }
+  .field-date:focus { border-color:var(--teal); }
+  .tr-del { background:none; border:none; color:#334155; font-size:15px; cursor:pointer; padding:3px 7px; border-radius:4px; transition:color .15s; }
+  .tr-del:hover { color:var(--red); }
+  #tr-body tr { border-bottom:1px solid var(--border); }
+  #tr-body td { padding:6px 4px; vertical-align:middle; }
+  .tr-bal-pos { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); font-weight:600; text-align:right; }
+  .tr-bal-neg { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--red); font-weight:600; text-align:right; }
+  .tr-mono { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--subtle); text-align:right; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="eyebrow"><span class="dot-live"></span>Rent Collection · Batam, Indonesia</div>
+    <div class="header-title">Edi Haron</div>
+    <div class="header-sub">Hostel rent tracker · changes sync for everyone · <span id="sync-status" style="color:var(--teal)">connecting...</span></div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <span id="last-saved" style="font-size:11px;color:var(--muted)"></span>
+    <button onclick="saveToSupabase()" id="save-btn" style="background:var(--teal);color:#07101f;border:none;border-radius:8px;padding:9px 20px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer">💾 Save Changes</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ── PART 1 — CAPITAL EXPENDITURE ─────────────────────── -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <div style="background:#1a2d45;border-left:4px solid var(--amber);border-radius:0 8px 8px 0;padding:10px 18px;flex:1">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9">Part 1 — Capital Expenditure</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">Money put into the hostel · fit-out, furniture, repairs</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+    <div class="card"><div class="kpi-label">Total Deposited</div><div class="kpi-value" id="p1-invested" style="font-size:18px">—</div><div class="kpi-sub">Into the hostel</div></div>
+    <div class="card"><div class="kpi-label">Total Spent</div><div class="kpi-value" id="p1-spent" style="font-size:18px;color:var(--red)">—</div><div class="kpi-sub">Fit-out &amp; furniture</div></div>
+    <div class="card teal-border"><div class="kpi-label">Net Balance to Part 2</div><div class="kpi-value teal" id="p1-net" style="font-size:18px">—</div><div class="kpi-sub">Carry-over</div></div>
+    <div class="card"><div class="kpi-label">Avg Cost / Room</div><div class="kpi-value" id="p1-perroom" style="font-size:18px">—</div><div class="kpi-sub" id="p1-roomcount">—</div></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <div class="input-group compact">
+      <div class="input-group-title">Exchange Rate</div>
+      <div class="input-row">
+        <span class="input-label">IDR per 1 SGD</span>
+        <div class="input-field-wrap">
+          <input type="number" id="tr-fx" value="13936" min="1" oninput="renderAll()">
+          <span class="input-unit">IDR/SGD</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb24" style="overflow-x:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div style="font-size:12px;color:var(--muted)">All amounts IDR. Negative balance = cumulative spend outstanding.</div>
+      <button onclick="addP1Row()" style="background:#1e2d1a;color:#86efac;border:1px solid #22c55e;border-radius:7px;padding:7px 14px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600">+ Add Row</button>
+    </div>
+    <table style="font-size:12px;min-width:820px">
+      <thead><tr>
+        <th style="width:12%">Date</th>
+        <th style="width:14%" class="r">Beginning Amt (IDR)</th>
+        <th style="width:14%" class="r">Money Spent (IDR)</th>
+        <th style="width:14%" class="r">Deposited (IDR)</th>
+        <th style="width:13%" class="r">Running Total (IDR)</th>
+        <th style="width:11%">Category</th>
+        <th style="width:20%">Remarks</th>
+        <th style="width:2%"></th>
+      </tr></thead>
+      <tbody id="p1-body"></tbody>
+      <tfoot id="p1-foot"></tfoot>
+    </table>
+  </div>
+
+  <!-- ── PART 2 — RENTAL COLLECTIONS ──────────────────────── -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <div style="background:#1a2d45;border-left:4px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 18px;flex:1">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9">Part 2 — Rental Collections</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">Rent collected from tenants, less expenses paid out</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+    <div class="card"><div class="kpi-label">Carry-over from Part 1</div><div class="kpi-value" id="p2-carryover" style="font-size:18px">—</div></div>
+    <div class="card teal-border"><div class="kpi-label">Total Rent Collected</div><div class="kpi-value teal" id="p2-collected" style="font-size:18px">—</div></div>
+    <div class="card"><div class="kpi-label">Total Expenses</div><div class="kpi-value" id="p2-expenses" style="font-size:18px;color:var(--red)">—</div></div>
+    <div class="card teal-border"><div class="kpi-label">Net Return</div><div class="kpi-value teal" id="p2-net" style="font-size:18px">—</div><div class="kpi-sub">Collected less expenses</div></div>
+  </div>
+
+  <div class="card mb24" style="overflow-x:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div style="font-size:12px;color:var(--muted)">Log each payment received. Reconciled against the tracker below.</div>
+      <button onclick="addP2Row()" style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:7px;padding:7px 14px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600">+ Add Row</button>
+    </div>
+    <table style="font-size:12px;min-width:820px">
+      <thead><tr>
+        <th style="width:12%">Date</th>
+        <th style="width:13%" class="r">Opening Balance</th>
+        <th style="width:14%" class="r">Rent Collected (IDR)</th>
+        <th style="width:13%" class="r">Expenses (IDR)</th>
+        <th style="width:13%" class="r">Running Total (IDR)</th>
+        <th style="width:11%" class="r">Running (SGD)</th>
+        <th style="width:22%">Remarks</th>
+        <th style="width:2%"></th>
+      </tr></thead>
+      <tbody id="p2-body"></tbody>
+      <tfoot id="p2-foot"></tfoot>
+    </table>
+  </div>
+
+  <!-- ── PART 3 — ROOM MANAGEMENT ─────────────────────────── -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <div style="background:#1a2d45;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:10px 18px;flex:1">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9">Part 3 — Room Management</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px" id="p3-sub">Hostel · rooms · rent due this month</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+    <div class="card"><div class="kpi-label">Occupied Rooms</div><div class="kpi-value" id="k-occ" style="font-size:18px">—</div><div class="kpi-sub" id="k-occ-sub">—</div></div>
+    <div class="card"><div class="kpi-label">Rent Due / Month</div><div class="kpi-value" id="k-due" style="font-size:18px">—</div><div class="kpi-sub" id="k-due-sgd">—</div></div>
+    <div class="card teal-border"><div class="kpi-label">Collected (Year)</div><div class="kpi-value teal" id="k-paid" style="font-size:18px">—</div><div class="kpi-sub" id="k-paid-sub">—</div></div>
+    <div class="card"><div class="kpi-label">Outstanding</div><div class="kpi-value" id="k-out" style="font-size:18px;color:var(--red)">—</div><div class="kpi-sub">Unpaid to date</div></div>
+    <div class="card"><div class="kpi-label">Deposits Held</div><div class="kpi-value" id="k-dep" style="font-size:18px">—</div><div class="kpi-sub">Refundable</div></div>
+  </div>
+
+  <div id="delinquency-banner" style="display:none;margin-bottom:16px;padding:14px 18px;border:2px solid var(--red);border-radius:10px;background:rgba(239,68,68,0.08)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span style="font-size:16px">🔴</span>
+      <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--red);font-size:14px">DELINQUENCY ALERT — Overdue Payments</span>
+    </div>
+    <div id="delinquency-list" style="font-size:12px;color:var(--subtle);line-height:1.8"></div>
+  </div>
+
+  <!-- Section A -->
+  <div class="card mb16" style="overflow-x:auto">
+    <div style="font-size:13px;font-weight:600;color:#f1f5f9;margin-bottom:14px">Section A — Room Details</div>
+    <table style="font-size:12px;min-width:900px">
+      <thead><tr>
+        <th style="width:7%">Room</th>
+        <th style="width:7%">Status</th>
+        <th style="width:22%">Tenant Name</th>
+        <th style="width:14%">Check-In Date</th>
+        <th style="width:9%">Due Date</th>
+        <th style="width:12%" class="r">Rent / Month</th>
+        <th style="width:11%" class="r">Deposit</th>
+        <th style="width:18%">Remarks</th>
+      </tr></thead>
+      <tbody id="room-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Section B -->
+  <div class="card" style="overflow-x:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#f1f5f9">Section B — 12-Month Payment Tracker</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">Jan 2026 – Dec 2026 · Tap cell to toggle: ⬜ Unpaid → ✅ Paid → — N/A · unpaid months turn 🔴 on their own once 30 days overdue</div>
+      </div>
+      <div style="display:flex;gap:12px;font-size:11px;align-items:center;flex-wrap:wrap">
+        <span>⬜ Unpaid</span><span>✅ Paid</span><span>🔴 Late / Overdue</span><span>— N/A</span>
+      </div>
+    </div>
+    <div id="payment-grid-wrap"></div>
+  </div>
+
+  <!-- Section C -->
+  <div class="card mb24" style="margin-top:24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:4px">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#f1f5f9">Section C — Room Occupancy &amp; Popularity</div>
+        <div id="occ-subtitle" style="font-size:11px;color:var(--muted);margin-top:3px"></div>
+      </div>
+      <button id="occ-table-btn" onclick="toggleOccTable()" class="tl-btn">▤ Table</button>
+    </div>
+    <div id="occ-lede" style="font-size:12px;color:var(--subtle);margin:10px 0 4px 0"></div>
+    <div id="occ-timeline"></div>
+    <div id="occ-ranking"></div>
+    <div id="occ-table" style="display:none"></div>
+  </div>
+
+</div>
+
+<div id="footer-bar" style="position:fixed;bottom:0;left:0;right:0;background:#060e1a;border-top:1px solid #1a2d45;padding:8px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;z-index:50;font-size:11px;color:#475569">
+  <span>🕐 <span id="footer-live-save">Not yet saved</span></span>
+  <span style="color:var(--muted)">Edi Haron · Batam Hostel · Synced via Supabase</span>
+</div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════════
+   EDI HARON — HOSTEL RENT TRACKER
+   Same shape as the Ace Hotel dashboard's Cash Transfers tab, adapted for a
+   19-room hostel where rent differs per room AND per month.
+   Cloud state lives in the SAME Supabase project, row id=2, so it can never
+   collide with the Ace Hotel model in row id=1.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const SUPA_URL = "https://kkhkqxsndinsawvagxhx.supabase.co";
+const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtraGtxeHNuZGluc2F3dmFneGh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA1NDksImV4cCI6MjEwMDQ0NjU0OX0.jDhzsXM-vi9MrY2WjTyQgKritNMxkWW1SCgqlWJum-o";
+const SUPA_READ_HEADERS = { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY };
+const ROW_ID   = 2;
+const SAVE_FN  = 'save_edi_model';       // created by the one-time setup SQL
+
+/* ── DATE HELPERS (same contract as the main dashboard) ──────────────────── */
+const _MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function toISO(s) {
+  s = (s||'').trim();
+  if (!s) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  return m ? `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}` : '';
+}
+function fromISO(s) {
+  const m = (s||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : '';
+}
+function parseDMY(s) {
+  const m = (s||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  return m ? new Date(+m[3], +m[2]-1, +m[1]) : null;
+}
+function ordinal(n) { const s=['th','st','nd','rd'], v=n%100; return n + (s[(v-20)%10] || s[v] || s[0]); }
+const htmlAttr = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const fmtRP = n => { const a=Math.abs(Math.round(n)); const s = a>=1000000 ? 'Rp '+(a/1000000).toFixed(2)+'M' : 'Rp '+a.toLocaleString(); return n<0?'−'+s:s; };
+const getFX  = () => parseFloat(document.getElementById('tr-fx')?.value) || 13936;
+const fmtSGD = n => (n<0?'−':'') + 'SGD ' + Math.abs(Math.round(n/getFX())).toLocaleString();
+
+/* ── SEED DATA (derived from Edi's 2026 book, Januari–Agustus) ───────────── */
+const EDI_MONTHS = ["Jan 26", "Feb 26", "Mar 26", "Apr 26", "May 26", "Jun 26", "Jul 26", "Aug 26", "Sep 26", "Oct 26", "Nov 26", "Dec 26"];
+const DEFAULT_ROOMS = [{"room": "Room 1", "status": "occupied", "tenant": "Bu Nur", "checkIn": "10/01/2026", "dueDay": 10, "deposit": 0, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Bu Nur", "from": "10/01/2026", "to": ""}]}, {"room": "Room 2", "status": "occupied", "tenant": "Kenzi Ramoksa", "checkIn": "14/01/2026", "dueDay": 12, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Kenzi Ramoksa", "from": "14/01/2026", "to": ""}]}, {"room": "Room 3", "status": "occupied", "tenant": "Wahyu", "checkIn": "19/01/2026", "dueDay": 19, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Wahyu", "from": "19/01/2026", "to": ""}]}, {"room": "Room 5", "status": "occupied", "tenant": "Riski Nofiani", "checkIn": "06/04/2026", "dueDay": 6, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Pelita", "from": "25/01/2026", "to": "25/02/2026"}, {"tenant": "Riski Nofiani", "from": "06/04/2026", "to": ""}]}, {"room": "Room 6", "status": "vacant", "tenant": "", "checkIn": "", "dueDay": 30, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Sundairi", "from": "20/01/2026", "to": "20/02/2026"}, {"tenant": "Oki Febriantama", "from": "30/03/2026", "to": "30/04/2026"}]}, {"room": "Room 7", "status": "occupied", "tenant": "Dessy", "checkIn": "19/06/2026", "dueDay": 19, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Alvin", "from": "30/01/2026", "to": "28/02/2026"}, {"tenant": "Tia", "from": "06/03/2026", "to": "06/06/2026"}, {"tenant": "Dessy", "from": "19/06/2026", "to": ""}]}, {"room": "Room 8", "status": "occupied", "tenant": "Agnes", "checkIn": "04/07/2026", "dueDay": 4, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Yuleha", "from": "11/01/2026", "to": "11/02/2026"}, {"tenant": "M. Agung Nurman", "from": "26/02/2026", "to": "26/04/2026"}, {"tenant": "Agnes", "from": "04/07/2026", "to": ""}]}, {"room": "Room 9", "status": "occupied", "tenant": "Dewi", "checkIn": "30/04/2026", "dueDay": 30, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Nisa Wulandari", "from": "18/01/2026", "to": "18/04/2026"}, {"tenant": "Dewi", "from": "30/04/2026", "to": ""}]}, {"room": "Room 10", "status": "vacant", "tenant": "", "checkIn": "", "dueDay": 13, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Weni", "from": "13/01/2026", "to": "13/05/2026"}]}, {"room": "Room 11", "status": "occupied", "tenant": "Hesty", "checkIn": "19/01/2026", "dueDay": 19, "deposit": 0, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Hesty", "from": "19/01/2026", "to": ""}]}, {"room": "Room 12", "status": "occupied", "tenant": "Macho", "checkIn": "26/01/2026", "dueDay": 26, "deposit": 0, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Macho", "from": "26/01/2026", "to": ""}]}, {"room": "Room 13", "status": "occupied", "tenant": "Suci", "checkIn": "29/05/2026", "dueDay": 29, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Muhammad Hanafi", "from": "18/01/2026", "to": "18/05/2026"}, {"tenant": "Suci", "from": "29/05/2026", "to": ""}]}, {"room": "Room 14", "status": "occupied", "tenant": "Lisa", "checkIn": "13/01/2026", "dueDay": 13, "deposit": 0, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Lisa", "from": "13/01/2026", "to": ""}]}, {"room": "Room 15", "status": "occupied", "tenant": "Doni", "checkIn": "04/08/2026", "dueDay": 4, "deposit": 0, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Bu Nur", "from": "19/01/2026", "to": "19/06/2026"}, {"tenant": "Doni", "from": "04/08/2026", "to": ""}]}, {"room": "Room 16", "status": "occupied", "tenant": "Puspitasari", "checkIn": "25/01/2026", "dueDay": 25, "deposit": 0, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Puspitasari", "from": "25/01/2026", "to": ""}]}, {"room": "Room 17", "status": "occupied", "tenant": "Dandi", "checkIn": "12/01/2026", "dueDay": 12, "deposit": 0, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Dandi", "from": "12/01/2026", "to": ""}]}, {"room": "Room 18", "status": "occupied", "tenant": "Rosika", "checkIn": "25/01/2026", "dueDay": 26, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Rosika", "from": "25/01/2026", "to": ""}]}, {"room": "Room 19", "status": "vacant", "tenant": "", "checkIn": "", "dueDay": 29, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Dessy Anak Bu Nur", "from": "17/01/2026", "to": "17/04/2026"}, {"tenant": "Susi", "from": "29/04/2026", "to": "29/05/2026"}]}, {"room": "Room 20", "status": "vacant", "tenant": "", "checkIn": "", "dueDay": 5, "deposit": 200000, "category": "Revenue", "remarks": "", "tenancies": [{"tenant": "Sundairi", "from": "20/02/2026", "to": "20/03/2026"}, {"tenant": "Abu Thalib", "from": "05/04/2026", "to": "05/07/2026"}]}];
+const DEFAULT_RENT = [[900000, 900000, 900000, 900000, 900000, 900000, 900000, 900000, 0, 0, 0, 0], [1300000, 1300000, 1300000, 1300000, 1300000, 1300000, 1300000, 1300000, 0, 0, 0, 0], [1600000, 1000000, 1000000, 1000000, 1000000, 1000000, 1000000, 1000000, 0, 0, 0, 0], [1000000, 0, 0, 1000000, 1000000, 1000000, 1000000, 1000000, 0, 0, 0, 0], [1600000, 0, 1700000, 1700000, 0, 0, 0, 0, 0, 0, 0, 0], [900000, 0, 900000, 900000, 1000000, 1000000, 1000000, 1000000, 0, 0, 0, 0], [1600000, 1700000, 1700000, 0, 0, 0, 1700000, 1700000, 0, 0, 0, 0], [1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 0, 0, 0, 0], [1600000, 1600000, 1600000, 1600000, 0, 0, 0, 0, 0, 0, 0, 0], [900000, 900000, 900000, 900000, 900000, 900000, 900000, 900000, 0, 0, 0, 0], [1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 0, 0, 0, 0], [1700000, 1700000, 1700000, 1700000, 1700000, 1700000, 1700000, 1700000, 0, 0, 0, 0], [900000, 900000, 900000, 900000, 900000, 900000, 900000, 900000, 0, 0, 0, 0], [900000, 900000, 900000, 900000, 900000, 0, 0, 900000, 0, 0, 0, 0], [1700000, 1700000, 1700000, 1700000, 1700000, 1700000, 1700000, 1700000, 0, 0, 0, 0], [900000, 900000, 900000, 900000, 900000, 900000, 900000, 900000, 0, 0, 0, 0], [1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 1600000, 0, 0, 0, 0], [1600000, 1600000, 1600000, 1700000, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1600000, 0, 1700000, 1700000, 1700000, 0, 0, 0, 0, 0, 0]];
+
+const YEAR = 2026;
+let p1Rows   = [];
+let p2Rows   = [];
+let rooms    = JSON.parse(JSON.stringify(DEFAULT_ROOMS));
+let rentHist = JSON.parse(JSON.stringify(DEFAULT_RENT));      // [room][month] historic rent
+let payments = DEFAULT_ROOMS.map(() => Array(12).fill(0));
+let expandedRooms = new Set();
+let hasUnsavedEdits = false;
+
+/* ── TENANCIES ───────────────────────────────────────────────────────────── */
+function migrateTenancies(list) {
+  (list||[]).forEach(r => {
+    if (!Array.isArray(r.tenancies)) r.tenancies = r.tenant ? [{tenant:r.tenant, from:r.checkIn||'', to:''}] : [];
+  });
+  return list;
+}
+function openTenancy(r) { const t=(r.tenancies||[]).filter(x=>!x.to); return t.length ? t[t.length-1] : null; }
+function syncRoomFromTenancy(r) { const t=openTenancy(r); r.tenant = t?(t.tenant||''):''; if (t) r.checkIn = t.from||''; }
+function monthDueDate(r, mi) { return new Date(YEAR, mi, Number(r.dueDay)||1); }
+function isMonthOverdue(r, mi, today) { return Math.floor((today - monthDueDate(r,mi))/86400000) > 30; }
+// Which month a tenancy belongs to is decided by the RENT PERIOD, not by the
+// day of the month: a tenancy covers every month from the one its first period
+// starts in, up to (but not including) the month its end date falls in — the
+// end date is when the next period would have begun. Resolving by due-date
+// instead breaks whenever a room's due day changes over time, which Edi's
+// book does (Room 2 moved from the 14th to the 12th).
+const monthIdx = d => (d.getFullYear() - YEAR) * 12 + d.getMonth();
+function tenantForMonth(r, mi) {
+  for (const t of (r.tenancies||[])) {
+    const f = parseDMY(t.from);
+    if (!f) continue;
+    const end = parseDMY(t.to);
+    if (mi < monthIdx(f)) continue;
+    if (end && mi >= monthIdx(end)) continue;
+    return t.tenant || '';
+  }
+  return '';
+}
+function tenantsAcrossYear(r) {
+  const seen=[];
+  EDI_MONTHS.forEach((_,mi)=>{ const n=tenantForMonth(r,mi); if (n && !seen.includes(n)) seen.push(n); });
+  return seen;
+}
+
+/* Rent for a room in a given month: the historic figure where Edi's book has
+   one, otherwise the room's current rent. No tenant that month → nothing due. */
+function rentFor(ri, mi) {
+  if (!tenantForMonth(rooms[ri], mi)) return 0;
+  const hist = (rentHist[ri] && rentHist[ri][mi]) || 0;
+  return hist || Number(rooms[ri].rent) || 0;
+}
+
+/* ── PART 1 ──────────────────────────────────────────────────────────────── */
+function renderP1() {
+  const tbody=document.getElementById('p1-body'), tfoot=document.getElementById('p1-foot');
+  if (!tbody) return 0;
+  let running=0, totSpent=0, totDep=0, html='';
+  p1Rows.forEach((r,i)=>{
+    const spent=parseFloat(r.spent)||0, dep=parseFloat(r.deposited)||0, begin=running;
+    running = running - spent + dep; totSpent+=spent; totDep+=dep;
+    const cats=['Furniture','Labor','Equipment','Installation','Electrical','Deposit','Other'];
+    const opts=cats.map(c=>`<option ${r.category===c?'selected':''}>${c}</option>`).join('');
+    html += `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:6px 4px"><input type="date" class="tr-input date" value="${toISO(r.date)}" onchange="p1Rows[${i}].date=fromISO(this.value);renderAll()"></td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${begin<0?'var(--red)':'var(--muted)'}">${begin?fmtRP(begin):''}</td>
+      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${spent||''}" placeholder="0" oninput="p1Rows[${i}].spent=parseFloat(this.value)||0;renderAll()"></td>
+      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${dep||''}" placeholder="0" oninput="p1Rows[${i}].deposited=parseFloat(this.value)||0;renderAll()"></td>
+      <td style="padding:6px 4px" class="${running>=0?'tr-bal-pos':'tr-bal-neg'}">${fmtRP(running)}</td>
+      <td style="padding:6px 4px"><select class="tr-input" style="width:95px" oninput="p1Rows[${i}].category=this.value">${opts}</select></td>
+      <td style="padding:6px 4px"><input class="tr-input" value="${htmlAttr(r.remarks)}" placeholder="Remarks" oninput="p1Rows[${i}].remarks=this.value"></td>
+      <td style="padding:6px 4px;text-align:center"><button class="tr-del" onclick="p1Rows.splice(${i},1);hasUnsavedEdits=true;renderAll()">✕</button></td>
+    </tr>`;
+  });
+  tbody.innerHTML = html || `<tr><td colspan="8" style="padding:18px;text-align:center;color:var(--muted);font-size:12px">No capital expenditure logged yet — use <strong>+ Add Row</strong>.</td></tr>`;
+  tfoot.innerHTML = `<tr><td style="padding:9px 4px;font-weight:700;color:#f1f5f9">PART 1 SUMMARY</td>
+    <td></td><td class="tr-mono" style="color:var(--red);font-weight:700">${fmtRP(totSpent)}</td>
+    <td class="tr-mono" style="color:var(--teal);font-weight:700">${fmtRP(totDep)}</td>
+    <td class="${running>=0?'tr-bal-pos':'tr-bal-neg'}">${fmtRP(running)}</td>
+    <td colspan="3" style="padding:9px 4px;font-size:11px;color:var(--muted)">Balance carries to Part 2</td></tr>`;
+
+  const occRooms = rooms.filter(r=>r.status==='occupied').length;
+  document.getElementById('p1-invested').textContent = fmtRP(totDep);
+  document.getElementById('p1-spent').textContent    = fmtRP(totSpent);
+  document.getElementById('p1-net').textContent      = fmtRP(running);
+  document.getElementById('p1-perroom').textContent  = rooms.length ? fmtRP(totSpent/rooms.length) : '—';
+  document.getElementById('p1-roomcount').textContent= `${rooms.length} rooms · ${occRooms} occupied`;
+  return running;
+}
+
+/* ── PART 2 ──────────────────────────────────────────────────────────────── */
+function renderP2(carryOver) {
+  const tbody=document.getElementById('p2-body'), tfoot=document.getElementById('p2-foot');
+  if (!tbody) return;
+  let running=carryOver||0, totCol=0, totExp=0, html='';
+  p2Rows.forEach((r,i)=>{
+    const col=parseFloat(r.collected)||0, exp=parseFloat(r.expenses)||0, open=running;
+    running = running + col - exp; totCol+=col; totExp+=exp;
+    html += `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:6px 4px"><input type="date" class="tr-input date" value="${toISO(r.date)}" onchange="p2Rows[${i}].date=fromISO(this.value);renderAll()"></td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">${fmtRP(open)}</td>
+      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${col||''}" placeholder="0" oninput="p2Rows[${i}].collected=parseFloat(this.value)||0;renderAll()"></td>
+      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${exp||''}" placeholder="0" oninput="p2Rows[${i}].expenses=parseFloat(this.value)||0;renderAll()"></td>
+      <td style="padding:6px 4px" class="tr-bal-pos">${fmtRP(running)}</td>
+      <td style="padding:6px 4px" class="tr-mono">${fmtSGD(running)}</td>
+      <td style="padding:6px 4px"><input class="tr-input" value="${htmlAttr(r.remarks)}" placeholder="Remarks" oninput="p2Rows[${i}].remarks=this.value"></td>
+      <td style="padding:6px 4px;text-align:center"><button class="tr-del" onclick="p2Rows.splice(${i},1);hasUnsavedEdits=true;renderAll()">✕</button></td>
+    </tr>`;
+  });
+  tbody.innerHTML = html || `<tr><td colspan="8" style="padding:18px;text-align:center;color:var(--muted);font-size:12px">No collections logged yet — use <strong>+ Add Row</strong>.</td></tr>`;
+  tfoot.innerHTML = `<tr><td style="padding:9px 4px;font-weight:700;color:#f1f5f9">PART 2 SUMMARY</td><td></td>
+    <td class="tr-mono" style="color:var(--teal);font-weight:700">${fmtRP(totCol)}</td>
+    <td class="tr-mono" style="color:var(--red);font-weight:700">${fmtRP(totExp)}</td>
+    <td class="tr-bal-pos">${fmtRP(running)}</td><td class="tr-mono">${fmtSGD(running)}</td>
+    <td colspan="2" style="padding:9px 4px;font-size:11px;color:var(--muted)">Net return: ${fmtRP(totCol-totExp)}</td></tr>`;
+
+  document.getElementById('p2-carryover').textContent = fmtRP(carryOver||0);
+  document.getElementById('p2-collected').textContent = fmtRP(totCol);
+  document.getElementById('p2-expenses').textContent  = fmtRP(totExp);
+  document.getElementById('p2-net').textContent       = fmtRP(totCol-totExp);
+  return totCol;
+}
+
+/* ── PART 3A — ROOM DETAILS ──────────────────────────────────────────────── */
+function renderRooms() {
+  const tbody=document.getElementById('room-body');
+  if (!tbody) return;
+  migrateTenancies(rooms);
+  const today=new Date(); const delinquent=[];
+
+  tbody.innerHTML = rooms.map((r,i)=>{
+    const isVacant = r.status==='vacant';
+    const icon = isVacant ? '❌' : '✅';
+    if (!isVacant && r.checkIn && r.dueDay) {
+      const due = new Date(today.getFullYear(), today.getMonth(), Number(r.dueDay));
+      const past = Math.floor((today-due)/86400000);
+      if (past > 30) delinquent.push(`${r.room} — ${r.tenant} (${past} days overdue)`);
+    }
+    const dueDay = Number(r.dueDay)||0;
+    const dayOpts = `<option value="0" ${dueDay?'':'selected'}>—</option>` +
+      Array.from({length:31},(_,n)=>`<option value="${n+1}" ${dueDay===n+1?'selected':''}>${ordinal(n+1)}</option>`).join('');
+    const past = (r.tenancies||[]).filter(t=>t.to).length;
+    const open = expandedRooms.has(i);
+    return `<tr style="border-bottom:${open?'none':'1px solid var(--border)'};${isVacant?'background:rgba(239,68,68,0.04)':''}">
+      <td style="padding:7px 4px;font-weight:700;color:#f1f5f9;font-size:12px">${r.room}</td>
+      <td style="padding:7px 4px;text-align:center"><button onclick="toggleRoomStatus(${i})" style="background:none;border:none;font-size:18px;cursor:pointer;line-height:1" title="Click to toggle">${icon}</button></td>
+      <td style="padding:7px 4px"><div style="display:flex;align-items:center;gap:5px">
+        <input class="tr-input" value="${htmlAttr(r.tenant)}" placeholder="${isVacant?'VACANT':'Tenant name'}" oninput="setRoomTenant(${i}, this.value)">
+        <button onclick="toggleRoomHistory(${i})" title="Previous tenants" style="background:none;border:1px solid var(--border);border-radius:5px;color:${past?'var(--amber)':'var(--muted)'};font-size:10px;padding:3px 6px;cursor:pointer;white-space:nowrap">${open?'▾':'▸'} ${past?past+' past':'history'}</button>
+      </div></td>
+      <td style="padding:7px 4px"><input type="date" class="tr-input date" value="${toISO(r.checkIn)}" onchange="setCheckIn(${i}, this.value)"></td>
+      <td style="padding:7px 4px;text-align:center"><select class="tr-input" style="width:78px" onchange="setDueDay(${i}, this.value)">${dayOpts}</select></td>
+      <td style="padding:7px 4px"><input class="tr-input mono" type="number" min="0" step="50000" value="${Number(r.rent)||''}" placeholder="0" oninput="rooms[${i}].rent=parseFloat(this.value)||0;renderAll()"></td>
+      <td style="padding:7px 4px"><input class="tr-input mono" type="number" min="0" step="50000" value="${Number(r.deposit)||''}" placeholder="0" oninput="rooms[${i}].deposit=parseFloat(this.value)||0;renderAll()"></td>
+      <td style="padding:7px 4px"><input class="tr-input" value="${htmlAttr(r.remarks)}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
+    </tr>${open ? tenancyRow(r,i) : ''}`;
+  }).join('');
+
+  renderDelinquency(delinquent);
+}
+
+function tenancyRow(r,i) {
+  const rows=(r.tenancies||[]).map((t,ti)=>`
+    <div class="input-row" style="gap:6px;flex-wrap:wrap">
+      <input class="tr-input" style="width:150px;flex:none" value="${htmlAttr(t.tenant)}" placeholder="Tenant name"
+        oninput="rooms[${i}].tenancies[${ti}].tenant=this.value" onchange="updateTenancy(${i},${ti},'tenant',this.value)">
+      <span class="field-lbl" style="width:auto">from</span>
+      <input type="date" class="field-date" value="${toISO(t.from)}" onchange="updateTenancy(${i},${ti},'from',this.value)">
+      <span class="field-lbl" style="width:auto">to</span>
+      <input type="date" class="field-date" value="${toISO(t.to)}" title="Leave blank if still living here" onchange="updateTenancy(${i},${ti},'to',this.value)">
+      <span style="font-size:10px;color:${t.to?'var(--muted)':'var(--teal)'}">${t.to?'moved out':'current'}</span>
+      <button class="tr-del" onclick="deleteTenancy(${i},${ti})">✕</button>
+    </div>`).join('');
+  return `<tr style="border-bottom:1px solid var(--border);background:rgba(148,163,184,0.04)">
+    <td colspan="8" style="padding:4px 10px 12px 10px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Tenancy history — ${htmlAttr(r.room)}. Leave the end date blank for whoever lives there now; the tracker labels each month from these dates.</div>
+      ${rows || '<div style="font-size:11px;color:var(--muted);margin-bottom:6px">No tenancies recorded yet.</div>'}
+      <button onclick="addTenancy(${i})" class="tl-btn" style="margin-top:8px">+ Add tenant</button>
+    </td></tr>`;
+}
+
+function toggleRoomHistory(i){ expandedRooms.has(i)?expandedRooms.delete(i):expandedRooms.add(i); renderRooms(); }
+function addTenancy(i){ rooms[i].tenancies=rooms[i].tenancies||[]; rooms[i].tenancies.push({tenant:'',from:'',to:''}); expandedRooms.add(i); hasUnsavedEdits=true; renderAll(); }
+function updateTenancy(i,ti,f,v){ const t=rooms[i].tenancies?.[ti]; if(!t) return; t[f] = f==='tenant'?v:fromISO(v); syncRoomFromTenancy(rooms[i]); renderAll(); }
+function deleteTenancy(i,ti){ rooms[i].tenancies.splice(ti,1); syncRoomFromTenancy(rooms[i]); hasUnsavedEdits=true; renderAll(); }
+function setRoomTenant(i,name){
+  const r=rooms[i]; r.tenancies=r.tenancies||[];
+  let t=openTenancy(r);
+  if(!t){ t={tenant:'',from:r.checkIn||'',to:''}; r.tenancies.push(t); }
+  t.tenant=name; r.tenant=name;
+}
+function setCheckIn(i,iso){
+  const r=rooms[i]; r.checkIn=fromISO(iso);
+  const t=openTenancy(r); if(t) t.from=r.checkIn;
+  if(!Number(r.dueDay)) r.dueDay = Number(iso.slice(8,10))||0;
+  renderAll();
+}
+function setDueDay(i,v){ rooms[i].dueDay=parseInt(v,10)||0; renderAll(); }
+function todayDMY(){ const d=new Date(); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; }
+function toggleRoomStatus(i){
+  const r=rooms[i]; r.status = r.status==='occupied'?'vacant':'occupied';
+  if (r.status==='vacant'){ const t=openTenancy(r); if(t&&!t.to) t.to=todayDMY(); r.tenant=''; }
+  hasUnsavedEdits=true; renderAll();
+}
+function renderDelinquency(list){
+  const b=document.getElementById('delinquency-banner'), l=document.getElementById('delinquency-list');
+  if(!b||!l) return;
+  if(!list||!list.length){ b.style.display='none'; return; }
+  b.style.display='block'; l.innerHTML=list.map(d=>`⚠️ ${d}`).join('<br>');
+}
+
+/* ── PART 3B — PAYMENT TRACKER ───────────────────────────────────────────── */
+const PAYMENT_STATES = ['⬜','✅','🔴','—'];
+const NEXT_PAYMENT_STATE = { 0:1, 1:3, 2:1, 3:0 };
+function togglePayment(ri,mi){ payments[ri][mi]=NEXT_PAYMENT_STATE[payments[ri][mi]] ?? 1; hasUnsavedEdits=true; renderAll(); }
+
+function renderPaymentGrid(collectedP2) {
+  const wrap=document.getElementById('payment-grid-wrap');
+  if(!wrap) return;
+  migrateTenancies(rooms);
+  const today=new Date();
+  let html=`<div style="overflow-x:auto"><table style="font-size:12px;min-width:1000px;border-collapse:collapse">
+    <thead><tr>
+      <th style="padding:8px 6px;text-align:left;min-width:70px">Room</th>
+      <th style="padding:8px 4px;text-align:left;min-width:90px">Tenant</th>
+      ${EDI_MONTHS.map(m=>`<th style="padding:8px 4px;text-align:center;min-width:50px;font-size:11px">${m}</th>`).join('')}
+      <th style="padding:8px 6px;text-align:right;min-width:90px">Total Paid</th>
+      <th style="padding:8px 6px;text-align:right;min-width:90px">Outstanding</th>
+    </tr></thead><tbody>`;
+
+  const monthTotals=Array(12).fill(0);
+  let paidCells=0, grandPaid=0, grandOut=0;
+
+  rooms.forEach((r,ri)=>{
+    const whoAll=tenantsAcrossYear(r), multi=whoAll.length>1;
+    let paidAmt=0, outAmt=0;
+    html += `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${htmlAttr(r.room)}</td>
+      <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${
+        whoAll.length ? whoAll.map(htmlAttr).join(' <span style="color:var(--muted)">→</span> ')
+        : '<span style="color:var(--red)">VACANT</span>'}</td>`;
+    EDI_MONTHS.forEach((_,mi)=>{
+      const state=payments[ri][mi], who=tenantForMonth(r,mi), rent=rentFor(ri,mi);
+      const noTenant = !who;
+      const shown = state===1 ? 1 : (noTenant || state===3) ? 3 : (isMonthOverdue(r,mi,today) ? 2 : 0);
+      const bg = shown===1?'rgba(0,212,184,0.1)':shown===2?'rgba(239,68,68,0.12)':'';
+      const border = shown===2?'1px solid var(--red)':'1px solid transparent';
+      if (state===1){ paidCells++; paidAmt+=rent; monthTotals[mi]+=rent; }
+      else if (!noTenant && state!==3) outAmt+=rent;
+      const label = multi && who
+        ? `<div style="font-size:9px;color:var(--muted);margin-top:2px;max-width:48px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${htmlAttr(who.split(/[\s&,]+/)[0])}</div>` : '';
+      const words = shown===1?'paid':shown===2?'overdue':shown===3?(noTenant?'no tenant':'no rent due'):'unpaid';
+      const hint = `${EDI_MONTHS[mi]} · ${who||'no tenant'} · ${words}${rent?' · '+fmtRP(rent):''}`;
+      html += `<td style="padding:4px;text-align:center">
+        <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:36px;opacity:${noTenant&&shown!==1?'.5':'1'};transition:all .15s" title="${htmlAttr(hint)}">${PAYMENT_STATES[shown]}</button>${label}
+      </td>`;
+    });
+    grandPaid+=paidAmt; grandOut+=outAmt;
+    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${paidAmt?fmtRP(paidAmt):'—'}</td>
+      <td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${outAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${outAmt>0?fmtRP(outAmt):'✅ Clear'}</td></tr>`;
+  });
+
+  html += `<tr style="border-top:2px solid var(--teal);background:rgba(0,212,184,0.05)">
+    <td style="padding:8px 6px;font-weight:700;color:#f1f5f9;font-size:12px" colspan="2">Monthly Total</td>
+    ${monthTotals.map(t=>`<td style="padding:8px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:${t>0?'var(--teal)':'var(--muted)'};font-weight:700">${t>0?fmtRP(t):'—'}</td>`).join('')}
+    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${fmtRP(grandPaid)}</td>
+    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);font-weight:700">${fmtRP(grandOut)}</td>
+  </tr></tbody></table></div>`;
+
+  const diff = grandPaid - (collectedP2||0);
+  const ok = Math.abs(diff) < 1;
+  html += `<div style="margin-top:14px;padding:10px 14px;border-radius:8px;font-size:11px;line-height:1.7;
+      border:1px solid ${ok?'var(--teal)':'var(--amber)'};background:${ok?'rgba(0,212,184,0.07)':'rgba(245,158,11,0.08)'};color:var(--subtle)">
+    ${ok?'✅':'⚠️'} Tracker <strong style="color:var(--teal)">${fmtRP(grandPaid)}</strong> (${paidCells} paid month${paidCells===1?'':'s'})
+    · Part 2 collected <strong style="color:var(--teal)">${fmtRP(collectedP2||0)}</strong>
+    ${ok ? '· <span style="color:var(--teal)">balanced</span>'
+         : `· <span style="color:var(--amber)">out by ${fmtRP(Math.abs(diff))} ${diff>0?'ticked but not collected':'collected but not yet ticked'}</span>`}
+  </div>`;
+  wrap.innerHTML = html;
+
+  // KPIs
+  const thisMonth = new Date().getMonth();
+  const occ = rooms.filter(r=>r.status==='occupied').length;
+  const dueNow = rooms.reduce((s,r,ri)=>s+rentFor(ri,thisMonth),0);
+  const deposits = rooms.reduce((s,r)=>s+(Number(r.deposit)||0),0);
+  document.getElementById('k-occ').textContent = occ;
+  document.getElementById('k-occ-sub').textContent = `of ${rooms.length} rooms`;
+  document.getElementById('k-due').textContent = fmtRP(dueNow);
+  document.getElementById('k-due-sgd').textContent = fmtSGD(dueNow);
+  document.getElementById('k-paid').textContent = fmtRP(grandPaid);
+  document.getElementById('k-paid-sub').textContent = `${paidCells} room-months`;
+  document.getElementById('k-out').textContent = fmtRP(grandOut);
+  document.getElementById('k-dep').textContent = fmtRP(deposits);
+  document.getElementById('p3-sub').textContent = `Batam hostel · ${rooms.length} rooms · ${occ} occupied · rent due this month ${fmtRP(dueNow)}`;
+}
+
+/* ── PART 3C — OCCUPANCY ─────────────────────────────────────────────────── */
+const OCC_START = new Date(YEAR, 0, 1);
+const OCC_END   = new Date(YEAR, 11, 31);
+const DAY = 86400000;
+const pos = d => ((d - OCC_START)/(OCC_END - OCC_START))*100;
+
+function occupancyStats() {
+  const now=new Date(); const elapsed = now<OCC_END?now:OCC_END;
+  const windowDays = Math.max(1,(elapsed-OCC_START)/DAY);
+  const stats = rooms.map((r,i)=>{
+    const spans=(r.tenancies||[]).map(t=>{
+      const f=parseDMY(t.from); if(!f) return null;
+      const e0=parseDMY(t.to);
+      const start = f<OCC_START?OCC_START:f;
+      const end = e0 ? (e0>OCC_END?OCC_END:e0) : elapsed;
+      return end>start ? {start,end,tenant:t.tenant||'',ongoing:!e0} : null;
+    }).filter(Boolean).sort((a,b)=>a.start-b.start);
+    const days=spans.reduce((a,s)=>a+(s.end-s.start)/DAY,0);
+    const guests=[...new Set(spans.map(s=>s.tenant).filter(Boolean))];
+    return { i, room:r.room, spans, guests, days:Math.round(days),
+             pct:Math.min(1,days/windowDays),
+             months:(payments[i]||[]).filter(c=>c===1).length };
+  });
+  return { stats, windowDays:Math.round(windowDays), elapsed };
+}
+
+function renderOccupancy() {
+  const tl=document.getElementById('occ-timeline'); if(!tl) return;
+  migrateTenancies(rooms);
+  const {stats, windowDays, elapsed}=occupancyStats();
+  document.getElementById('occ-subtitle').textContent =
+    `Jan 2026 – Dec 2026 · occupancy measured over the ${windowDays} days elapsed so far`;
+  if (!stats.some(s=>s.spans.length)) { tl.innerHTML=''; document.getElementById('occ-ranking').innerHTML=''; return; }
+
+  const ranked=[...stats].sort((a,b)=>b.days-a.days||b.guests.length-a.guests.length);
+  const top=ranked[0];
+  const idle=stats.filter(s=>!s.days).map(s=>s.room);
+  document.getElementById('occ-lede').innerHTML =
+    `Most popular with guests: <strong style="color:#f1f5f9">${htmlAttr(top.room)}</strong> — ${Math.round(top.pct*100)}% of the period, ${top.days} days, ${top.guests.length} guest${top.guests.length===1?'':'s'}`
+    + (idle.length ? ` · never let: <span style="color:var(--muted)">${idle.map(htmlAttr).join(', ')}</span>` : '');
+
+  const ticks=Array.from({length:13},(_,k)=>`<div class="occ-tick" style="left:${pos(new Date(YEAR,k,1))}%"></div>`).join('');
+  const todayMark = elapsed>OCC_START && elapsed<OCC_END ? `<div class="occ-today" style="left:${pos(elapsed)}%" title="Today"></div>` : '';
+
+  tl.innerHTML = `
+    <div class="occ-key">
+      <span><i style="background:var(--teal)"></i>Let to a guest</span>
+      <span><i style="background:var(--surface2)"></i>Vacant</span>
+      <span><i style="background:var(--subtle);width:2px;height:12px;border-radius:0"></i>Today</span>
+    </div>
+    <div class="occ-scroll"><div class="occ-grid">
+      ${stats.map(s=>{
+        const bars=s.spans.map(sp=>{
+          const left=pos(sp.start), width=pos(sp.end)-pos(sp.start);
+          const first=(sp.tenant||'').split(/[\s&,]+/)[0];
+          const label = width>=20 && first ? `<span>${htmlAttr(first)}${sp.ongoing?' ▸':''}</span>` : '';
+          const days=Math.round((sp.end-sp.start)/DAY);
+          return `<div class="occ-bar" style="left:${left}%;width:${width}%" title="${htmlAttr(`${s.room} · ${sp.tenant||'unnamed guest'} · ${days} days${sp.ongoing?' · still living here':''}`)}">${label}</div>`;
+        }).join('');
+        return `<div class="occ-row">
+          <div class="occ-name">${htmlAttr(s.room)}<small>${s.guests.length?htmlAttr(s.guests.join(' → ')):'never let'}</small></div>
+          <div class="occ-track">${ticks}${bars}${todayMark}</div>
+        </div>`;
+      }).join('')}
+      <div class="occ-months"><div></div><div>${EDI_MONTHS.map(m=>`<span>${m.split(' ')[0]}</span>`).join('')}</div></div>
+    </div></div>`;
+
+  document.getElementById('occ-ranking').innerHTML = `
+    <div style="font-size:12px;font-weight:600;color:#f1f5f9;margin:20px 0 4px 0">Share of the period let</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Most-let room first. Longer bar = more of the last ${windowDays} days with a paying guest in it.</div>
+    <div class="occ-scroll"><div style="min-width:520px">
+    ${ranked.map(s=>`<div class="occ-barrow">
+      <div class="occ-name">${htmlAttr(s.room)}</div>
+      <div><div class="occ-mag" style="width:${Math.max(s.pct*100, s.days?1:0)}%" title="${htmlAttr(`${s.room} · ${s.days} of ${windowDays} days`)}"></div></div>
+      <div class="occ-val">${Math.round(s.pct*100)}% · ${s.days}d</div></div>`).join('')}
+    </div></div>`;
+
+  const el=document.getElementById('occ-table');
+  el.innerHTML = `<div style="overflow-x:auto;margin-top:16px"><table style="font-size:12px;min-width:560px">
+    <thead><tr><th style="text-align:left">Room</th><th style="text-align:left">Guests</th>
+    <th class="r">Days let</th><th class="r">Occupancy</th><th class="r">Months paid</th></tr></thead><tbody>
+    ${[...stats].sort((a,b)=>b.days-a.days).map(s=>`<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:6px 4px;font-weight:600;color:#f1f5f9">${htmlAttr(s.room)}</td>
+      <td style="padding:6px 4px;color:var(--subtle)">${s.guests.length?htmlAttr(s.guests.join(', ')):'—'}</td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--subtle)">${s.days} / ${windowDays}</td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${Math.round(s.pct*100)}%</td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--subtle)">${s.months}</td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+function toggleOccTable(){
+  const el=document.getElementById('occ-table'), b=document.getElementById('occ-table-btn');
+  const show = el.style.display==='none';
+  el.style.display = show?'block':'none';
+  b.textContent = show?'▤ Hide table':'▤ Table';
+}
+
+/* ── ROW ADDERS ──────────────────────────────────────────────────────────── */
+function addP1Row(){ p1Rows.push({date:'',spent:0,deposited:0,category:'Furniture',remarks:''}); hasUnsavedEdits=true; renderAll(); }
+function addP2Row(){ p2Rows.push({date:'',collected:0,expenses:0,remarks:''}); hasUnsavedEdits=true; renderAll(); }
+
+/* ── RENDER ALL ──────────────────────────────────────────────────────────── */
+function renderAll(){
+  const carry = renderP1();
+  const collected = renderP2(carry);
+  renderRooms();
+  renderPaymentGrid(collected);
+  renderOccupancy();
+}
+
+/* ── PERSISTENCE ─────────────────────────────────────────────────────────── */
+function collectInputs(){
+  return {
+    _p1Rows: JSON.parse(JSON.stringify(p1Rows)),
+    _p2Rows: JSON.parse(JSON.stringify(p2Rows)),
+    _rooms:  JSON.parse(JSON.stringify(rooms)),
+    _rent:   JSON.parse(JSON.stringify(rentHist)),
+    _payments: JSON.parse(JSON.stringify(payments)),
+    _fx: getFX()
+  };
+}
+function applyInputs(d){
+  if (Array.isArray(d._p1Rows)) p1Rows = d._p1Rows;
+  if (Array.isArray(d._p2Rows)) p2Rows = d._p2Rows;
+  if (Array.isArray(d._rooms) && d._rooms.length) rooms = migrateTenancies(d._rooms);
+  if (Array.isArray(d._rent) && d._rent.length) rentHist = d._rent;
+  if (Array.isArray(d._payments) && d._payments.length) payments = d._payments.map(r=>r.map(c=>c===2?0:c));
+  // A room added since the last save must still have a payments row
+  while (payments.length < rooms.length) payments.push(Array(12).fill(0));
+  const fx=document.getElementById('tr-fx'); if (fx && d._fx) fx.value = d._fx;
+  renderAll();
+}
+
+/* ── EDIT PASSWORD (shared with the Ace Hotel dashboard, same origin) ────── */
+const PW_KEY='batam_edit_pw';
+const getStoredPassword=()=>localStorage.getItem(PW_KEY);
+const storePassword=pw=>localStorage.setItem(PW_KEY,pw);
+const forgetStoredPassword=()=>localStorage.removeItem(PW_KEY);
+
+function askPassword(message){
+  return new Promise(resolve=>{
+    document.getElementById('pw-modal')?.remove();
+    const m=document.createElement('div'); m.id='pw-modal';
+    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
+    m.innerHTML=`<div style="background:#0e1929;border:1px solid var(--teal);border-radius:14px;padding:28px;max-width:380px;width:100%">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#f1f5f9;margin-bottom:8px">🔒 Edit password</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">${message||'Enter the password to save changes.'}</div>
+      <input id="pw-input" type="password" autocomplete="current-password" placeholder="Password" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:#e2e8f0;font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;width:100%;outline:none">
+      <div style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end">
+        <button id="pw-cancel" style="background:none;border:1px solid var(--border);border-radius:8px;padding:8px 16px;color:var(--muted);font-size:13px;cursor:pointer">Cancel</button>
+        <button id="pw-ok" style="background:var(--teal);border:none;border-radius:8px;padding:8px 18px;color:#07101f;font-size:13px;font-weight:700;cursor:pointer">Unlock</button>
+      </div></div>`;
+    document.body.appendChild(m);
+    const input=m.querySelector('#pw-input'); input.focus();
+    const done=v=>{m.remove();resolve(v);};
+    m.querySelector('#pw-ok').onclick=()=>done(input.value||null);
+    m.querySelector('#pw-cancel').onclick=()=>done(null);
+    input.onkeydown=e=>{ if(e.key==='Enter')done(input.value||null); if(e.key==='Escape')done(null); };
+  });
+}
+async function callSecure(fn,args,retryMessage){
+  let pw=getStoredPassword();
+  if(!pw){ pw=await askPassword(retryMessage); if(!pw) return {ok:false,cancelled:true}; storePassword(pw); }
+  try{
+    const res=await fetch(SUPA_URL+'/rest/v1/rpc/'+fn,{method:'POST',
+      headers:{...SUPA_READ_HEADERS,'Content-Type':'application/json'},
+      body:JSON.stringify({pw,...args})});
+    if(res.ok) return {ok:true,value:await res.json().catch(()=>null)};
+    const body=await res.text();
+    if(/wrong password/i.test(body)){
+      forgetStoredPassword();
+      const retry=await askPassword('That password was not correct. Try again.');
+      if(!retry) return {ok:false,cancelled:true};
+      storePassword(retry);
+      return callSecure(fn,args);
+    }
+    return {ok:false,error:'HTTP '+res.status+' — '+body};
+  }catch(e){ return {ok:false,error:e.message}; }
+}
+
+function setSyncStatus(msg,color){ const el=document.getElementById('sync-status'); if(el){el.textContent=msg;el.style.color=color||'var(--teal)';} }
+function setLastSaved(ts){
+  const el=document.getElementById('last-saved'); if(!el||!ts) return;
+  const d=new Date(ts);
+  el.textContent='Last saved: '+d.toLocaleTimeString();
+  const f=document.getElementById('footer-live-save');
+  if(f) f.textContent='Live model saved: '+d.toLocaleDateString('en-SG',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+async function saveToSupabase(){
+  const btn=document.getElementById('save-btn');
+  btn.textContent='Saving...'; btn.style.opacity='.6';
+  const r=await callSecure(SAVE_FN,{payload:collectInputs()},'Enter the password to save Edi’s tracker.');
+  btn.style.opacity='1'; btn.textContent='💾 Save Changes';
+  if(r.ok){
+    hasUnsavedEdits=false;
+    setSyncStatus('✓ saved','var(--teal)');
+    setLastSaved(new Date().toISOString());
+  } else if(r.cancelled){
+    setSyncStatus('not saved','var(--amber)');
+  } else if(/save_edi_model|PGRST202|404/.test(r.error||'')){
+    setSyncStatus('⚠ cloud setup not run yet','var(--amber)');
+    alert('Cloud saving is not set up yet.\n\nRun the one-time setup SQL in Supabase (it creates row 2 and the save_edi_model function), then try again. Your edits are still on screen — do not reload.');
+  } else {
+    setSyncStatus('⚠ save failed','var(--red)');
+    alert('Save failed: '+r.error);
+  }
+}
+
+async function loadFromSupabase(){
+  setSyncStatus('loading...','var(--amber)');
+  try{
+    const res=await fetch(SUPA_URL+`/rest/v1/inputs?id=eq.${ROW_ID}&select=data,updated_at`,{headers:SUPA_READ_HEADERS});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const rowsIn=await res.json();
+    if(rowsIn.length && rowsIn[0].data && Object.keys(rowsIn[0].data).length){
+      applyInputs(rowsIn[0].data);
+      setLastSaved(rowsIn[0].updated_at);
+      setSyncStatus('✓ live','var(--teal)');
+      hasUnsavedEdits=false;
+    } else {
+      renderAll();
+      setSyncStatus(rowsIn.length ? '✓ live (empty — seeded from Edi’s book)' : '⚠ cloud row not created yet','var(--amber)');
+    }
+  }catch(e){
+    console.error(e);
+    setSyncStatus('⚠ offline — local only','var(--amber)');
+    renderAll();
+  }
+}
+
+/* dirty tracking + 15s poll, same contract as the main dashboard */
+document.addEventListener('input',e=>{ const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT')&&t.id!=='pw-input') hasUnsavedEdits=true; });
+document.addEventListener('change',e=>{ const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT')&&t.id!=='pw-input') hasUnsavedEdits=true; });
+window.addEventListener('beforeunload',e=>{ if(hasUnsavedEdits){ e.preventDefault(); e.returnValue=''; } });
+
+setInterval(async ()=>{
+  if(hasUnsavedEdits) return;                     // never clobber local edits
+  try{
+    const res=await fetch(SUPA_URL+`/rest/v1/inputs?id=eq.${ROW_ID}&select=data,updated_at`,{headers:SUPA_READ_HEADERS});
+    if(!res.ok) return;
+    const rowsIn=await res.json();
+    if(rowsIn.length && rowsIn[0].data && Object.keys(rowsIn[0].data).length){
+      applyInputs(rowsIn[0].data); setLastSaved(rowsIn[0].updated_at);
+    }
+  }catch(e){}
+}, 15000);
+
+renderAll();
+loadFromSupabase();
+</script>
+</body>
+</html>
