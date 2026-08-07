@@ -442,6 +442,27 @@
     <div id="occ-table" style="display:none"></div>
   </div>
 
+  <!-- Version history -->
+  <div class="card" style="margin-top:24px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#f1f5f9">📸 Version History</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">Save a named copy before making big changes. Restore any version in two taps.</div>
+      </div>
+      <div class="input-group compact">
+        <div class="input-group-title">New Snapshot</div>
+        <div class="input-row">
+          <span class="input-label">Name</span>
+          <input id="snapshot-name" type="text" class="tr-input" placeholder="e.g. before Aug rent" style="width:180px;flex:none">
+        </div>
+        <div class="input-row" style="justify-content:flex-end;margin-top:2px">
+          <button onclick="saveSnapshot()" id="snap-btn" style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:8px 16px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">📸 Save Snapshot</button>
+        </div>
+      </div>
+    </div>
+    <div id="snapshot-list"></div>
+  </div>
+
 </div><!-- /panel-hostel -->
 
 <div id="panel-laundry" class="panel">
@@ -917,6 +938,89 @@ function toggleOccTable(){
   b.textContent = show?'▤ Hide table':'▤ Table';
 }
 
+/* ── VERSION HISTORY ─────────────────────────────────────────────────────── */
+// Snapshots live inside row 2's own JSON under _snapshots, so this page needs
+// no extra table or SQL. The trade-off is that they share the row's fate, so
+// they are capped and the repo keeps file backups too (see backups/).
+const MAX_SNAPSHOTS = 12;
+let snapshots = [];
+let pendingConfirm = null;      // id of the snapshot awaiting a second tap
+
+function snapSummary(s) {
+  const d = s.data || {};
+  const rooms = (d._rooms||[]).length;
+  const paid  = (d._payments||[]).reduce((a,r)=>a+r.filter(c=>c===1).length, 0);
+  const occ   = (d._rooms||[]).filter(r=>r.status==='occupied').length;
+  return `${rooms} rooms · ${occ} occupied · ${paid} month${paid===1?'':'s'} ticked paid`;
+}
+
+function renderSnapshots() {
+  const el = document.getElementById('snapshot-list');
+  if (!el) return;
+  if (!snapshots.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--muted);padding:6px 0">No snapshots yet.</div>`;
+    return;
+  }
+  el.innerHTML = snapshots.map((s,i)=>{
+    const when = new Date(s.at);
+    const confirming = pendingConfirm === s.id;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="min-width:200px;flex:1">
+        <div style="font-size:12px;font-weight:600;color:#f1f5f9">${htmlAttr(s.name)}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${when.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})} ${when.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'})} · ${snapSummary(s)}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button onclick="restoreSnapshot(${s.id})" class="tl-btn" style="${confirming?'border-color:var(--amber);color:var(--amber)':''}">${confirming?'⚠️ Tap again to replace everything':'↩ Restore'}</button>
+        <button onclick="deleteSnapshot(${s.id})" class="tr-del" title="Delete this snapshot">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function saveSnapshot() {
+  const input = document.getElementById('snapshot-name');
+  const now = new Date();
+  const name = (input.value || '').trim() ||
+    `${now.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})} ${now.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'})}`;
+  const payload = collectInputs();
+  delete payload._snapshots;            // never nest history inside history
+  snapshots.unshift({ id: now.getTime(), name, at: now.toISOString(), data: payload });
+  if (snapshots.length > MAX_SNAPSHOTS) snapshots.length = MAX_SNAPSHOTS;
+  input.value = '';
+  renderSnapshots();
+  await saveToSupabase();               // a snapshot nobody saved is no snapshot
+}
+
+async function restoreSnapshot(id) {
+  const s = snapshots.find(x=>x.id===id);
+  if (!s) return;
+  if (pendingConfirm !== id) {          // two taps, no blocking browser dialog
+    pendingConfirm = id;
+    renderSnapshots();
+    setTimeout(()=>{ if (pendingConfirm===id) { pendingConfirm=null; renderSnapshots(); } }, 6000);
+    return;
+  }
+  pendingConfirm = null;
+  const keep = snapshots;               // restoring must not wipe the history
+  applyInputs({ ...s.data, _snapshots: keep });
+  hasUnsavedEdits = true;
+  renderSnapshots();
+  setSyncStatus('restored — press Save to keep it','var(--amber)');
+}
+
+function deleteSnapshot(id) {
+  if (pendingConfirm !== 'del'+id) {
+    pendingConfirm = 'del'+id;
+    setSyncStatus('tap ✕ again to delete that snapshot','var(--amber)');
+    setTimeout(()=>{ if (pendingConfirm==='del'+id) { pendingConfirm=null; setSyncStatus('✓ live'); } }, 6000);
+    return;
+  }
+  pendingConfirm = null;
+  snapshots = snapshots.filter(x=>x.id!==id);
+  renderSnapshots();
+  saveToSupabase();
+}
+
 /* ── TABS ────────────────────────────────────────────────────────────────── */
 function switchTab(id, btn) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -947,6 +1051,7 @@ function collectInputs(){
     _rooms:  JSON.parse(JSON.stringify(rooms)),
     _rent:   JSON.parse(JSON.stringify(rentHist)),
     _payments: JSON.parse(JSON.stringify(payments)),
+    _snapshots: JSON.parse(JSON.stringify(snapshots)),
     _fx: getFX()
   };
 }
@@ -958,8 +1063,10 @@ function applyInputs(d){
   if (Array.isArray(d._payments) && d._payments.length) payments = d._payments.map(r=>r.map(c=>c===2?0:c));
   // A room added since the last save must still have a payments row
   while (payments.length < rooms.length) payments.push(Array(12).fill(0));
+  if (Array.isArray(d._snapshots)) snapshots = d._snapshots;
   const fx=document.getElementById('tr-fx'); if (fx && d._fx) fx.value = d._fx;
   renderAll();
+  renderSnapshots();
 }
 
 function setSyncStatus(msg,color){ const el=document.getElementById('sync-status'); if(el){el.textContent=msg;el.style.color=color||'var(--teal)';} }
@@ -1047,6 +1154,7 @@ setInterval(async ()=>{
 }, 15000);
 
 renderAll();
+renderSnapshots();
 loadFromSupabase();
 </script>
 </body>
