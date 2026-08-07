@@ -138,6 +138,27 @@
   .tl-detail { font-size:12px; color:var(--muted); }
   .tl-btn { background:var(--surface); color:var(--teal); border:1px solid var(--border); border-radius:7px; padding:6px 12px; font-family:'Inter',sans-serif; font-size:11px; font-weight:600; cursor:pointer; transition:border-color .15s; }
   .tl-btn:hover { border-color:var(--teal); }
+  /* OCCUPANCY (Section C) — single-hue marks; identity comes from labels, not
+     extra colours, so no categorical palette is in play. */
+  .occ-scroll { overflow-x:auto; padding-top:6px; }
+  .occ-grid { min-width:640px; }
+  .occ-row { display:grid; grid-template-columns:120px 1fr; align-items:center; gap:10px; margin-bottom:7px; }
+  .occ-name { font-size:11px; color:var(--subtle); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .occ-name small { display:block; color:var(--muted); font-weight:400; font-size:10px; }
+  /* the track IS the vacant state — an empty stretch reads as unlet */
+  .occ-track { position:relative; height:22px; background:var(--surface2); border-radius:4px; }
+  .occ-tick { position:absolute; top:0; bottom:0; width:1px; background:var(--border); }   /* hairline, solid */
+  .occ-bar { position:absolute; top:3px; bottom:3px; background:var(--teal); border-radius:4px; display:flex; align-items:center; padding:0 6px; }
+  .occ-bar span { font-size:9px; font-weight:700; color:#07101f; white-space:nowrap; }     /* ink chosen for the fill */
+  .occ-today { position:absolute; top:-5px; bottom:-5px; width:1px; background:var(--subtle); }
+  .occ-months { display:grid; grid-template-columns:120px 1fr; gap:10px; margin-top:2px; }
+  .occ-months div { display:flex; }
+  .occ-months span { flex:1; font-size:9px; color:var(--muted); text-align:left; font-variant-numeric:tabular-nums; }
+  .occ-barrow { display:grid; grid-template-columns:120px 1fr 96px; align-items:center; gap:10px; margin-bottom:6px; }
+  .occ-mag { height:14px; background:var(--teal); border-radius:0 4px 4px 0; }             /* square at baseline */
+  .occ-val { font-size:11px; color:var(--subtle); font-variant-numeric:tabular-nums; text-align:right; }
+  .occ-key { display:flex; gap:14px; flex-wrap:wrap; font-size:10px; color:var(--muted); margin:10px 0 2px 0; align-items:center; }
+  .occ-key i { display:inline-block; width:14px; height:8px; border-radius:2px; vertical-align:middle; margin-right:5px; }
   .timeline-edit { display:flex; flex-direction:column; gap:12px; }
   /* Fixed label column so every field lines up and the inputs take the rest of
      the card instead of truncating their text. */
@@ -925,6 +946,21 @@
         <div style="font-size:12px;color:var(--muted);margin-bottom:10px;border-top:1px solid var(--border);padding-top:14px">📦 Archived Period</div>
         <div id="archive-content"></div>
       </div>
+    </div>
+
+    <!-- Section C: Occupancy & popularity -->
+    <div class="card mb24" style="margin-top:24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:4px">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#f1f5f9">Section C — Room Occupancy &amp; Popularity</div>
+          <div id="occ-subtitle" style="font-size:11px;color:var(--muted);margin-top:3px"></div>
+        </div>
+        <button id="occ-table-btn" onclick="toggleOccTable()" class="tl-btn">▤ Table</button>
+      </div>
+      <div id="occ-lede" style="font-size:12px;color:var(--subtle);margin:10px 0 4px 0"></div>
+      <div id="occ-timeline"></div>
+      <div id="occ-ranking"></div>
+      <div id="occ-table" style="display:none"></div>
     </div>
 
   </div>
@@ -2696,6 +2732,7 @@ function renderRooms() {
   }).join('');
 
   renderDelinquency(delinquent);
+  renderOccupancy();   // tenancy edits feed Section C
 }
 
 // The expandable "who lived here before" sub-row under a room.
@@ -2780,6 +2817,7 @@ function togglePayment(ri, mi) {
   payments[ri][mi] = NEXT_PAYMENT_STATE[payments[ri][mi]] ?? 1;
   hasUnsavedEdits = true;
   renderPaymentGrid();
+  renderOccupancy();   // "months paid" column in the table twin
 }
 
 // Month index 0 = May 2026 … 11 = Apr 2027
@@ -2914,6 +2952,144 @@ function renderPaymentGrid() {
   renderArchive();
 }
 
+// ── SECTION C: OCCUPANCY & POPULARITY ─────────────────────────────────────────
+// Two questions, two forms: WHEN was each room let (state over time → timeline)
+// and WHICH rooms earn their keep (magnitude → sorted bars). Both are single
+// series, so one hue throughout; tenant identity rides on labels, never colour.
+
+const OCC_START = new Date(2026, 4, 1);    // 1 May 2026 — same window as MONTHS_12
+const OCC_END   = new Date(2027, 3, 30);   // 30 Apr 2027
+const DAY = 86400000;
+
+function occupancyStats() {
+  const now     = new Date();
+  const elapsed = now < OCC_END ? now : OCC_END;               // don't credit the future
+  const windowDays = Math.max(1, (elapsed - OCC_START) / DAY);
+
+  const stats = rooms.map((r, i) => {
+    const spans = (r.tenancies || []).map(t => {
+      const f = parseDMY(t.from);
+      if (!f) return null;
+      const e0 = parseDMY(t.to);
+      const start = f  < OCC_START ? OCC_START : f;
+      const end   = e0 ? (e0 > OCC_END ? OCC_END : e0) : elapsed;   // open tenancy runs to today
+      return end > start ? { start, end, tenant: t.tenant || '', ongoing: !e0 } : null;
+    }).filter(Boolean).sort((a, b) => a.start - b.start);
+
+    const days   = spans.reduce((a, s) => a + (s.end - s.start) / DAY, 0);
+    const guests = [...new Set(spans.map(s => s.tenant).filter(Boolean))];
+    return { i, room: r.room, spans, guests,
+             days: Math.round(days),
+             pct: Math.min(1, days / windowDays),
+             months: (payments[i] || []).filter(c => c === 1).length };
+  });
+  return { stats, windowDays: Math.round(windowDays), elapsed };
+}
+
+const pos = d => ((d - OCC_START) / (OCC_END - OCC_START)) * 100;   // % across the track
+
+function renderOccupancy() {
+  const tl = document.getElementById('occ-timeline');
+  if (!tl) return;
+  migrateTenancies(rooms);
+  const { stats, windowDays, elapsed } = occupancyStats();
+  const anyTenancy = stats.some(s => s.spans.length);
+
+  document.getElementById('occ-subtitle').textContent =
+    `May 2026 – Apr 2027 · occupancy measured over the ${windowDays} days elapsed so far`;
+
+  if (!anyTenancy) {
+    tl.innerHTML = `<div style="font-size:12px;color:var(--muted);padding:14px 0">No tenancies recorded yet — add check-in and check-out dates under a room's <strong>history</strong> in Section A and this fills in.</div>`;
+    document.getElementById('occ-ranking').innerHTML = '';
+    document.getElementById('occ-lede').textContent = '';
+    return;
+  }
+
+  // Lede — answer the question in words, not just in marks.
+  const ranked = [...stats].sort((a, b) => b.days - a.days || b.guests.length - a.guests.length);
+  const top = ranked[0];
+  const idle = stats.filter(s => !s.days).map(s => s.room);
+  document.getElementById('occ-lede').innerHTML =
+    `Most let: <strong style="color:#f1f5f9">${htmlAttr(top.room)}</strong> — ${Math.round(top.pct*100)}% of the period, `
+    + `${top.days} days, ${top.guests.length} guest${top.guests.length===1?'':'s'}`
+    + (idle.length ? ` · never let: <span style="color:var(--muted)">${idle.map(htmlAttr).join(', ')}</span>` : '');
+
+  // ── Timeline: one row per room, a bar per tenancy, empty track = vacant
+  const ticks = Array.from({length: 13}, (_, k) => {
+    const d = new Date(2026, 4 + k, 1);
+    return `<div class="occ-tick" style="left:${pos(d)}%"></div>`;
+  }).join('');
+  const todayMark = elapsed > OCC_START && elapsed < OCC_END
+    ? `<div class="occ-today" style="left:${pos(elapsed)}%" title="Today"></div>` : '';
+
+  tl.innerHTML = `
+    <div class="occ-key">
+      <span><i style="background:var(--teal)"></i>Let to a guest</span>
+      <span><i style="background:var(--surface2)"></i>Vacant</span>
+      <span><i style="background:var(--subtle);width:2px;height:12px;border-radius:0"></i>Today</span>
+    </div>
+    <div class="occ-scroll"><div class="occ-grid">
+      ${stats.map(s => {
+        const bars = s.spans.map(sp => {
+          const left = pos(sp.start), width = pos(sp.end) - pos(sp.start);
+          const first = (sp.tenant || '').split(/[\s&,]+/)[0];
+          // only label inside the mark when it comfortably fits — never clip
+          const label = width >= 20 && first ? `<span>${htmlAttr(first)}${sp.ongoing ? ' ▸' : ''}</span>` : '';
+          const days  = Math.round((sp.end - sp.start) / DAY);
+          return `<div class="occ-bar" style="left:${left}%;width:${width}%" title="${htmlAttr(
+            `${s.room} · ${sp.tenant || 'unnamed guest'} · ${days} days${sp.ongoing ? ' · still living here' : ''}`)}">${label}</div>`;
+        }).join('');
+        return `<div class="occ-row">
+          <div class="occ-name">${htmlAttr(s.room)}<small>${s.guests.length ? htmlAttr(s.guests.join(' → ')) : 'never let'}</small></div>
+          <div class="occ-track">${ticks}${bars}${todayMark}</div>
+        </div>`;
+      }).join('')}
+      <div class="occ-months"><div></div><div>${
+        MONTHS_12.map(m => `<span>${m.split(' ')[0]}</span>`).join('')}</div></div>
+    </div></div>`;
+
+  // ── Ranking: magnitude on nominal categories → one hue for every bar
+  document.getElementById('occ-ranking').innerHTML = `
+    <div style="font-size:12px;font-weight:600;color:#f1f5f9;margin:20px 0 4px 0">Share of the period let</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Most-let room first. Longer bar = more of the last ${windowDays} days with a paying guest in it.</div>
+    <div class="occ-scroll"><div style="min-width:520px">
+    ${ranked.map(s => `<div class="occ-barrow">
+        <div class="occ-name">${htmlAttr(s.room)}</div>
+        <div><div class="occ-mag" style="width:${Math.max(s.pct*100, s.days?1:0)}%" title="${htmlAttr(`${s.room} · ${s.days} of ${windowDays} days`)}"></div></div>
+        <div class="occ-val">${Math.round(s.pct*100)}% · ${s.days}d</div>
+      </div>`).join('')}
+    </div></div>`;
+
+  renderOccTable(stats, windowDays);
+}
+
+// Table twin — every value here is reachable without hovering anything.
+function renderOccTable(stats, windowDays) {
+  const el = document.getElementById('occ-table');
+  if (!el) return;
+  el.innerHTML = `<div style="overflow-x:auto;margin-top:16px"><table style="font-size:12px;min-width:560px">
+    <thead><tr>
+      <th style="text-align:left">Room</th><th style="text-align:left">Guests</th>
+      <th class="r">Days let</th><th class="r">Occupancy</th><th class="r">Months paid</th>
+    </tr></thead><tbody>
+    ${[...stats].sort((a,b)=>b.days-a.days).map(s => `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:6px 4px;font-weight:600;color:#f1f5f9">${htmlAttr(s.room)}</td>
+      <td style="padding:6px 4px;color:var(--subtle)">${s.guests.length ? htmlAttr(s.guests.join(', ')) : '—'}</td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--subtle)">${s.days} / ${windowDays}</td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${Math.round(s.pct*100)}%</td>
+      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--subtle)">${s.months}</td>
+    </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function toggleOccTable() {
+  const el  = document.getElementById('occ-table');
+  const btn = document.getElementById('occ-table-btn');
+  const show = el.style.display === 'none';
+  el.style.display = show ? 'block' : 'none';
+  btn.textContent  = show ? '▤ Hide table' : '▤ Table';
+}
+
 function archivePeriod() {
   if (!confirm('Archive May 2026 – Apr 2027 and start a fresh tracker?')) return;
   const totalPaid = payments.flat().filter(s=>s===1).length * rentPerRoom();
@@ -2944,7 +3120,7 @@ function renderArchive() {
 function renderTransfers() {
   const carryOver = renderP1();
   renderP2(carryOver);
-  renderRooms();
+  renderRooms();          // ends with renderOccupancy()
   renderPaymentGrid();
 }
 // Compatibility alias: the live-FX module calls renderTransferDerived() to
