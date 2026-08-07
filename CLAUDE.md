@@ -6,6 +6,20 @@ Mac-mini quant trading fund (`gekko` / `gekko-research`). Do NOT mix memory,
 context, credentials, or deployments between them.** Sibling repo:
 `jeremychoyl/batampropbot` (the WhatsApp consultant bot for the same business).
 
+## Two pages in this repo
+- **`index.html`** → `/` — the Ace Hotel & Laundry investor model (below).
+- **`edi.html`** → `/edi` — **Edi Haron**, a 19-room hostel rent tracker for the
+  partner who collects rent. Same look and the same Part 1/2/3 shape as the
+  Cash Transfers tab, but rent is held **per room per month** (`_rent`), because
+  Edi's rents differ per room and change over time. Seeded from his 2026 book
+  (Januari–Agustus); tenancy spans were derived from the month-by-month tenant
+  names and verified to reproduce all 152 room-months exactly.
+  Its cloud state is **Supabase row `id=2`**, saved via `save_edi_model` — see
+  `SETUP-EDI.sql`, which must be run once by the project owner (anon INSERT is
+  blocked by RLS). `vercel.json` sets `cleanUrls` so `/edi` works without `.html`.
+  Month index 0 = Jan 2026 there, vs May 2026 in `index.html` — check which page
+  you're in before touching month maths.
+
 ## What this is
 A single-page financial model / investor dashboard for the owner's **Ace Hotel
 & Laundry Shophouse** business in Batam. It's a *shared live model* — every
