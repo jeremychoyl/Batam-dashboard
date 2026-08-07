@@ -2869,18 +2869,20 @@ function renderPaymentGrid() {
       <th style="padding:8px 4px;text-align:left;min-width:70px">Tenant</th>
       ${MONTHS_12.map(m=>`<th style="padding:8px 4px;text-align:center;min-width:52px;font-size:11px">${m}</th>`).join('')}
       <th style="padding:8px 6px;text-align:right;min-width:80px">Total Paid</th>
-      <th style="padding:8px 6px;text-align:right;min-width:90px">Outstanding</th>
+      <th style="padding:8px 6px;text-align:right;min-width:90px" title="Past its due date and unpaid — what is actually owed">Arrears</th>
+      <th style="padding:8px 6px;text-align:right;min-width:90px" title="Rent that has not fallen due yet">Not Yet Due</th>
     </tr></thead><tbody>`;
 
   let monthTotals = Array(12).fill(0);
   let paidCells   = 0;
+  let grandArr = 0, grandLater = 0;
 
   rooms.forEach((r, ri) => {
     const isVacant = r.status === 'vacant';
     const isNonRev = r.category === 'Non-Revenue';
     const whoAll   = tenantsAcrossYear(r);      // e.g. ['Ara','Olivia & Fitri']
     const multi    = whoAll.length > 1;         // label the cells when it changed hands
-    let paid = 0, outstanding = 0;
+    let paid = 0, arrears = 0, notYetDue = 0;
 
     html += `<tr style="border-bottom:1px solid var(--border)">
       <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${r.room}</td>
@@ -2912,8 +2914,12 @@ function renderPaymentGrid() {
       const label = multi && who
         ? `<div style="font-size:9px;color:var(--muted);margin-top:2px;max-width:50px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${htmlAttr(who.split(/[\s&,]+/)[0])}</div>`
         : '';
+      // Unpaid rent is only ARREARS once its due date has passed; the rest is
+      // simply not owed yet, and lumping the two together overstates the debt.
       if (state === 1) { paid++; monthTotals[mi] += RENT; }
-      else if (!exempt && state !== 3) outstanding++;  // paid + outstanding + N/A = 12
+      else if (!exempt && state !== 3) {
+        if (isMonthOverdue(r, mi, today)) arrears++; else notYetDue++;
+      }
       html += `<td style="padding:4px;text-align:center">
         <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:38px;opacity:${exempt&&shown!==1?'.5':'1'};transition:all .15s" title="${htmlAttr(hint)}">${icon}</button>${label}
       </td>`;
@@ -2921,9 +2927,12 @@ function renderPaymentGrid() {
 
     paidCells += paid;
     const paidAmt   = paid * RENT;
-    const outAmt    = outstanding * RENT;
+    const arrAmt    = arrears * RENT;
+    const laterAmt  = notYetDue * RENT;
+    grandArr += arrAmt; grandLater += laterAmt;
     html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${paid?fmtRP(paidAmt):'—'}</td>`;
-    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${outAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${isVacant||isNonRev?'—':outAmt>0?fmtRP(outAmt):'✅ Clear'}</td>`;
+    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${arrAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${isVacant||isNonRev?'—':arrAmt>0?fmtRP(arrAmt):'✅ Clear'}</td>`;
+    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">${laterAmt>0?fmtRP(laterAmt):'—'}</td>`;
     html += `</tr>`;
   });
 
@@ -2932,7 +2941,8 @@ function renderPaymentGrid() {
     <td style="padding:8px 6px;font-weight:700;color:#f1f5f9;font-size:12px" colspan="2">Monthly Total</td>
     ${monthTotals.map(t=>`<td style="padding:8px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:${t>0?'var(--teal)':'var(--muted)'};font-weight:700">${t>0?fmtRP(t):'—'}</td>`).join('')}
     <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${fmtRP(monthTotals.reduce((a,b)=>a+b,0))}</td>
-    <td></td>
+    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);font-weight:700">${fmtRP(grandArr)}</td>
+    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);font-weight:700">${fmtRP(grandLater)}</td>
   </tr>`;
 
   html += `</tbody></table></div>`;

@@ -383,7 +383,7 @@
     <div class="card"><div class="kpi-label">Occupied Rooms</div><div class="kpi-value" id="k-occ" style="font-size:18px">—</div><div class="kpi-sub" id="k-occ-sub">—</div></div>
     <div class="card"><div class="kpi-label">Rent Due / Month</div><div class="kpi-value" id="k-due" style="font-size:18px">—</div><div class="kpi-sub" id="k-due-sgd">—</div></div>
     <div class="card teal-border"><div class="kpi-label">Collected (Year)</div><div class="kpi-value teal" id="k-paid" style="font-size:18px">—</div><div class="kpi-sub" id="k-paid-sub">—</div></div>
-    <div class="card"><div class="kpi-label">Outstanding</div><div class="kpi-value" id="k-out" style="font-size:18px;color:var(--red)">—</div><div class="kpi-sub">Unpaid to date</div></div>
+    <div class="card"><div class="kpi-label">Arrears</div><div class="kpi-value" id="k-out" style="font-size:18px;color:var(--red)">—</div><div class="kpi-sub" id="k-out-sub">Past due and unpaid</div></div>
     <div class="card"><div class="kpi-label">Deposits Held</div><div class="kpi-value" id="k-dep" style="font-size:18px">—</div><div class="kpi-sub">Refundable</div></div>
   </div>
 
@@ -744,15 +744,16 @@ function renderPaymentGrid(collectedP2) {
       <th style="padding:8px 4px;text-align:left;min-width:90px">Tenant</th>
       ${EDI_MONTHS.map(m=>`<th style="padding:8px 4px;text-align:center;min-width:50px;font-size:11px">${m}</th>`).join('')}
       <th style="padding:8px 6px;text-align:right;min-width:90px">Total Paid</th>
-      <th style="padding:8px 6px;text-align:right;min-width:90px">Outstanding</th>
+      <th style="padding:8px 6px;text-align:right;min-width:90px" title="Past its due date and unpaid — what is actually owed">Arrears</th>
+      <th style="padding:8px 6px;text-align:right;min-width:90px" title="Rent that has not fallen due yet">Not Yet Due</th>
     </tr></thead><tbody>`;
 
   const monthTotals=Array(12).fill(0);
-  let paidCells=0, grandPaid=0, grandOut=0;
+  let paidCells=0, grandPaid=0, grandArr=0, grandLater=0;
 
   rooms.forEach((r,ri)=>{
     const whoAll=tenantsAcrossYear(r), multi=whoAll.length>1;
-    let paidAmt=0, outAmt=0;
+    let paidAmt=0, arrAmt=0, laterAmt=0;
     html += `<tr style="border-bottom:1px solid var(--border)">
       <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${htmlAttr(r.room)}</td>
       <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${
@@ -764,8 +765,12 @@ function renderPaymentGrid(collectedP2) {
       const shown = state===1 ? 1 : (noTenant || state===3) ? 3 : (isMonthOverdue(r,mi,today) ? 2 : 0);
       const bg = shown===1?'rgba(0,212,184,0.1)':shown===2?'rgba(239,68,68,0.12)':'';
       const border = shown===2?'1px solid var(--red)':'1px solid transparent';
+      // Unpaid rent is only ARREARS once its due date has passed; the rest is
+      // simply not owed yet, and lumping the two together overstates the debt.
       if (state===1){ paidCells++; paidAmt+=rent; monthTotals[mi]+=rent; }
-      else if (!noTenant && state!==3) outAmt+=rent;
+      else if (!noTenant && state!==3) {
+        if (isMonthOverdue(r, mi, today)) arrAmt += rent; else laterAmt += rent;
+      }
       const label = multi && who
         ? `<div style="font-size:9px;color:var(--muted);margin-top:2px;max-width:48px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${htmlAttr(who.split(/[\s&,]+/)[0])}</div>` : '';
       const words = shown===1?'paid':shown===2?'overdue':shown===3?(noTenant?'no tenant':'no rent due'):'unpaid';
@@ -774,16 +779,18 @@ function renderPaymentGrid(collectedP2) {
         <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:36px;opacity:${noTenant&&shown!==1?'.5':'1'};transition:all .15s" title="${htmlAttr(hint)}">${PAYMENT_STATES[shown]}</button>${label}
       </td>`;
     });
-    grandPaid+=paidAmt; grandOut+=outAmt;
+    grandPaid+=paidAmt; grandArr+=arrAmt; grandLater+=laterAmt;
     html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${paidAmt?fmtRP(paidAmt):'—'}</td>
-      <td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${outAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${outAmt>0?fmtRP(outAmt):'✅ Clear'}</td></tr>`;
+      <td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${arrAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${arrAmt>0?fmtRP(arrAmt):'✅ Clear'}</td>
+      <td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">${laterAmt>0?fmtRP(laterAmt):'—'}</td></tr>`;
   });
 
   html += `<tr style="border-top:2px solid var(--teal);background:rgba(0,212,184,0.05)">
     <td style="padding:8px 6px;font-weight:700;color:#f1f5f9;font-size:12px" colspan="2">Monthly Total</td>
     ${monthTotals.map(t=>`<td style="padding:8px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:${t>0?'var(--teal)':'var(--muted)'};font-weight:700">${t>0?fmtRP(t):'—'}</td>`).join('')}
     <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${fmtRP(grandPaid)}</td>
-    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);font-weight:700">${fmtRP(grandOut)}</td>
+    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);font-weight:700">${fmtRP(grandArr)}</td>
+    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);font-weight:700">${fmtRP(grandLater)}</td>
   </tr></tbody></table></div>`;
 
   const diff = grandPaid - (collectedP2||0);
@@ -808,7 +815,8 @@ function renderPaymentGrid(collectedP2) {
   document.getElementById('k-due-sgd').textContent = fmtSGD(dueNow);
   document.getElementById('k-paid').textContent = fmtRP(grandPaid);
   document.getElementById('k-paid-sub').textContent = `${paidCells} room-months`;
-  document.getElementById('k-out').textContent = fmtRP(grandOut);
+  document.getElementById('k-out').textContent = fmtRP(grandArr);
+  document.getElementById('k-out-sub').textContent = grandLater ? `+ ${fmtRP(grandLater)} not yet due` : 'Past due and unpaid';
   document.getElementById('k-dep').textContent = fmtRP(deposits);
   document.getElementById('p3-sub').textContent = `Batam hostel · ${rooms.length} rooms · ${occ} occupied · rent due this month ${fmtRP(dueNow)}`;
 }
