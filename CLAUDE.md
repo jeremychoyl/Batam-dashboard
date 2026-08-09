@@ -3,8 +3,32 @@
 Context for Claude Code when working in this repo. **This is part of the Batam
 property business (Ace Hotel + Laundry Shophouse) — fully separate from the
 Mac-mini quant trading fund (`gekko` / `gekko-research`). Do NOT mix memory,
-context, credentials, or deployments between them.** Sibling repo:
-`jeremychoyl/batampropbot` (the WhatsApp consultant bot for the same business).
+context, credentials, or deployments between them.**
+
+## Where this repo sits — four repos in `~/batam`
+
+This is one of four independent repos, each with its own remote:
+
+| Path | GitHub repo | What it is |
+|------|-------------|-----------|
+| `~/batam` (root) | `jeremychoyl/batam-workspace` **private** | router `CLAUDE.md` + Claude settings |
+| `~/batam/dashboard` | `jeremychoyl/Batam-dashboard` | **this repo** — investor model + rent tracker |
+| `~/batam/propbot` | `jeremychoyl/batampropbot` **private** | WhatsApp consultant bot, on Railway |
+| `~/batam/memory` | `jeremychoyl/claude-memory-batam` **private** | Claude's saved facts, symlinked from `~/.claude/projects/…/memory` |
+
+The root repo **gitignores** the other three, so a clean `git status` there says
+nothing about this one — and committing here says nothing about the others.
+Before ending a session check all four, not just the one you touched:
+
+```bash
+for r in . dashboard propbot memory; do
+  printf '\n=== %s ===\n' "$r"; git -C "$r" status -sb
+done
+```
+
+`~/batam/.claude/check-repos.sh` runs this on a `Stop` hook and warns only when
+something is unbacked, but it skips `.claude/settings.local.json` and never
+fetches — run the loop by hand for the full picture. See the root `CLAUDE.md`.
 
 ## Two pages in this repo
 - **`index.html`** → `/` — the Ace Hotel & Laundry investor model (below).
