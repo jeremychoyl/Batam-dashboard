@@ -81,9 +81,47 @@ Live: **https://batam-dashboard.vercel.app/**
 
 ## Tabs (each an `#panel-*` + its own `<script>` block)
 Inputs · Overview · Projections · Occupancy · Benchmarks · Risks · Timeline ·
-Renovation · Ratings · Laundry (Accounts) · Cash Transfers.
+Renovation · Ratings · Laundry (Accounts) · Cash Transfers · Market.
 Each feature-script patches `collectInputs`/`applyInputs`/`switchTab` to persist
 and render its own slice — keep that chaining intact when adding features.
+
+### Market tab (added 2026-08-14)
+
+Charts scraped **asking prices by area** from BatamPropBot's archive — the only
+Batam price series that exists, because we create it. Two dot strips (rooms in
+IDR/month, shophouses in IDR-billions), a written summary per chart, and a table
+view.
+
+**Data comes from `market-data.json`, committed in this repo.** Not a live fetch:
+this page is static on Vercel and the propbot API sends no CORS headers, so the
+browser cannot read the archive directly — and a committed file keeps the tab
+working when Railway is asleep. Regenerate with `propbot/ops/export-archive.py`,
+which writes here *and* to `propbot/data/market-archive.json`, then commit both
+repos. **The tab does not update itself**; new scans reach it only via that step.
+
+Four things that are deliberate, not stylistic:
+
+- **Dots, not bars.** With 1–4 listings an area, a bar implies a robustness the
+  data lacks and hides that "Batu Ampar" is one seller's ask. Coincident prices
+  are dodged vertically — drawn flat, four listings at two prices stacked into
+  two dots above a label reading `n=4`.
+- **Two charts, never one.** Rent is IDR/month and shophouses are outright sale
+  prices; a shared axis is meaningless and a dual axis worse.
+- **Colour is validated, not chosen.** Focus area vs other, using the dataviz
+  skill's categorical slots 1–2 (`#3987e5`/`#d95926`) checked against THIS
+  page's surface `#0e1929`. The dashboard's own amber `#f59e0b` was the
+  intuitive pick and **fails** the dark lightness band at 0.769 — run
+  `validate_palette.js` before changing these.
+- **Focus areas with no listings still get a row**, labelled `n=0` and "no
+  listings found — not a price of zero". Omitting them silently is the same
+  failure propbot's blocked-vs-empty contract exists to prevent.
+
+⚠️ The summaries state percentages **in the direction the sentence reads** —
+"X is N% below Y" is `1 - X/Y`, not `Y/X - 1`. These benchmark the market
+against the owner's own room rates, so the two are not interchangeable. And
+exact figures are used wherever a number is read; the compact `1.8 m` form is
+for axis ticks only, because `(2.05).toFixed(1)` floats down to `"2.0"` and
+would print a 2,050,000 median as "IDR 2 m".
 
 ### Cash Transfers tab (rebuilt 2026-08-02)
 Three sections: **Part 1 — Capital Expenditure** (renovation spend ledger,
