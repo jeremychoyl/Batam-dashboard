@@ -3632,7 +3632,10 @@ function mktDotStrip(cat) {
   // Column caption sits ABOVE the rows, not on the axis line — on the axis it
   // collided with the last tick and rendered as "2.4 mmedian".
   let rows = `<text x="${W - RIGHT + 10}" y="${TOP - 10}" fill="var(--muted)"
-                font-size="10">median</text>`;
+                font-size="10">median</text>`;   // exact, not the axis's short form:
+  // "2 m" for a 2,050,000 median understates it by 2.4%, and this column is
+  // read as a figure. The unit is already in the section heading, so the
+  // "IDR " prefix comes off to make room rather than the precision.
 
   areas.forEach(([area, s], i) => {
     const cy = TOP + i * ROW + ROW / 2;
@@ -3677,7 +3680,7 @@ function mktDotStrip(cat) {
     rows += `<line x1="${x(s.median_idr)}" y1="${cy - 13}" x2="${x(s.median_idr)}" y2="${cy + 13}"
                stroke="var(--text)" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
              <text x="${W - RIGHT + 10}" y="${cy + 4}" fill="var(--subtle)"
-               font-size="11.5">${mktIDRShort(s.median_idr)}</text>`;
+               font-size="11.5">${mktIDR(s.median_idr).replace('IDR ', '')}</text>`;
   });
 
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}"
