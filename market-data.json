@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-08-14T17:23:04+08:00",
+  "source": "BatamPropBot market archive — asking prices scraped from Rumah123 (direct) and Facebook Marketplace.",
+  "caveat": "ASKING prices, not transacted. No public Batam transaction database exists, so this series is built forward from our own scans and cannot be backfilled.",
+  "coverage": {
+    "room": {
+      "scan_days_with_matches": 3,
+      "first_scan": "2026-08-11",
+      "last_scan": "2026-08-14",
+      "archive_scan_days": 3
+    },
+    "shophouse": {
+      "scan_days_with_matches": 2,
+      "first_scan": "2026-08-11",
+      "last_scan": "2026-08-12",
+      "archive_scan_days": 3
+    }
+  },
+  "categories": {
+    "room": {
+      "unit": "IDR / month",
+      "n": 5,
+      "coverage": {
+        "scan_days_with_matches": 3,
+        "first_scan": "2026-08-11",
+        "last_scan": "2026-08-14",
+        "archive_scan_days": 3
+      },
+      "by_platform": {
+        "Rumah123": 5
+      },
+      "by_area": {
+        "Batam Centre": {
+          "n": 4,
+          "priced_n": 4,
+          "min_idr": 1800000,
+          "max_idr": 2300000,
+          "median_idr": 2050000,
+          "prices_idr": [
+            1800000,
+            1800000,
+            2300000,
+            2300000
+          ]
+        },
+        "Tiban": {
+          "n": 1,
+          "priced_n": 1,
+          "min_idr": 1800000,
+          "max_idr": 1800000,
+          "median_idr": 1800000,
+          "prices_idr": [
+            1800000
+          ]
+        }
+      },
+      "listings": [
+        {
+          "url": "https://www.rumah123.com/properti/batam-tiban/kos-brandddd-new-spektakuler-di-tiban-gajah-mada-ksr236573/",
+          "title": "Kos Brandddd New Spektakuler di Tiban Gajah Mada",
+          "category": "room",
+          "location": "Tiban, Batam",
+          "platform": "Rumah123",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-14"
+        },
+        {
+          "url": "https://www.rumah123.com/properti/batam-batam-centre/di-sewakan-kamar-kost-baru-perumahan-citra-batam-batam-centre-ksr104326/",
+          "title": "DI SEWAKAN KAMAR KOST BARU PERUMAHAN CITRA BATAM BATAM CENTRE",
+          "category": "room",
+          "location": "Batam Centre, Batam",
+          "platform": "Rumah123",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-14"
+        },
+        {
+          "url": "https://www.rumah123.com/properti/batam-batam-centre/kost-campur-botania-premium-ksr301569/",
+          "title": "Kost Campur Botania Premium",
+          "category": "room",
+          "location": "Batam Centre, Batam",
+          "platform": "Rumah123",
+          "price_idr": 2300000,
+          "price_sgd": 165.04,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-14"
+        },
+        {
+          "url": "https://www.rumah123.com/properti/batam-batam-centre/kost-putra-putri-premium-sungai-panas-ksr301547/",
+          "title": "Kost Putra Putri Premium Sungai Panas",
+          "category": "room",
+          "location": "Batam Centre, Batam",
+          "platform": "Rumah123",
+          "price_idr": 2300000,
+          "price_sgd": 165.04,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-14"
+        },
+        {
+          "url": "https://www.rumah123.com/properti/batam-batam-centre/di-sewakan-kamar-kost-baru-perumahan-green-land-batam-batam-centre-ksr145862/",
+          "title": "DI SEWAKAN KAMAR KOST BARU PERUMAHAN GREEN LAND BATAM BATAM CENTRE",
+          "category": "room",
+          "location": "Batam Centre, Batam",
+          "platform": "Rumah123",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-14"
+        }
+      ]
+    },
+    "shophouse": {
+      "unit": "IDR (asking, sale)",
+      "n": 5,
+      "coverage": {
+        "scan_days_with_matches": 2,
+        "first_scan": "2026-08-11",
+        "last_scan": "2026-08-12",
+        "archive_scan_days": 3
+      },
+      "by_platform": {
+        "Rumah123": 5
+      },
+      "by_area": {
+        "Lubuk Baja": {
+          "n": 2,
+          "priced_n": 2,
+          "min_idr": 4000000000,
+          "max_idr": 4500000000,
+          "median_idr": 4250000000,
+          "prices_idr": [
+            4000000000,
+            4500000000
+          ]
+        },
+        "Nagoya": {
+          "n": 2,
+          "priced_n": 2,
+          "min_idr": 2200000000,
+          "max_idr": 2800000000,
+          "median_idr": 2500000000,
+          "prices_idr": [
+            2200000000,
+            2800000000
+          ]
+        },
+        "Batu Ampar": {
+          "n": 1,
+          "priced_n": 1,
+          "min_idr": 7000000000,
+          "max_idr": 7000000000,
+          "median_idr": 7000000000,
+          "prices_idr": [
+            7000000000
+          ]
+        }
+      },
+      "listings": [
+        {
+          "url": "https://www.rumah123.com/properti/batam-nagoya/dijual-ruko-di-polaris-sakti-nagoya-shs9990628/",
+          "title": "Dijual Ruko di Polaris Sakti, Nagoya",
+          "category": "shophouse",
+          "location": "Nagoya, Batam",
+          "platform": "Rumah123",
+          "price_idr": 2800000000,
+          "price_sgd": 200918.48,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-12"
+        },
+        {
+          "url": "https://www.rumah123.com/properti/batam-lubuk-baja/dijual-3-unit-ruko-3lt-lokasi-strategis-ring-1-jl-sentosa-tanah-longsor-jodoh-batam-shs9936773/",
+          "title": "Dijual 3 Unit Ruko 3Lt Lokasi Strategis Ring 1 Jl Sentosa Tanah Longsor Jodoh Batam",
+          "category": "shophouse",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Rumah123",
+          "price_idr": 4500000000,
+          "price_sgd": 322904.71,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-12"
+        },
+        {
+          "url": "https://www.rumah123.com/properti/batam-batu-ampar/dijual-ruko-pujasera-di-komplek-dirga-surya-indah-park-kampung-seraya-shs4670539/",
+          "title": "Dijual Ruko + Pujasera di Komplek Dirga Surya Indah Park Kampung Seraya",
+          "category": "shophouse",
+          "location": "Batu Ampar, Batam",
+          "platform": "Rumah123",
+          "price_idr": 7000000000,
+          "price_sgd": 502296.21,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-12"
+        },
+        {
+          "url": "https://www.rumah123.com/properti/batam-nagoya/dijual-ruko-komplek-bumi-indah-di-nagoya-shs9526562/",
+          "title": "Dijual Ruko Komplek Bumi Indah di Nagoya",
+          "category": "shophouse",
+          "location": "Nagoya, Batam",
+          "platform": "Rumah123",
+          "price_idr": 2200000000,
+          "price_sgd": 157864.52,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-12"
+        },
+        {
+          "url": "https://www.rumah123.com/properti/batam-lubuk-baja/ruko-hadap-jalan-besar-baloi-kusuma-dekat-bcs-penuin-lubuk-baja-shs10109605/",
+          "title": "Ruko Hadap Jalan Besar Baloi Kusuma Dekat Bcs Penuin Lubuk Baja",
+          "category": "shophouse",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Rumah123",
+          "price_idr": 4000000000,
+          "price_sgd": 287026.41,
+          "first_seen": "2026-08-11",
+          "last_seen": "2026-08-12"
+        }
+      ]
+    }
+  }
+}
