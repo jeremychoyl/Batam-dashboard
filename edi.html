@@ -541,13 +541,20 @@ const receiptsForRoom = roomName => {
 // receiptsReady=false rather than thrown away, so the grid can say "not set up
 // yet" instead of quietly showing every month as having no proof.
 async function loadReceipts() {
+  // The list endpoint CANNOT tell us whether the bucket exists: Supabase answers
+  // 200 [] for a bucket that was never created, exactly as it does for a real
+  // empty one. Verified against a nonsense bucket name. So readiness is probed
+  // separately, or a missing bucket would look like "no slips uploaded yet" and
+  // only reveal itself when Edi had already picked a photo.
+  receiptsReady = await probeReceiptBucket();
+  if (receiptsReady !== true) { receipts = {}; return; }
   try {
     const res = await fetch(`${SUPA_URL}/storage/v1/object/list/${RECEIPT_BUCKET}`, {
       method: 'POST',
       headers: { ...SUPA_READ_HEADERS, 'Content-Type': 'application/json' },
       body: JSON.stringify({ prefix: '', limit: 1000, sortBy: { column: 'name', order: 'asc' } })
     });
-    if (!res.ok) { receiptsReady = false; return; }
+    if (!res.ok) { receiptsReady = 'noread'; return; }
     const files = await res.json();
     const map = {};
     (Array.isArray(files) ? files : []).forEach(f => {
@@ -557,8 +564,31 @@ async function loadReceipts() {
       (map[k] = map[k] || []).push(f.name);
     });
     receipts = map;
-    receiptsReady = true;
-  } catch(e) { receiptsReady = false; }
+  } catch(e) { receiptsReady = 'noread'; }
+}
+
+// Asks for an object that will never exist. A missing BUCKET answers
+// NoSuchBucket; a live bucket answers something else entirely (object not found,
+// or a permissions error if the select policy is absent). Anything that is not
+// NoSuchBucket therefore means the bucket is there. A network failure returns
+// null — "I could not tell", which must not be shown as "not set up".
+async function probeReceiptBucket() {
+  try {
+    const res = await fetch(`${SUPA_URL}/storage/v1/object/${RECEIPT_BUCKET}/__probe__.jpg`, { headers: SUPA_READ_HEADERS });
+    if (res.ok) return true;
+    const body = await res.text().catch(() => '');
+    return /nosuchbucket|bucket not found/i.test(body) ? false : true;
+  } catch(e) { return null; }
+}
+
+// Three distinct states worth telling apart, because "no photos" and "photos
+// impossible" look identical on screen otherwise.
+function receiptSetupNote() {
+  if (receiptsReady === false)
+    return 'Proof-of-payment photos are not switched on yet — run <strong style="color:var(--amber)">SETUP-RECEIPTS.sql</strong> in Supabase once. The 📎 buttons work the moment it is done.';
+  if (receiptsReady === 'noread')
+    return 'The <strong style="color:var(--amber)">receipts</strong> bucket exists but this page cannot read it, so photos already uploaded cannot be shown — the anon <strong style="color:var(--amber)">select</strong> policy from SETUP-RECEIPTS.sql is missing.';
+  return '';
 }
 
 // Downscale in the browser: a 4 MB phone photo becomes ~150 KB, which keeps the
@@ -595,8 +625,11 @@ async function uploadReceipt(roomName, mi, file) {
   });
   if (!res.ok) {
     const body = await res.text().catch(()=> '');
-    throw new Error(/bucket not found/i.test(body)
-      ? 'photo storage is not set up yet — the owner needs to run SETUP-RECEIPTS.sql'
+    if (/nosuchbucket|bucket not found/i.test(body)) { receiptsReady = false; }
+    throw new Error(
+      /nosuchbucket|bucket not found/i.test(body) ? 'photo storage is not set up yet — the owner needs to run SETUP-RECEIPTS.sql once'
+      : (res.status === 401 || res.status === 403 || /row-level security|violates/i.test(body))
+        ? 'storage refused the upload — the anon insert policy from SETUP-RECEIPTS.sql is missing'
       : `upload failed (${res.status}) ${body.slice(0,120)}`);
   }
   const k = receiptKey(roomSlug(roomName), mi);
@@ -943,11 +976,10 @@ function renderPaymentGrid(collectedP2) {
 
   // Say it plainly when the photo bucket is missing. Silence here would read as
   // "no slips have been uploaded", which is a different thing entirely.
-  if (receiptsReady === false) {
+  const rcNote = receiptSetupNote();
+  if (rcNote) {
     html += `<div style="margin-top:8px;padding:9px 14px;border-radius:8px;font-size:11px;line-height:1.7;
-        border:1px solid var(--amber);background:rgba(245,158,11,0.06);color:var(--subtle)">
-      📎 Proof-of-payment photos are not switched on yet — run <strong style="color:var(--amber)">SETUP-RECEIPTS.sql</strong> in Supabase once. The 📎 buttons work the moment it is done.
-    </div>`;
+        border:1px solid var(--amber);background:rgba(245,158,11,0.06);color:var(--subtle)">📎 ${rcNote}</div>`;
   }
   wrap.innerHTML = html;
 
@@ -1211,13 +1243,17 @@ function renderReceiptBody(ri) {
 
   if (receiptsReady === false) {
     body.innerHTML = `<div style="border:1px solid var(--amber);background:rgba(245,158,11,0.08);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--subtle);line-height:1.7">
-      ⚠️ Photo storage is not set up yet, so there is nowhere to put a slip.
-      The owner needs to run <strong style="color:var(--amber)">SETUP-RECEIPTS.sql</strong> in Supabase once — after that this panel works with no further steps.</div>`;
+      ⚠️ ${receiptSetupNote()}</div>`;
     return;
   }
 
   const today = new Date();
-  body.innerHTML = EDI_MONTHS.map((label, mi) => {
+  // 'noread' still allows uploading, so the months are listed — with the reason
+  // the thumbnails are missing stated above them rather than left as a mystery.
+  const headNote = receiptsReady === 'noread'
+    ? `<div style="border:1px solid var(--amber);background:rgba(245,158,11,0.08);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--subtle);line-height:1.6;margin-bottom:10px">⚠️ ${receiptSetupNote()}</div>`
+    : '';
+  body.innerHTML = headNote + EDI_MONTHS.map((label, mi) => {
     const files = receiptsFor(r.room, mi);
     const who   = tenantForMonth(r, mi);
     const paid  = payments[ri] && payments[ri][mi] === 1;

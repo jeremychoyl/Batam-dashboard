@@ -72,6 +72,13 @@ fetches — run the loop by hand for the full picture. See the root `CLAUDE.md`.
   the right one, never wiped by whoever holds the link. Setup is
   `SETUP-RECEIPTS.sql`, run once; until then the grid says so in as many words
   rather than showing every month as having no slip.
+  ⚠️ Readiness is probed with a **GET for an object that cannot exist**, never
+  from the `list` call: Supabase answers `200 []` when listing a bucket that was
+  **never created**, identically to a real empty bucket (verified against a
+  nonsense bucket name). Only a missing bucket answers `NoSuchBucket`, so that
+  string is the test — anything else means the bucket is live. Three states are
+  kept apart on purpose: `false` (no bucket), `'noread'` (bucket present, select
+  policy missing, so uploads work but thumbnails cannot), `true`.
 
 ## What this is
 A single-page financial model / investor dashboard for the owner's **Ace Hotel
