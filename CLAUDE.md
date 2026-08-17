@@ -57,6 +57,22 @@ fetches — run the loop by hand for the full picture. See the root `CLAUDE.md`.
   wrong restore. Because they share the row's fate, `backups/edi-YYYY-MM-DD.json`
   stays the off-row line of defence; restore that by PATCHing `data` to row 2.
 
+  **Proof-of-payment photos (added 2026-08-17)** live in the Supabase **Storage
+  bucket `receipts`**, deliberately *not* in row 2: that row is polled every 15s
+  and rewritten whole on save, so a photo in it would ride every poll and an
+  upload would be lost by forgetting to press Save. The **filename is the
+  index** — `scope__room-slug__mNN__epoch.jpg` — so one `list` call tells the
+  page which cells have proof and there is no metadata table to fall out of
+  step. Keyed on the room's **name**, not its row number, because reordering a
+  room would otherwise re-attach a slip to a different tenant; the `edi__` /
+  `ace__` scope prefix is what lets the Ace tracker share the bucket. The bucket
+  is **private** — photos are fetched with the anon key and shown as blob URLs,
+  since slips carry names and bank details and `/edi` has no password. Policies
+  grant anon **insert + select only**: a wrong photo is superseded by uploading
+  the right one, never wiped by whoever holds the link. Setup is
+  `SETUP-RECEIPTS.sql`, run once; until then the grid says so in as many words
+  rather than showing every month as having no slip.
+
 ## What this is
 A single-page financial model / investor dashboard for the owner's **Ace Hotel
 & Laundry Shophouse** business in Batam. It's a *shared live model* — every

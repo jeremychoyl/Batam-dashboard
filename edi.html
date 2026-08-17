@@ -504,6 +504,116 @@ const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 const SUPA_READ_HEADERS = { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY };
 const ROW_ID   = 2;
 
+/* ── PROOF-OF-PAYMENT PHOTOS ──────────────────────────────────────────────────
+   Slips live in a Supabase Storage bucket, NOT in row 2. That row is polled
+   every 15 seconds and rewritten whole on every save, so a photo inside it
+   would ride along on every poll, and an upload would be lost by forgetting to
+   press Save. In Storage the upload is its own write: independent of the Save
+   button and unable to clobber anyone's edits.
+
+   The FILENAME is the index — scope__room-slug__mNN__epoch.jpg — so one list
+   call tells the page which cells have proof, with no metadata table to keep in
+   step with reality. Keyed on the room's NAME, not its row number, because
+   reordering or deleting a room would otherwise silently re-attach a slip to a
+   different tenant. The scope prefix is what lets the Ace tracker share this
+   bucket later without the two ever seeing each other's photos.
+
+   The bucket is private: photos are fetched with the anon key and shown as blob
+   URLs, so a slip is never readable from a bare URL the way a public bucket
+   would leave it. Setup SQL lives in SETUP-RECEIPTS.sql. */
+const RECEIPT_BUCKET  = 'receipts';
+const RECEIPT_SCOPE   = 'edi';        // the Ace tracker will use its own scope here
+const RECEIPT_MAX_PX  = 1400;         // downscale before upload — Batam mobile data
+const RECEIPT_QUALITY = 0.75;
+let receipts      = {};               // "room-slug|monthIndex" -> [filename, ...]
+let receiptsReady = null;             // null = not checked, true = bucket live, false = missing
+const receiptUrls = {};               // filename -> blob URL, fetched once per session
+
+const roomSlug   = s => String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || 'room';
+const receiptKey = (slug, mi) => slug + '|' + mi;
+const receiptsFor = (roomName, mi) => receipts[receiptKey(roomSlug(roomName), mi)] || [];
+const receiptsForRoom = roomName => {
+  const p = roomSlug(roomName) + '|';
+  return Object.keys(receipts).filter(k => k.startsWith(p)).reduce((a,k)=>a+receipts[k].length, 0);
+};
+
+// One list call for the whole bucket. A missing bucket is reported as
+// receiptsReady=false rather than thrown away, so the grid can say "not set up
+// yet" instead of quietly showing every month as having no proof.
+async function loadReceipts() {
+  try {
+    const res = await fetch(`${SUPA_URL}/storage/v1/object/list/${RECEIPT_BUCKET}`, {
+      method: 'POST',
+      headers: { ...SUPA_READ_HEADERS, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prefix: '', limit: 1000, sortBy: { column: 'name', order: 'asc' } })
+    });
+    if (!res.ok) { receiptsReady = false; return; }
+    const files = await res.json();
+    const map = {};
+    (Array.isArray(files) ? files : []).forEach(f => {
+      const m = /^([a-z0-9]+)__(.+?)__m(\d{2})__/.exec(f.name || '');
+      if (!m || m[1] !== RECEIPT_SCOPE) return;
+      const k = receiptKey(m[2], parseInt(m[3], 10));
+      (map[k] = map[k] || []).push(f.name);
+    });
+    receipts = map;
+    receiptsReady = true;
+  } catch(e) { receiptsReady = false; }
+}
+
+// Downscale in the browser: a 4 MB phone photo becomes ~150 KB, which keeps the
+// free storage tier comfortable and makes uploading survivable on mobile data.
+function shrinkImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, RECEIPT_MAX_PX / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width  = Math.max(1, Math.round(img.width  * scale));
+      c.height = Math.max(1, Math.round(img.height * scale));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(b => b ? resolve(b) : reject(new Error('could not re-save that image')),
+               'image/jpeg', RECEIPT_QUALITY);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('could not read that file as a photo — if it came straight off an iPhone as HEIC, open it and share it as a JPEG'));
+    };
+    img.src = url;
+  });
+}
+
+async function uploadReceipt(roomName, mi, file) {
+  const blob = await shrinkImage(file);
+  const name = `${RECEIPT_SCOPE}__${roomSlug(roomName)}__m${String(mi).padStart(2,'0')}__${Date.now()}.jpg`;
+  const res = await fetch(`${SUPA_URL}/storage/v1/object/${RECEIPT_BUCKET}/${name}`, {
+    method: 'POST',
+    headers: { ...SUPA_READ_HEADERS, 'Content-Type': 'image/jpeg', 'x-upsert': 'false' },
+    body: blob
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(()=> '');
+    throw new Error(/bucket not found/i.test(body)
+      ? 'photo storage is not set up yet — the owner needs to run SETUP-RECEIPTS.sql'
+      : `upload failed (${res.status}) ${body.slice(0,120)}`);
+  }
+  const k = receiptKey(roomSlug(roomName), mi);
+  (receipts[k] = receipts[k] || []).push(name);
+  receiptsReady = true;
+  return name;
+}
+
+// Private bucket, so a photo is fetched with the key and handed to the <img> as
+// a blob URL. Cached per session: the same slip is never downloaded twice.
+async function receiptObjectURL(name) {
+  if (receiptUrls[name]) return receiptUrls[name];
+  const res = await fetch(`${SUPA_URL}/storage/v1/object/${RECEIPT_BUCKET}/${name}`, { headers: SUPA_READ_HEADERS });
+  if (!res.ok) throw new Error('could not load that photo');
+  return (receiptUrls[name] = URL.createObjectURL(await res.blob()));
+}
+
 /* ── DATE HELPERS (same contract as the main dashboard) ──────────────────── */
 const _MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function toISO(s) {
@@ -775,8 +885,12 @@ function renderPaymentGrid(collectedP2) {
   rooms.forEach((r,ri)=>{
     const whoAll=tenantsAcrossYear(r), multi=whoAll.length>1;
     let paidAmt=0, arrAmt=0, laterAmt=0;
+    const rcCount = receiptsForRoom(r.room);
     html += `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${htmlAttr(r.room)}</td>
+      <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${htmlAttr(r.room)}
+        <button onclick="openReceipts(${ri})" title="Proof of payment photos for ${htmlAttr(r.room)}"
+          style="display:block;margin-top:3px;background:none;border:none;padding:0;cursor:pointer;font-size:10px;color:${rcCount?'var(--teal)':'var(--muted)'}">📎 ${rcCount||'add'}</button>
+      </td>
       <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${
         whoAll.length ? whoAll.map(htmlAttr).join(' <span style="color:var(--muted)">→</span> ')
         : '<span style="color:var(--red)">VACANT</span>'}</td>`;
@@ -792,8 +906,11 @@ function renderPaymentGrid(collectedP2) {
       else if (!noTenant && state!==3) {
         if (isMonthOverdue(r, mi, today)) arrAmt += rent; else laterAmt += rent;
       }
-      const label = multi && who
-        ? `<div style="font-size:9px;color:var(--muted);margin-top:2px;max-width:48px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${htmlAttr(who.split(/[\s&,]+/)[0])}</div>` : '';
+      const rc = receiptsFor(r.room, mi).length;
+      const label = (multi && who) || rc
+        ? `<div style="font-size:9px;color:var(--muted);margin-top:2px;max-width:48px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${
+            multi && who ? htmlAttr(who.split(/[\s&,]+/)[0]) : ''}${
+            rc ? `<span style="color:var(--teal)" title="${rc} proof photo${rc===1?'':'s'}"> 📎${rc>1?rc:''}</span>` : ''}</div>` : '';
       const words = shown===1?'paid':shown===2?'overdue':shown===3?(noTenant?'no tenant':'no rent due'):'unpaid';
       const hint = `${EDI_MONTHS[mi]} · ${who||'no tenant'} · ${words}${rent?' · '+fmtRP(rent):''}`;
       html += `<td style="padding:4px;text-align:center">
@@ -823,6 +940,15 @@ function renderPaymentGrid(collectedP2) {
     ${ok ? '· <span style="color:var(--teal)">balanced</span>'
          : `· <span style="color:var(--amber)">out by ${fmtRP(Math.abs(diff))} ${diff>0?'ticked but not collected':'collected but not yet ticked'}</span>`}
   </div>`;
+
+  // Say it plainly when the photo bucket is missing. Silence here would read as
+  // "no slips have been uploaded", which is a different thing entirely.
+  if (receiptsReady === false) {
+    html += `<div style="margin-top:8px;padding:9px 14px;border-radius:8px;font-size:11px;line-height:1.7;
+        border:1px solid var(--amber);background:rgba(245,158,11,0.06);color:var(--subtle)">
+      📎 Proof-of-payment photos are not switched on yet — run <strong style="color:var(--amber)">SETUP-RECEIPTS.sql</strong> in Supabase once. The 📎 buttons work the moment it is done.
+    </div>`;
+  }
   wrap.innerHTML = html;
 
   // KPIs
@@ -1043,6 +1169,117 @@ function renderAll(){
   renderOccupancy();
 }
 
+/* ── PROOF-OF-PAYMENT UI ──────────────────────────────────────────────────────
+   One panel per room listing all 12 months, rather than an upload control in
+   every grid cell: the grid is 19 rooms x 12 months and a file button in each
+   of those 228 cells would be unusable on a phone. Tapping a cell still only
+   toggles paid/unpaid — that muscle memory is left alone. */
+function closeReceipts() {
+  const m = document.getElementById('rc-modal');
+  if (m) m.remove();
+}
+
+async function openReceipts(ri) {
+  const r = rooms[ri];
+  if (!r) return;
+  closeReceipts();
+  const m = document.createElement('div');
+  m.id = 'rc-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto';
+  m.innerHTML = `
+    <div style="background:#0e1929;border:1px solid var(--teal);border-radius:14px;padding:20px;max-width:540px;width:100%;margin:auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:4px">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#f1f5f9">📎 Proof of payment</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">${htmlAttr(r.room)} · photo of the transfer slip or receipt, per month</div>
+        </div>
+        <button onclick="closeReceipts()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:0 4px">✕</button>
+      </div>
+      <div id="rc-body" style="margin-top:14px"><div style="font-size:12px;color:var(--muted)">Loading photos…</div></div>
+    </div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click', e => { if (e.target === m) closeReceipts(); });
+  // Re-list on open so a slip Edi added on his phone shows up on the owner's iPad.
+  await loadReceipts();
+  renderReceiptBody(ri);
+}
+
+function renderReceiptBody(ri) {
+  const body = document.getElementById('rc-body');
+  const r = rooms[ri];
+  if (!body || !r) return;
+
+  if (receiptsReady === false) {
+    body.innerHTML = `<div style="border:1px solid var(--amber);background:rgba(245,158,11,0.08);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--subtle);line-height:1.7">
+      ⚠️ Photo storage is not set up yet, so there is nowhere to put a slip.
+      The owner needs to run <strong style="color:var(--amber)">SETUP-RECEIPTS.sql</strong> in Supabase once — after that this panel works with no further steps.</div>`;
+    return;
+  }
+
+  const today = new Date();
+  body.innerHTML = EDI_MONTHS.map((label, mi) => {
+    const files = receiptsFor(r.room, mi);
+    const who   = tenantForMonth(r, mi);
+    const paid  = payments[ri] && payments[ri][mi] === 1;
+    const state = paid ? '<span style="color:var(--teal)">paid</span>'
+                : !who ? '<span style="color:var(--muted)">no tenant</span>'
+                : isMonthOverdue(r, mi, today) ? '<span style="color:var(--red)">overdue</span>'
+                : '<span style="color:var(--muted)">not due yet</span>';
+    const thumbs = files.map(n =>
+      `<img data-rc="${htmlAttr(n)}" onclick="viewReceipt('${htmlAttr(n)}')"
+        style="width:54px;height:54px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer;background:var(--surface2)"
+        alt="slip">`).join('');
+    return `<div style="border-bottom:1px solid var(--border);padding:9px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="min-width:96px">
+        <div style="font-size:12px;font-weight:600;color:#f1f5f9">${label}</div>
+        <div style="font-size:10px;color:var(--muted)">${htmlAttr(who || '')}${who ? ' · ' : ''}${state}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex:1;flex-wrap:wrap">${thumbs || '<span style="font-size:11px;color:var(--muted)">no photo yet</span>'}</div>
+      <label style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap">
+        + Photo
+        <input type="file" accept="image/*" style="display:none" onchange="handleReceiptPick(${ri},${mi},this)">
+      </label>
+    </div>`;
+  }).join('') + `<div id="rc-msg" style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6">
+      Photos upload on their own — no need to press Save Changes. They are shrunk on this device before sending, so a phone photo costs little data.
+    </div>`;
+
+  // Thumbnails load after the list is on screen, so the panel never waits on them.
+  body.querySelectorAll('img[data-rc]').forEach(async img => {
+    try { img.src = await receiptObjectURL(img.dataset.rc); }
+    catch(e) { img.replaceWith(Object.assign(document.createElement('span'),
+      { textContent: '⚠ photo missing', style: 'font-size:11px;color:var(--red)' })); }
+  });
+}
+
+async function handleReceiptPick(ri, mi, input) {
+  const file = input.files && input.files[0];
+  const msg  = document.getElementById('rc-msg');
+  if (!file) return;
+  input.value = '';
+  const say = (t, c) => { if (msg) { msg.textContent = t; msg.style.color = c || 'var(--muted)'; } };
+  say('Uploading ' + EDI_MONTHS[mi] + '…', 'var(--amber)');
+  try {
+    await uploadReceipt(rooms[ri].room, mi, file);
+    renderReceiptBody(ri);
+    renderAll();                                  // paperclip counts in the grid
+    const m2 = document.getElementById('rc-msg');
+    if (m2) { m2.textContent = '✓ ' + EDI_MONTHS[mi] + ' photo saved'; m2.style.color = 'var(--teal)'; }
+  } catch(e) {
+    say('⚠ ' + e.message, 'var(--red)');
+  }
+}
+
+function viewReceipt(name) {
+  const url = receiptUrls[name];
+  if (!url) return;
+  const v = document.createElement('div');
+  v.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1100;display:flex;align-items:center;justify-content:center;padding:14px;cursor:zoom-out';
+  v.innerHTML = `<img src="${url}" style="max-width:100%;max-height:100%;border-radius:8px" alt="proof of payment">`;
+  v.onclick = () => v.remove();
+  document.body.appendChild(v);
+}
+
 /* ── PERSISTENCE ─────────────────────────────────────────────────────────── */
 function collectInputs(){
   return {
@@ -1156,6 +1393,9 @@ setInterval(async ()=>{
 renderAll();
 renderSnapshots();
 loadFromSupabase();
+// Photo index is independent of row 2, so it loads on its own and re-renders the
+// grid once the paperclip counts are known.
+loadReceipts().then(renderAll);
 </script>
 </body>
 </html>
