@@ -222,6 +222,24 @@ not once across the business. That reading of "first 2 units … applies to both
 is worth 500,000/month against the business-wide reading — confirm before
 treating either as settled.
 
+### Phase 2 Expansion Capex box (split 2026-08-18)
+Phase 1 → Phase 2 is **two unrelated things at once**, and this box used to blend
+them into one "return on incremental capex": the rooms you build, and a laundry
+lease that steps up (30m → 60m/yr) whether or not you build them. Charging the
+lease increase against the construction spend made the rooms look like 27%/yr
+when they are 33%/yr.
+
+The split follows **causation**: extra room revenue is caused by the capex, and so
+is the extra operating cost (the rule is per unit, so 3 more rooms = 3 more
+charged units). The lease step-up and the reception sublet land on the Phase 2
+calendar regardless, so they sit in their own section. The two sections must sum
+to `incrProfit` — verified, SGD 2,327 + (−431) = 1,896.
+
+The box also **warns when `newRooms` disagrees with the rooms the counts actually
+add** (7 paid for vs 3 earning, as of writing) and computes the return on the
+earning rooms, since that is the honest denominator until the owner settles which
+input is wrong.
+
 ### Occupancy tab
 ⚠️ **Occupancy scales room REVENUE, never profit.** Rent, operating cost and the
 reception sublet do not fall when rooms sit empty, so profit at 70% occupancy is

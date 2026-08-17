@@ -1303,15 +1303,64 @@ function renderPL(m) {
     <div class="pl-divider"><span>Phase 2 Monthly Net</span><span>SGD ${Math.round(m.netP2_SGD).toLocaleString()}</span></div>`;
 }
 
+/* Phase 1 → Phase 2 is two unrelated things happening at once, and this box used
+   to blend them: the rooms you build, and a lease that steps up whether or not
+   you build them. Charging the lease increase against SGD 7,000 of construction
+   made the rooms look like a 27%/yr investment when they are better than that.
+
+   The split follows causation. Extra room revenue is caused by the capex, and so
+   is the extra operating cost — the cost rule is per unit, so three more rooms
+   mean three more charged units. The laundry lease step-up and the reception
+   sublet happen on the Phase 2 calendar regardless, so they sit apart. The two
+   sections still add to the same total as before. */
 function renderCapex(m) {
-  $('capex-table').innerHTML = `
-    <div class="pl-row"><span class="pl-label">Base investment (Ph.1)</span><span class="pl-val" style="color:var(--subtle)">SGD ${Math.round(m.totalInvestSGD).toLocaleString()}</span></div>
-    <div class="pl-row"><span class="pl-label">${m.newRooms} new rooms × SGD ${m.constructCost.toLocaleString()}</span><span class="pl-val" style="color:var(--subtle)">SGD ${Math.round(m.phase2Capex).toLocaleString()}</span></div>
-    <div class="pl-row"><span class="pl-label" style="color:#f1f5f9;font-weight:600">Total Ph.2 investment</span><span class="pl-val" style="color:#f1f5f9;font-weight:700">SGD ${Math.round(m.totalP2Invest).toLocaleString()}</span></div>
-    <div class="pl-row"><span class="pl-label">Incremental annual profit</span><span class="pl-val pos">+SGD ${Math.round(m.incrProfit).toLocaleString()}</span></div>
-    <div class="pl-row"><span class="pl-label">Return on incremental capex</span><span class="pl-val" style="color:var(--teal)">${(m.incrReturn*100).toFixed(0)}% / yr</span></div>
-    <div class="pl-row"><span class="pl-label">Payback on SGD ${Math.round(m.phase2Capex).toLocaleString()}</span><span class="pl-val" style="color:var(--teal)">~${m.incrPayback.toFixed(1)} months</span></div>`;
-  $('verdict-box').innerHTML = `<div class="verdict-title">Verdict</div><div class="verdict-body">SGD ${Math.round(m.phase2Capex).toLocaleString()} extra capex lifts annual profit by SGD ${Math.round(m.incrProfit).toLocaleString()} — ${(m.incrReturn*100).toFixed(0)}%/yr return recovered in ~${m.incrPayback.toFixed(1)} months. Adds SGD ${Math.round(m.incrProfit*5).toLocaleString()} to 5-year profit.</div>`;
+  const fx = m.fx;
+  const addedRooms   = (m.laundryP2 - m.laundryP1) + (m.aceRoomsP2 - m.aceRoomsP1);
+  const extraRoomRev = (m.laundryRevP2 - m.laundryRevP1) + (m.aceRevP2 - m.aceRevP1);
+  const extraOpex    = m.monthlyOpexP2 - m.monthlyOpexP1;   // per-unit rule: caused by the new rooms
+  const roomsNet     = extraRoomRev - extraOpex;
+  const leaseStep    = m.monthlyRentalP2 - m.monthlyRentalP1;
+  const otherNet     = m.reception - leaseStep;             // happens with or without the build
+  const roomsAnnual  = roomsNet * 12 / fx;
+  const otherAnnual  = otherNet * 12 / fx;
+  const capexReturn  = m.phase2Capex > 0 ? roomsAnnual / m.phase2Capex : 0;
+  const capexPayback = roomsAnnual > 0 ? m.phase2Capex / (roomsAnnual / 12) : Infinity;
+  const S = n => Math.round(n / fx).toLocaleString();
+  const row = (label, value, cls, note) =>
+    `<div class="pl-row"><span class="pl-label">${label}${note ? `<div style="font-size:10px;color:var(--muted)">${note}</div>` : ''}</span><span class="pl-val ${cls||''}">${value}</span></div>`;
+
+  // The capex pays for newRooms; the room counts may add a different number. When
+  // they disagree, say so here — this box is exactly where that costs you.
+  const mismatch = m.newRooms !== addedRooms
+    ? `<div style="margin-top:8px;padding:8px 12px;border-radius:6px;border:1px solid var(--amber);background:rgba(245,158,11,0.07);font-size:10px;color:var(--subtle);line-height:1.6">
+         ⚠️ Capex is charged for <strong>${m.newRooms}</strong> new rooms, but the Phase 2 room counts add
+         <strong>${addedRooms}</strong>. One of the two inputs needs correcting — the return below is computed on the ${addedRooms} that earn.
+       </div>` : '';
+
+  $('capex-table').innerHTML =
+    `<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Investment</div>`
+    + row('Base investment (Ph.1)', 'SGD ' + Math.round(m.totalInvestSGD).toLocaleString(), '', '')
+    + row(`${m.newRooms} new rooms × SGD ${m.constructCost.toLocaleString()}`, 'SGD ' + Math.round(m.phase2Capex).toLocaleString())
+    + row('<strong style="color:#f1f5f9">Total Ph.2 investment</strong>', '<strong style="color:#f1f5f9">SGD ' + Math.round(m.totalP2Invest).toLocaleString() + '</strong>')
+    + mismatch
+    + `<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 4px">What the new rooms earn</div>`
+    + row(`Extra room revenue (${addedRooms} more room${addedRooms===1?'':'s'})`, '+' + S(extraRoomRev), 'pos')
+    + row('Extra operating cost', '−' + S(extraOpex), 'neg', `${addedRooms} more charged unit${addedRooms===1?'':'s'} × ${fmtIDR(m.opexPerUnit)}`)
+    + row('<strong style="color:var(--teal)">Net from the new rooms</strong>', `<strong style="color:var(--teal)">${roomsNet>=0?'+':'−'}${S(Math.abs(roomsNet))} /mo</strong>`)
+    + row('Return on the construction spend', m.phase2Capex > 0 ? (capexReturn*100).toFixed(0) + '% / yr' : '—', '', 'annual: SGD ' + Math.round(roomsAnnual).toLocaleString())
+    + row(`Payback on SGD ${Math.round(m.phase2Capex).toLocaleString()}`, isFinite(capexPayback) ? '~' + capexPayback.toFixed(1) + ' months' : 'never at this rate')
+    + `<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 4px">Phase 2 changes the capex does not buy</div>`
+    + row('Reception sublet (Ph.2 only)', '+' + S(m.reception), 'pos')
+    + row('Laundry lease step-up', '−' + S(leaseStep), 'neg', `${fmtIDR(m.laundryAnnualP1)} → ${fmtIDR(m.laundryAnnualP2)} a year`)
+    + row(`<strong>Net, happens either way</strong>`, `<strong style="color:${otherNet>=0?'var(--teal)':'var(--red)'}">${otherNet>=0?'+':'−'}${S(Math.abs(otherNet))} /mo</strong>`)
+    + `<div class="pl-divider"><span>Ph.2 vs Ph.1 annual profit</span><span>${m.incrProfit>=0?'+':'−'}SGD ${Math.abs(Math.round(m.incrProfit)).toLocaleString()}</span></div>`;
+
+  $('verdict-box').innerHTML = `<div class="verdict-title">Verdict</div><div class="verdict-body">
+    The <strong>SGD ${Math.round(m.phase2Capex).toLocaleString()}</strong> of construction buys ${addedRooms} more earning room${addedRooms===1?'':'s'},
+    worth <strong style="color:var(--teal)">SGD ${Math.round(roomsAnnual).toLocaleString()}/yr</strong>
+    — ${m.phase2Capex > 0 ? `<strong style="color:var(--teal)">${(capexReturn*100).toFixed(0)}%/yr</strong>, back in ~${isFinite(capexPayback)?capexPayback.toFixed(1):'—'} months` : 'no capex entered'}.
+    Separately, Phase 2's lease step-up costs SGD ${Math.abs(Math.round(otherAnnual)).toLocaleString()}/yr more than the reception sublet brings in, which happens whether or not the rooms get built.
+    Together: annual profit ${m.incrProfit>=0?'rises':'falls'} SGD ${Math.abs(Math.round(m.incrProfit)).toLocaleString()}.</div>`;
 }
 
 function renderProjections(m) {
