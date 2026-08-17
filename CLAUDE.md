@@ -180,6 +180,18 @@ at that level.
 The Ace Ph.2 curve is **dashed** because it sits exactly on Ph.1 whenever both
 phases hold the same rooms, and a hidden series reads as a missing one.
 
+The four **breakeven cards are tap-through** (`showBreakeven()`, added
+2026-08-17): each lays out the model's own figures — revenue at 100%, the rent
+and operating cost charged, the reception offset on laundry Ph.2 — and then the
+division that produces the percentage. Built from values `calc()` returns rather
+than recomputed, so the card and its explanation cannot disagree. This is also
+where the **operating-cost split becomes visible**: the model charges the Ace
+side ⅔ and the laundry ⅓ of the single opex figure by a **fixed fraction, not an
+input**, and that assumption alone sets the laundry's 83.3% breakeven — at a 20%
+share it would be 73.8%. ⚠️ That fraction is written in two places
+(`calc()` and `renderOccupancy`); keep them in step or the cards and the curve
+will diverge.
+
 ### Ace Rooms tab (scaffolded 2026-08-17)
 Room-by-room rent tracking for the **13 Ace Hotel rooms** — Section A (room
 details) + Section B (12-month payment grid), persisted in row 1 under

@@ -1196,6 +1196,9 @@ function calc() {
     laundryRevP2, aceRevP2, totalRevP2, netP2_IDR, netP2_SGD, annualP2_SGD,
     breakevenP1, breakevenP2, yieldP1, yieldP2,
     OCC_STRESS, netP1_occ_SGD, netP2_occ_SGD, breakevenP1_occ, breakevenP2_occ,
+    // The pieces each breakeven percentage is built from, so the tap-through
+    // detail shows the model's own numbers instead of recomputing its own.
+    aceRent_mo, laundryRent_mo, aceOpex, laundryOpex, aceOpexShare: 2/3, laundryOpexShare: 1/3,
     incrProfit, incrReturn, incrPayback,
     laundryP1_100, laundryP2_100, aceP1_100, aceP2_100,
     beLP1, beLP2, beAP1, beAP2
@@ -1327,11 +1330,102 @@ function renderOccupancy(m) {
   upsertChart('chartSens',{type:'bar',data:{labels:sensLabels,datasets:[{data:sensProfits,backgroundColor:sensLabels.map(l=>l===occHi?TEAL:DIM),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` SGD ${c.parsed.y.toLocaleString()}`}}},scales:{x:{grid:{color:'#1a2d45'}},y:{grid:{color:'#1a2d45'},ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
 
   $('breakeven-cards').innerHTML = [
-    {l:'Laundry Ph.1 Breakeven', v:fmtPct(m.beLP1), d:'Most exposed to low occupancy', c:'var(--red)', bc:'red-border'},
-    {l:'Laundry Ph.2 Breakeven', v:fmtPct(Math.max(0,m.beLP2)), d:'Phase 2 transforms laundry risk', c:'var(--amber)', bc:'amber-border'},
-    {l:'Ace Hotel Ph.1 Breakeven', v:fmtPct(m.beAP1), d:'Resilient — carries the business', c:'var(--blue)', bc:'blue-border'},
-    {l:'Ace Hotel Ph.2 Breakeven', v:fmtPct(m.beAP2), d:'Most resilient scenario', c:'var(--teal)', bc:'teal-border'},
-  ].map(c=>`<div class="card ${c.bc}"><div class="kpi-label">${c.l}</div><div style="font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:${c.c};line-height:1">${c.v}</div><div class="kpi-sub">${c.d}</div></div>`).join('');
+    {k:'lp1', l:'Laundry Ph.1 Breakeven', v:fmtPct(m.beLP1), d:'Most exposed to low occupancy', c:'var(--red)', bc:'red-border'},
+    {k:'lp2', l:'Laundry Ph.2 Breakeven', v:fmtPct(Math.max(0,m.beLP2)), d:'Phase 2 transforms laundry risk', c:'var(--amber)', bc:'amber-border'},
+    {k:'ap1', l:'Ace Hotel Ph.1 Breakeven', v:fmtPct(m.beAP1), d:'Resilient — carries the business', c:'var(--blue)', bc:'blue-border'},
+    {k:'ap2', l:'Ace Hotel Ph.2 Breakeven', v:fmtPct(m.beAP2), d:'Most resilient scenario', c:'var(--teal)', bc:'teal-border'},
+  ].map(c=>`<div class="card ${c.bc}" role="button" tabindex="0" onclick="showBreakeven('${c.k}')"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showBreakeven('${c.k}')}"
+      style="cursor:pointer" title="Tap to see how ${c.v} is worked out">
+      <div class="kpi-label">${c.l}</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:${c.c};line-height:1">${c.v}</div>
+      <div class="kpi-sub">${c.d}</div>
+      <div style="font-size:10px;color:${c.c};margin-top:8px;opacity:.85">▸ tap for the formula</div>
+    </div>`).join('');
+}
+
+/* ── BREAKEVEN, SHOWN AS WORKING ───────────────────────────────────────────────
+   A percentage on its own is unauditable. Tapping a card lays out the model's
+   own figures — the same ones calc() used — so the number can be checked rather
+   than trusted, and so the assumptions buried in it (notably the operating-cost
+   split, which is a fixed fraction and not an input) are visible on screen
+   instead of only in the source. */
+function breakevenDetail(key, m) {
+  const rooms = {
+    lp1: `${m.laundryP1} rooms × ${fmtIDR(m.laundryRent)}`,
+    lp2: `${m.laundryP2} rooms × ${fmtIDR(m.laundryRent)}`,
+    ap1: `${m.aceP1} × ${fmtIDR(m.aceRent)} + ${m.aceP1b} × ${fmtIDR(m.aceRent2)}`,
+    ap2: `${m.aceP2} × ${fmtIDR(m.aceRent)} + ${m.aceP2b} × ${fmtIDR(m.aceRent2)}`
+  }[key];
+  const isLaundry = key[0] === 'l';
+  const spec = {
+    lp1: { title:'Laundry Shophouse — Phase 1', rev:m.laundryRevP1, be:m.beLP1, accent:'var(--red)' },
+    lp2: { title:'Laundry Shophouse — Phase 2', rev:m.laundryRevP2, be:Math.max(0,m.beLP2), accent:'var(--amber)' },
+    ap1: { title:'Ace Hotel — Phase 1',        rev:m.aceRevP1,     be:m.beAP1, accent:'var(--blue)' },
+    ap2: { title:'Ace Hotel — Phase 2',        rev:m.aceRevP2,     be:m.beAP2, accent:'var(--teal)' }
+  }[key];
+  const rent  = isLaundry ? m.laundryRent_mo : m.aceRent_mo;
+  const opex  = isLaundry ? m.laundryOpex    : m.aceOpex;
+  const share = isLaundry ? m.laundryOpexShare : m.aceOpexShare;
+  const rentSrc = isLaundry ? m.laundryAnnual : m.aceAnnual;
+  const offset  = key === 'lp2' ? m.reception : 0;   // reception is Phase 2, laundry side only
+  const fixed   = rent + opex - offset;
+  return { ...spec, rooms, rent, opex, share, rentSrc, offset, fixed };
+}
+
+function showBreakeven(key) {
+  const m = calc();
+  const d = breakevenDetail(key, m);
+  const old = document.getElementById('be-modal');
+  if (old) old.remove();
+  const row = (label, value, note) => `
+    <div style="display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:12px;color:var(--subtle)">${label}${note ? `<div style="font-size:10px;color:var(--muted);margin-top:2px">${note}</div>` : ''}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#f1f5f9;white-space:nowrap">${value}</div>
+    </div>`;
+  const pct = (d.be*100).toFixed(1);
+  const perPoint = d.rev / 100;          // one percentage point of occupancy, in IDR/month
+  const el = document.createElement('div');
+  el.id = 'be-modal';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto';
+  el.innerHTML = `
+    <div style="background:#0e1929;border:1px solid ${d.accent};border-radius:14px;padding:22px;max-width:520px;width:100%;margin:auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#f1f5f9">${d.title}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Breakeven occupancy
+            <strong style="color:${d.accent}">${pct}%</strong></div>
+        </div>
+        <button onclick="document.getElementById('be-modal').remove()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:0 4px">✕</button>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--subtle);line-height:1.7;margin-bottom:12px">
+        fixed cost that does not move with occupancy <strong style="color:var(--subtle)">÷</strong> revenue when every room is let
+      </div>
+
+      ${row('Revenue at 100% occupancy', fmtIDR(d.rev) + ' /mo', d.rooms)}
+      ${row('Rent charged to this property', '− ' + fmtIDR(d.rent) + ' /mo', fmtIDR(d.rentSrc) + ' a year ÷ 12')}
+      ${row('Operating cost charged', '− ' + fmtIDR(d.opex) + ' /mo',
+            Math.round(d.share*100) + '% of the ' + fmtIDR(m.opex) + ' /mo you entered — a fixed assumption in the model, not an input')}
+      ${d.offset ? row('Reception rental', '+ ' + fmtIDR(d.offset) + ' /mo', 'a fixed sublet, so it offsets fixed cost rather than scaling with occupancy') : ''}
+      ${row('<strong>Fixed cost to cover</strong>', '<strong>' + fmtIDR(d.fixed) + ' /mo</strong>')}
+
+      <div style="margin-top:14px;padding:12px 14px;border-radius:8px;border:1px solid ${d.accent};background:rgba(255,255,255,.02)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#f1f5f9;line-height:1.8">
+          ${fmtIDR(d.fixed)} ÷ ${fmtIDR(d.rev)} = <strong style="color:${d.accent}">${pct}%</strong>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:var(--muted);margin-top:14px;line-height:1.7">
+        ${d.fixed <= 0
+          ? 'Fixed cost is already covered by the reception rental, so this property cannot lose money on rooms alone.'
+          : `At <strong style="color:var(--subtle)">${pct}%</strong> occupancy this property exactly covers its costs. Above that it earns; below it loses.
+             Each 1% of occupancy is worth about ${fmtIDR(perPoint)} a month.`}
+        <br>The exchange rate does not affect this percentage — it divides out of both sides.
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click', e => { if (e.target === el) el.remove(); });
 }
 
 function renderBenchmarks(m) {
