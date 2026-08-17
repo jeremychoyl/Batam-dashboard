@@ -160,6 +160,25 @@ exact figures are used wherever a number is read; the compact `1.8 m` form is
 for axis ticks only, because `(2.05).toFixed(1)` floats down to `"2.0"` and
 would print a 2,050,000 median as "IDR 2 m".
 
+### Phase-specific laundry lease (2026-08-17)
+The laundry rent is **two inputs**, `in-laundryAnnualRentP1` (30,000,000) and
+`in-laundryAnnualRentP2` (60,000,000) — part of the shophouse in Phase 1, the
+whole building in Phase 2. Ace's lease is unchanged across phases. Consequently
+**there is no single `monthlyRental` or `totalMonthlyCost`**: `calc()` returns
+`monthlyRentalP1/P2` and `totalMonthlyCostP1/P2`, and every Phase 1 figure must
+use the P1 pair or Phase 1 looks dearer to run than it is. That includes the
+occupancy curve's laundry Ph.1 line, the laundry Ph.1 breakeven card and the 85%
+payback.
+
+`applyInputs()` migrates the legacy single key: a row saved before the split
+carries `in-laundryAnnualRent`, which was the **Phase 2** lease, so it is copied
+into the P1-absent Ph.2 field rather than letting this file's default overwrite
+the owner's own number. Press Save Changes once to store the two new keys.
+
+Per-property rent is now simply `annualLease / 12`. The old
+`monthlyRental × share-of-total` formula computed exactly the same number and
+only looked like a cost allocation.
+
 ### Occupancy tab
 ⚠️ **Occupancy scales room REVENUE, never profit.** Rent, operating cost and the
 reception sublet do not fall when rooms sit empty, so profit at 70% occupancy is
