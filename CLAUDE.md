@@ -162,9 +162,14 @@ occupancy rate and ran the axis to **130%**, which an occupancy rate cannot do.
 At 70% that printed SGD 17.1k against a true 12.2k, 40% too high, in exactly the
 range the owner plans around. Both charts now use the same arithmetic, so the
 100% bar equals the model's annual net and the two cannot disagree.
-`Payback @ 70% occupancy` in the Live Output Summary comes from the same
-`OCC_STRESS` figure in `calc()`; it prints "never at 70%" rather than a negative
-month count when the phase loses money at that level.
+`Payback @ N% occupancy` in the Live Output Summary comes from **`OCC_STRESS` in
+`calc()`** — one constant, currently **0.85** (owner's planning case; it was 0.70
+when first added on 2026-08-17 and changed the same day). That constant drives the
+two figures, the tile captions *and* the highlighted bar, so the page cannot say
+85% in one place and 70% in another; change it there and nowhere else. The bars
+step in 5% so any planning case on a multiple of five lands on a real bar. Tiles
+print "never at N%" rather than a negative month count when the phase loses money
+at that level.
 The Ace Ph.2 curve is **dashed** because it sits exactly on Ph.1 whenever both
 phases hold the same rooms, and a hidden series reads as a missing one.
 

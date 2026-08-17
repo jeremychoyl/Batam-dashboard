@@ -568,7 +568,7 @@
     <div class="sh"><h2>Occupancy Sensitivity</h2><p>Monthly net profit (SGD) at each occupancy level. Updated from your inputs.</p></div>
     <div class="card mb24"><div class="chart-wrap" style="height:290px"><canvas id="chartOcc"></canvas></div></div>
     <div class="occs-grid" id="breakeven-cards"></div>
-    <div class="card"><div class="sh"><h2>Ph.2 Annual Profit by Occupancy</h2><p>Room revenue moves with occupancy; rent, operating cost and the reception sublet do not. The highlighted bar is 70%, the planning case.</p></div><div class="chart-wrap" style="height:200px"><canvas id="chartSens"></canvas></div></div>
+    <div class="card"><div class="sh"><h2>Ph.2 Annual Profit by Occupancy</h2><p id="sens-note">Room revenue moves with occupancy; rent, operating cost and the reception sublet do not.</p></div><div class="chart-wrap" style="height:200px"><canvas id="chartSens"></canvas></div></div>
   </div>
 
   <!-- ── BENCHMARKS ──────────────────────────────────────── -->
@@ -1141,13 +1141,16 @@ function calc() {
   // the rent, the opex and the reception sublet do not move, which is the whole
   // reason payback stretches so much further than 1/0.7 would suggest. Same
   // convention as the occupancy chart: reception is a fixed sublet, not a room.
-  const OCC_STRESS   = 0.70;
-  const netP1_70_SGD = ((laundryRevP1 + aceRevP1) * OCC_STRESS - totalMonthlyCost) / fx;
-  const netP2_70_SGD = ((laundryRevP2 + aceRevP2) * OCC_STRESS + reception - totalMonthlyCost) / fx;
+  // One constant drives the payback tiles, their labels and the highlighted bar
+  // on the Occupancy tab, so the planning case can never read 85% in one place
+  // and 70% in another.
+  const OCC_STRESS   = 0.85;
+  const netP1_occ_SGD = ((laundryRevP1 + aceRevP1) * OCC_STRESS - totalMonthlyCost) / fx;
+  const netP2_occ_SGD = ((laundryRevP2 + aceRevP2) * OCC_STRESS + reception - totalMonthlyCost) / fx;
   // Losing money at 70% means the investment never comes back at 70% — report
   // that rather than a negative "payback" that reads like a number of months.
-  const breakevenP1_70 = netP1_70_SGD > 0 ? totalInvestSGD / netP1_70_SGD : Infinity;
-  const breakevenP2_70 = netP2_70_SGD > 0 ? totalP2Invest  / netP2_70_SGD : Infinity;
+  const breakevenP1_occ = netP1_occ_SGD > 0 ? totalInvestSGD / netP1_occ_SGD : Infinity;
+  const breakevenP2_occ = netP2_occ_SGD > 0 ? totalP2Invest  / netP2_occ_SGD : Infinity;
 
   // Yields
   const yieldP1 = annualP1_SGD / totalInvestSGD;
@@ -1192,7 +1195,7 @@ function calc() {
     laundryRevP1, aceRevP1, totalRevP1, netP1_IDR, netP1_SGD, annualP1_SGD,
     laundryRevP2, aceRevP2, totalRevP2, netP2_IDR, netP2_SGD, annualP2_SGD,
     breakevenP1, breakevenP2, yieldP1, yieldP2,
-    OCC_STRESS, netP1_70_SGD, netP2_70_SGD, breakevenP1_70, breakevenP2_70,
+    OCC_STRESS, netP1_occ_SGD, netP2_occ_SGD, breakevenP1_occ, breakevenP2_occ,
     incrProfit, incrReturn, incrPayback,
     laundryP1_100, laundryP2_100, aceP1_100, aceP2_100,
     beLP1, beLP2, beAP1, beAP2
@@ -1201,15 +1204,19 @@ function calc() {
 
 // ── RENDER FUNCTIONS ─────────────────────────────────────────────────────────
 function renderLiveSummary(m) {
+  // Labels are built from OCC_STRESS, so changing the planning case changes the
+  // tile captions with it — no second place to forget.
+  const occPct   = Math.round(m.OCC_STRESS * 100);
+  const occLabel = 'Payback @ ' + occPct + '% occupancy';
   $('live-summary').innerHTML = [
     ['Phase 1 Monthly Net', 'SGD ' + Math.round(m.netP1_SGD).toLocaleString()],
     ['Phase 2 Monthly Net', 'SGD ' + Math.round(m.netP2_SGD).toLocaleString()],
     ['Total Investment (Ph.1)', 'SGD ' + Math.round(m.totalInvestSGD).toLocaleString()],
     ['Total Investment (Ph.2)', 'SGD ' + Math.round(m.totalP2Invest).toLocaleString()],
     ['Payback Ph.1', m.breakevenP1.toFixed(1) + ' months'],
-    ['Payback Ph.1 @ 70% occupancy', isFinite(m.breakevenP1_70) ? m.breakevenP1_70.toFixed(1) + ' months' : 'never at 70%'],
+    [occLabel + ' Ph.1', isFinite(m.breakevenP1_occ) ? m.breakevenP1_occ.toFixed(1) + ' months' : 'never at ' + occPct + '%'],
     ['Payback Ph.2', m.breakevenP2.toFixed(1) + ' months'],
-    ['Payback Ph.2 @ 70% occupancy', isFinite(m.breakevenP2_70) ? m.breakevenP2_70.toFixed(1) + ' months' : 'never at 70%'],
+    [occLabel + ' Ph.2', isFinite(m.breakevenP2_occ) ? m.breakevenP2_occ.toFixed(1) + ' months' : 'never at ' + occPct + '%'],
     ['Income Yield Ph.2', (m.yieldP2*100).toFixed(1) + '%'],
     ['5-Yr Cumulative (Ph.2)', 'SGD ' + Math.round(m.annualP2_SGD*5).toLocaleString()],
   ].map(([k,v]) => `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">${k}</div><div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--teal)">${v}</div></div>`).join('');
@@ -1306,12 +1313,18 @@ function renderOccupancy(m) {
   // opex do not fall when rooms sit empty, so at 70% it claimed SGD 17.1k
   // against a true SGD 12.2k — 40% too high, in the range the owner actually
   // plans around. Same arithmetic as the curve above, so the two now agree.
-  const sensOccs = [0.4,0.5,0.6,0.7,0.8,0.9,1.0];
+  // 5% steps, so a planning case on any multiple of five lands on a real bar
+  // instead of being highlighted somewhere between two of them.
+  const sensOccs = [0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1.00];
   const sensLabels = sensOccs.map(o=>Math.round(o*100)+'%');
+  const occHi = Math.round(m.OCC_STRESS*100) + '%';
   const roomRevP2_SGD = (m.laundryRevP2 + m.aceRevP2) / fx;
   const sensProfits = sensOccs.map(o =>
     Math.round((roomRevP2_SGD * o + m.reception/fx - m.totalMonthlyCost/fx) * 12));
-  upsertChart('chartSens',{type:'bar',data:{labels:sensLabels,datasets:[{data:sensProfits,backgroundColor:sensLabels.map(l=>l==='70%'?TEAL:DIM),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` SGD ${c.parsed.y.toLocaleString()}`}}},scales:{x:{grid:{color:'#1a2d45'}},y:{grid:{color:'#1a2d45'},ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
+  const sensNote = $('sens-note');
+  if (sensNote) sensNote.textContent =
+    `Room revenue moves with occupancy; rent, operating cost and the reception sublet do not. The highlighted bar is ${occHi}, the planning case.`;
+  upsertChart('chartSens',{type:'bar',data:{labels:sensLabels,datasets:[{data:sensProfits,backgroundColor:sensLabels.map(l=>l===occHi?TEAL:DIM),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` SGD ${c.parsed.y.toLocaleString()}`}}},scales:{x:{grid:{color:'#1a2d45'}},y:{grid:{color:'#1a2d45'},ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
 
   $('breakeven-cards').innerHTML = [
     {l:'Laundry Ph.1 Breakeven', v:fmtPct(m.beLP1), d:'Most exposed to low occupancy', c:'var(--red)', bc:'red-border'},
