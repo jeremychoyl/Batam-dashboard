@@ -101,6 +101,13 @@ Live: **https://batam-dashboard.vercel.app/**
     `_archived`, `_tr_fx`). Saved via PATCH; polled every 15s so
     partners' edits appear live.
   - table `snapshots` — named version history (Save Snapshot / Restore / Preview).
+    Both the manual snapshot and the silent `autoBackup()` build their caption
+    through **one** `snapshotSummary(m)`, so the two cannot record different
+    things. It stores `occPct` **beside** the occupancy payback: the planning case
+    has already moved once (70% → 85%), and captioning an old snapshot with
+    today's rate would label a figure with a number never used to compute it.
+    Snapshots saved before 2026-08-17 carry no `occPct`, so that clause is simply
+    omitted for them — never back-filled.
 
 ## Tabs (each an `#panel-*` + its own `<script>` block)
 Inputs · Overview · Projections · Occupancy · Benchmarks · Risks · Timeline ·

@@ -1810,6 +1810,25 @@ window.addEventListener('beforeunload', e => {
 // Escape a value for safe embedding in an inline onclick="...'VALUE'..." handler.
 const jsAttr = s => String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;');
 
+// One shape for both the manual snapshot and the silent auto-backup, so the two
+// cannot drift into recording different things. occPct travels WITH the figure:
+// the planning case has already moved once (70% → 85%), and a caption that read
+// today's rate would relabel every older snapshot with a number that was never
+// used to compute it.
+function snapshotSummary(m) {
+  return {
+    netP2_SGD: Math.round(m.netP2_SGD),
+    annualP2_SGD: Math.round(m.annualP2_SGD),
+    totalP2Invest: Math.round(m.totalP2Invest),
+    yieldP2pct: (m.yieldP2*100).toFixed(1),
+    breakevenP2: m.breakevenP2.toFixed(1),
+    cum5yr: Math.round(m.annualP2_SGD*5),
+    occPct: Math.round(m.OCC_STRESS*100),
+    breakevenP1occ: isFinite(m.breakevenP1_occ) ? m.breakevenP1_occ.toFixed(1) : null,
+    breakevenP2occ: isFinite(m.breakevenP2_occ) ? m.breakevenP2_occ.toFixed(1) : null
+  };
+}
+
 async function saveSnapshot() {
   const nameEl = document.getElementById('snapshot-name');
   const btn = document.querySelector('button[onclick="saveSnapshot()"]');
@@ -1827,14 +1846,7 @@ async function saveSnapshot() {
 
   const data = collectInputs();
   const m = calc();
-  const summary = {
-    netP2_SGD: Math.round(m.netP2_SGD),
-    annualP2_SGD: Math.round(m.annualP2_SGD),
-    totalP2Invest: Math.round(m.totalP2Invest),
-    yieldP2pct: (m.yieldP2*100).toFixed(1),
-    breakevenP2: m.breakevenP2.toFixed(1),
-    cum5yr: Math.round(m.annualP2_SGD*5)
-  };
+  const summary = snapshotSummary(m);
 
   try {
     const r = await callSecure('add_snapshot',
@@ -1874,14 +1886,7 @@ async function autoBackup(reason) {
     const r = await callSecure('add_snapshot', {
       snap_name: `🔒 Auto-backup before ${reason} — ${stamp}`,
       payload: collectInputs(),
-      snap_summary: {
-        netP2_SGD: Math.round(m.netP2_SGD),
-        annualP2_SGD: Math.round(m.annualP2_SGD),
-        totalP2Invest: Math.round(m.totalP2Invest),
-        yieldP2pct: (m.yieldP2*100).toFixed(1),
-        breakevenP2: m.breakevenP2.toFixed(1),
-        cum5yr: Math.round(m.annualP2_SGD*5)
-      }
+      snap_summary: snapshotSummary(m)
     }, 'Enter the edit password to continue.');
     return r.ok;
   } catch(e) { console.error('Auto-backup failed:', e); return false; }
@@ -1935,7 +1940,13 @@ async function loadSnapshots() {
       const d = new Date(r.created_at);
       const dateStr = d.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
       const s = r.summary || {};
-      const meta = s.netP2_SGD ? `Ph.2 net SGD ${Number(s.netP2_SGD).toLocaleString()}/mo · yield ${s.yieldP2pct}% · payback ${s.breakevenP2} mo · 5-yr SGD ${Number(s.cum5yr).toLocaleString()}` : '';
+      // Snapshots saved before the occupancy payback existed carry no occPct, so
+      // the clause is omitted rather than printed against today's rate — the
+      // figure was never computed at that rate and saying so would be a lie.
+      const occBit = s.occPct
+        ? ` · payback @${s.occPct}% ${s.breakevenP2occ ? s.breakevenP2occ + ' mo' : 'never'}`
+        : '';
+      const meta = s.netP2_SGD ? `Ph.2 net SGD ${Number(s.netP2_SGD).toLocaleString()}/mo · yield ${s.yieldP2pct}% · payback ${s.breakevenP2} mo${occBit} · 5-yr SGD ${Number(s.cum5yr).toLocaleString()}` : '';
       const safeName = jsAttr(r.name);
       return `<div class="snap-row">
         <div><div class="snap-name">${r.name}</div><div class="snap-meta">${dateStr}${meta ? ' · ' + meta : ''}</div></div>
@@ -1965,6 +1976,9 @@ async function previewSnapshot(id, name) {
       ['Annual Net (Ph.2)', s.annualP2_SGD ? 'SGD ' + Number(s.annualP2_SGD).toLocaleString() : '—'],
       ['Income Yield', s.yieldP2pct ? s.yieldP2pct + '%' : '—'],
       ['Payback', s.breakevenP2 ? s.breakevenP2 + ' months' : '—'],
+      // Labelled with the rate stored in the snapshot, not today's.
+      ['Payback @ ' + (s.occPct || '—') + '% occupancy (Ph.1)', s.occPct ? (s.breakevenP1occ ? s.breakevenP1occ + ' months' : 'never at ' + s.occPct + '%') : 'not recorded'],
+      ['Payback @ ' + (s.occPct || '—') + '% occupancy (Ph.2)', s.occPct ? (s.breakevenP2occ ? s.breakevenP2occ + ' months' : 'never at ' + s.occPct + '%') : 'not recorded'],
       ['5-Year Cumulative', s.cum5yr ? 'SGD ' + Number(s.cum5yr).toLocaleString() : '—'],
       ['Total Ph.2 Investment', s.totalP2Invest ? 'SGD ' + Number(s.totalP2Invest).toLocaleString() : '—'],
     ];
