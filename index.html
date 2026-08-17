@@ -380,7 +380,7 @@
       </div>
 
       <div class="input-group">
-        <div class="input-group-title">Ace Hotel Rooms</div>
+        <div class="input-group-title">Ace Hotel Rooms — Category 1</div>
         <div class="input-row">
           <span class="input-label">Rent per room / month</span>
           <div class="input-field-wrap">
@@ -399,6 +399,31 @@
           <span class="input-label">Rooms — Phase 2</span>
           <div class="input-field-wrap">
             <input type="number" id="in-aceP2" value="14" min="0" max="50" oninput="recalc()">
+            <span class="input-unit">rooms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-group-title">Ace Hotel Rooms — Category 2 (smaller)</div>
+        <div class="input-row">
+          <span class="input-label">Rent per room / month</span>
+          <div class="input-field-wrap">
+            <input type="number" id="in-aceRent2" value="1200000" min="0" oninput="recalc()">
+            <span class="input-unit">IDR</span>
+          </div>
+        </div>
+        <div class="input-row">
+          <span class="input-label">Rooms — Phase 1</span>
+          <div class="input-field-wrap">
+            <input type="number" id="in-aceP1b" value="2" min="0" max="50" oninput="recalc()">
+            <span class="input-unit">rooms</span>
+          </div>
+        </div>
+        <div class="input-row">
+          <span class="input-label">Rooms — Phase 2</span>
+          <div class="input-field-wrap">
+            <input type="number" id="in-aceP2b" value="2" min="0" max="50" oninput="recalc()">
             <span class="input-unit">rooms</span>
           </div>
         </div>
@@ -1024,6 +1049,14 @@ function calc() {
   const aceRent      = val('in-aceRent');
   const aceP1        = val('in-aceP1');
   const aceP2        = val('in-aceP2');
+  // Ace rooms come in two rent categories. Room counts are independent, so the
+  // hotel's room total is cat 1 + cat 2 and its revenue is the blended sum —
+  // anything reading a single per-room rent must use aceRev*/aceRooms* instead.
+  const aceRent2     = val('in-aceRent2');
+  const aceP1b       = val('in-aceP1b');
+  const aceP2b       = val('in-aceP2b');
+  const aceRoomsP1   = aceP1 + aceP1b;
+  const aceRoomsP2   = aceP2 + aceP2b;
   const reception    = val('in-reception');
   const aceAnnual    = val('in-aceAnnualRent');
   const laundryAnnual= val('in-laundryAnnualRent');
@@ -1047,7 +1080,7 @@ function calc() {
 
   // Phase 1 revenue (IDR)
   const laundryRevP1 = laundryRent * laundryP1;
-  const aceRevP1     = aceRent * aceP1;
+  const aceRevP1     = aceRent * aceP1 + aceRent2 * aceP1b;
   const totalRevP1   = laundryRevP1 + aceRevP1;
   const netP1_IDR    = totalRevP1 - totalMonthlyCost;
   const netP1_SGD    = netP1_IDR / fx;
@@ -1055,7 +1088,7 @@ function calc() {
 
   // Phase 2 revenue (IDR)
   const laundryRevP2 = laundryRent * laundryP2;
-  const aceRevP2     = aceRent * aceP2;
+  const aceRevP2     = aceRent * aceP2 + aceRent2 * aceP2b;
   const totalRevP2   = laundryRevP2 + aceRevP2 + reception;
   const netP2_IDR    = totalRevP2 - totalMonthlyCost;
   const netP2_SGD    = netP2_IDR / fx;
@@ -1100,6 +1133,7 @@ function calc() {
 
   return {
     fx, deposit, advRental, reno, laundryRent, laundryP1, laundryP2, aceRent, aceP1, aceP2,
+    aceRent2, aceP1b, aceP2b, aceRoomsP1, aceRoomsP2,
     reception, aceAnnual, laundryAnnual, opex, constructCost, newLaundry, newAce,
     idYield, sgYield,
     totalInvestSGD, phase2Capex, totalP2Invest, newRooms,
@@ -1130,8 +1164,8 @@ function renderLiveSummary(m) {
 function renderKPIs(m) {
   const items = [
     {l:'Initial Investment', v:'SGD '+Math.round(m.totalInvestSGD).toLocaleString(), s:'Deposit + Advance + Reno', acc:false},
-    {l:'Phase 1 Monthly Net', v:'SGD '+Math.round(m.netP1_SGD).toLocaleString(), s:m.laundryP1+' laundry + '+m.aceP1+' hotel rooms', acc:false},
-    {l:'Phase 2 Monthly Net', v:'SGD '+Math.round(m.netP2_SGD).toLocaleString(), s:m.laundryP2+' laundry + '+m.aceP2+' hotel rooms', acc:true},
+    {l:'Phase 1 Monthly Net', v:'SGD '+Math.round(m.netP1_SGD).toLocaleString(), s:m.laundryP1+' laundry + '+m.aceRoomsP1+' hotel rooms', acc:false},
+    {l:'Phase 2 Monthly Net', v:'SGD '+Math.round(m.netP2_SGD).toLocaleString(), s:m.laundryP2+' laundry + '+m.aceRoomsP2+' hotel rooms', acc:true},
     {l:'Payback Period', v:m.breakevenP2.toFixed(1)+' mo', s:'Phase 2 capital recovery', acc:false},
     {l:'5-Year Cumulative', v:'SGD '+Math.round(m.annualP2_SGD*5).toLocaleString(), s:'Phase 2 stabilised', acc:false},
     {l:'Income Yield (Ph.2)', v:(m.yieldP2*100).toFixed(1)+'%', s:'vs ID '+(m.idYield*100).toFixed(1)+'% / SG '+(m.sgYield*100).toFixed(1)+'%', acc:true},
@@ -1143,8 +1177,8 @@ function renderPL(m) {
   $('pl-table').innerHTML = `
     <div class="pl-row"><span class="pl-label">Laundry rooms Ph.1 (${m.laundryP1} rooms)</span><span class="pl-val pos">+${Math.round(m.laundryRevP1/m.fx).toLocaleString()}</span></div>
     <div class="pl-row"><span class="pl-label">Laundry rooms Ph.2 (${m.laundryP2} rooms)</span><span class="pl-val pos">+${Math.round(m.laundryRevP2/m.fx).toLocaleString()}</span></div>
-    <div class="pl-row"><span class="pl-label">Ace Hotel Ph.1 (${m.aceP1} rooms)</span><span class="pl-val pos">+${Math.round(m.aceRevP1/m.fx).toLocaleString()}</span></div>
-    <div class="pl-row"><span class="pl-label">Ace Hotel Ph.2 (${m.aceP2} rooms)</span><span class="pl-val pos">+${Math.round(m.aceRevP2/m.fx).toLocaleString()}</span></div>
+    <div class="pl-row"><span class="pl-label">Ace Hotel Ph.1 (${m.aceRoomsP1} rooms — ${m.aceP1} @ ${m.aceRent/1e6}m + ${m.aceP1b} @ ${m.aceRent2/1e6}m)</span><span class="pl-val pos">+${Math.round(m.aceRevP1/m.fx).toLocaleString()}</span></div>
+    <div class="pl-row"><span class="pl-label">Ace Hotel Ph.2 (${m.aceRoomsP2} rooms — ${m.aceP2} @ ${m.aceRent/1e6}m + ${m.aceP2b} @ ${m.aceRent2/1e6}m)</span><span class="pl-val pos">+${Math.round(m.aceRevP2/m.fx).toLocaleString()}</span></div>
     <div class="pl-row"><span class="pl-label">Reception rental (Ph.2 only)</span><span class="pl-val pos">+${Math.round(m.reception/m.fx).toLocaleString()}</span></div>
     <div class="pl-row"><span class="pl-label">Monthly rental cost</span><span class="pl-val neg">−${Math.round(m.monthlyRental/m.fx).toLocaleString()}</span></div>
     <div class="pl-row"><span class="pl-label">Monthly operating expenses</span><span class="pl-val neg">−${Math.round(m.monthlyOpex/m.fx).toLocaleString()}</span></div>
@@ -1186,7 +1220,10 @@ function renderOccupancy(m) {
   const occLabels = occs.map(o=>Math.round(o*100)+'%');
   const fx = m.fx;
   const lR_mo_per = m.laundryRent / fx; // rev per room per month SGD
-  const aR_mo_per = m.aceRent / fx;
+  // Ace has two rent categories, so scale its blended revenue by occupancy
+  // rather than a single per-room rate × room count.
+  const aceRevP1_SGD = m.aceRevP1 / fx;
+  const aceRevP2_SGD = m.aceRevP2 / fx;
   const aceRentMo   = m.aceAnnual / 12 / fx;
   const laundryRentMo = m.laundryAnnual / 12 / fx;
   const aceOpexMo   = m.opex / fx * 2/3;
@@ -1195,8 +1232,8 @@ function renderOccupancy(m) {
   const d = {
     lP1: occs.map(o=> Math.round(lR_mo_per*m.laundryP1*o - laundryRentMo - laundryOpexMo)),
     lP2: occs.map(o=> Math.round(lR_mo_per*m.laundryP2*o + m.reception/fx - laundryRentMo - laundryOpexMo)),
-    aP1: occs.map(o=> Math.round(aR_mo_per*m.aceP1*o - aceRentMo - aceOpexMo)),
-    aP2: occs.map(o=> Math.round(aR_mo_per*m.aceP2*o - aceRentMo - aceOpexMo)),
+    aP1: occs.map(o=> Math.round(aceRevP1_SGD*o - aceRentMo - aceOpexMo)),
+    aP2: occs.map(o=> Math.round(aceRevP2_SGD*o - aceRentMo - aceOpexMo)),
   };
 
   upsertChart('chartOcc',{type:'line',data:{labels:occLabels,datasets:[
@@ -1258,8 +1295,8 @@ function renderTimeline(m) {
   // the text on window._tlAuto so the (editable, re-rendered) milestone list can
   // pick it up, and write through to the DOM only if that milestone still exists.
   window._tlAuto = window._tlAuto || {};
-  window._tlAuto.p1 = `${m.laundryP1} laundry rooms + ${m.aceP1} hotel rooms. Monthly net: SGD ${Math.round(m.netP1_SGD).toLocaleString()}.`;
-  window._tlAuto.p2 = `${m.newLaundry} new laundry rooms + ${m.newAce} new hotel rooms. Total: ${m.laundryP2} laundry + ${m.aceP2} hotel. Monthly net: SGD ${Math.round(m.netP2_SGD).toLocaleString()}.`;
+  window._tlAuto.p1 = `${m.laundryP1} laundry rooms + ${m.aceRoomsP1} hotel rooms. Monthly net: SGD ${Math.round(m.netP1_SGD).toLocaleString()}.`;
+  window._tlAuto.p2 = `${m.newLaundry} new laundry rooms + ${m.newAce} new hotel rooms. Total: ${m.laundryP2} laundry + ${m.aceRoomsP2} hotel. Monthly net: SGD ${Math.round(m.netP2_SGD).toLocaleString()}.`;
   const p1El = $('tl-p1-detail'), p2El = $('tl-p2-detail');
   if (p1El) p1El.textContent = window._tlAuto.p1;
   if (p2El) p2El.textContent = window._tlAuto.p2;
@@ -1509,6 +1546,7 @@ const DEFAULTS = {
   'in-fx': 13936, 'in-deposit': 10000000, 'in-advRental': 110000000,
   'in-reno': 110000000, 'in-laundryRent': 1200000, 'in-laundryP1': 7,
   'in-laundryP2': 11, 'in-aceRent': 3000000, 'in-aceP1': 11, 'in-aceP2': 14,
+  'in-aceRent2': 1200000, 'in-aceP1b': 2, 'in-aceP2b': 2,
   'in-reception': 2000000, 'in-aceAnnualRent': 110000000,
   'in-laundryAnnualRent': 60000000, 'in-opex': 5000000,
   'in-constructCost': 1000, 'in-newLaundry': 4, 'in-newAce': 3,
@@ -1840,7 +1878,7 @@ async function previewSnapshot(id, name) {
     const lines = [
       ['FX Rate', d['in-fx'] ? 'IDR ' + Number(d['in-fx']).toLocaleString() + ' / SGD' : '—'],
       ['Laundry rooms Ph.2', d['in-laundryP2'] || '—'],
-      ['Ace Hotel rooms Ph.2', d['in-aceP2'] || '—'],
+      ['Ace Hotel rooms Ph.2', d['in-aceP2'] ? (Number(d['in-aceP2']) + Number(d['in-aceP2b'] || 0)) : '—'],
       ['Monthly Net (Ph.2)', s.netP2_SGD ? 'SGD ' + Number(s.netP2_SGD).toLocaleString() : '—'],
       ['Annual Net (Ph.2)', s.annualP2_SGD ? 'SGD ' + Number(s.annualP2_SGD).toLocaleString() : '—'],
       ['Income Yield', s.yieldP2pct ? s.yieldP2pct + '%' : '—'],
