@@ -1037,6 +1037,20 @@ function upsertChart(id, config) {
   if (ctx) charts[id] = new Chart(ctx, config);
 }
 
+// recalc() builds every chart, including the ones on hidden panels — a canvas
+// inside a display:none panel has no size, so Chart.js draws it at its 300×150
+// fallback. Revealing the panel resizes the axes but the datasets can be left
+// unpainted: the Occupancy tab showed a full grid with no lines on it. Re-settle
+// the charts on whichever panel just became visible; it's a cheap no-op for the
+// ones that drew correctly, which is why it isn't limited to one tab.
+function settlePanelCharts(panelId) {
+  const panel = $(panelId);
+  if (!panel) return;
+  Object.values(charts).forEach(ch => {
+    if (ch && ch.canvas && panel.contains(ch.canvas)) { ch.resize(); ch.update('none'); }
+  });
+}
+
 // ── CORE CALCULATIONS ───────────────────────────────────────────────────────
 function calc() {
   const fx           = val('in-fx');
@@ -1338,6 +1352,7 @@ function switchTab(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   $('panel-' + id).classList.add('active');
+  settlePanelCharts('panel-' + id);
   if (id === 'accounts')  renderAccounts();
   if (id === 'transfers') renderTransfers();
 }
