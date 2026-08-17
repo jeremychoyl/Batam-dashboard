@@ -1129,7 +1129,23 @@ function calc() {
   // nobody had chosen and which alone set the laundry's breakeven occupancy.
   const opexFreeUnits = val('in-opexFreeUnits');
   const opexPerUnit   = val('in-opexPerUnit');
-  const opexFor = units => Math.max(0, units - opexFreeUnits) * opexPerUnit;
+  // The free allowance is granted ONCE across the whole business (owner,
+  // 2026-08-17), not per property. The two properties still need their own cost
+  // for the occupancy curve and the breakeven cards, so the discount those free
+  // units represent is shared out pro-rata by unit count. That keeps the two
+  // property figures summing exactly to the business total — any other split
+  // would make the parts disagree with the whole.
+  const opexSplit = (laundryUnits, aceUnits) => {
+    const units = laundryUnits + aceUnits;
+    const total = Math.max(0, units - opexFreeUnits) * opexPerUnit;
+    if (units <= 0) return { laundry: 0, ace: 0, total: 0 };
+    const discount = Math.min(opexFreeUnits, units) * opexPerUnit;
+    return {
+      laundry: laundryUnits * opexPerUnit - discount * (laundryUnits / units),
+      ace:     aceUnits     * opexPerUnit - discount * (aceUnits     / units),
+      total
+    };
+  };
   const constructCost= val('in-constructCost');
   const newLaundry   = val('in-newLaundry');
   const newAce       = val('in-newAce');
@@ -1145,12 +1161,14 @@ function calc() {
   // Monthly costs — per phase, because the laundry lease steps up in Phase 2 and
   // the unit rule means opex follows the room count too. Each property gets its
   // own free allowance; the rule applies to the laundry and to Ace alike.
-  const laundryOpexP1 = opexFor(laundryP1);
-  const laundryOpexP2 = opexFor(laundryP2);
-  const aceOpexP1     = opexFor(aceRoomsP1);
-  const aceOpexP2     = opexFor(aceRoomsP2);
-  const monthlyOpexP1 = laundryOpexP1 + aceOpexP1;
-  const monthlyOpexP2 = laundryOpexP2 + aceOpexP2;
+  const opexP1Split = opexSplit(laundryP1, aceRoomsP1);
+  const opexP2Split = opexSplit(laundryP2, aceRoomsP2);
+  const laundryOpexP1 = opexP1Split.laundry;
+  const laundryOpexP2 = opexP2Split.laundry;
+  const aceOpexP1     = opexP1Split.ace;
+  const aceOpexP2     = opexP2Split.ace;
+  const monthlyOpexP1 = opexP1Split.total;
+  const monthlyOpexP2 = opexP2Split.total;
   const monthlyRentalP1  = (aceAnnual + laundryAnnualP1) / 12;
   const monthlyRentalP2  = (aceAnnual + laundryAnnualP2) / 12;
   const totalMonthlyCostP1 = monthlyRentalP1 + monthlyOpexP1;
@@ -1287,7 +1305,7 @@ function renderPL(m) {
     <div class="pl-row"><span class="pl-label">Ace Hotel Ph.2 (${m.aceRoomsP2} rooms — ${m.aceP2} @ ${m.aceRent/1e6}m + ${m.aceP2b} @ ${m.aceRent2/1e6}m)</span><span class="pl-val pos">+${Math.round(m.aceRevP2/m.fx).toLocaleString()}</span></div>
     <div class="pl-row"><span class="pl-label">Reception rental (Ph.2 only)</span><span class="pl-val pos">+${Math.round(m.reception/m.fx).toLocaleString()}</span></div>
     <div class="pl-row"><span class="pl-label">Monthly rental cost (Ph.2 lease)</span><span class="pl-val neg">−${Math.round(m.monthlyRentalP2/m.fx).toLocaleString()}</span></div>
-    <div class="pl-row"><span class="pl-label">Monthly operating expenses (Ph.2 — ${m.laundryP2 + m.aceRoomsP2} units, first ${m.opexFreeUnits} of each free)</span><span class="pl-val neg">−${Math.round(m.monthlyOpexP2/m.fx).toLocaleString()}</span></div>
+    <div class="pl-row"><span class="pl-label">Monthly operating expenses (Ph.2 — ${m.laundryP2 + m.aceRoomsP2} units, first ${m.opexFreeUnits} free)</span><span class="pl-val neg">−${Math.round(m.monthlyOpexP2/m.fx).toLocaleString()}</span></div>
     <div class="pl-divider"><span>Phase 2 Monthly Net</span><span>SGD ${Math.round(m.netP2_SGD).toLocaleString()}</span></div>`;
 }
 
@@ -1373,8 +1391,8 @@ function renderOccupancy(m) {
   // right next to the two inputs that drive it.
   const opexOut = $('opex-derived');
   if (opexOut) opexOut.innerHTML =
-    `Ph.1 ${fmtIDR(m.monthlyOpexP1)} <span style="color:var(--muted)">(${m.laundryP1}+${m.aceRoomsP1} units)</span><br>`
-    + `Ph.2 ${fmtIDR(m.monthlyOpexP2)} <span style="color:var(--muted)">(${m.laundryP2}+${m.aceRoomsP2} units)</span>`;
+    `Ph.1 ${fmtIDR(m.monthlyOpexP1)} <span style="color:var(--muted)">(${m.laundryP1 + m.aceRoomsP1} units − ${m.opexFreeUnits} free)</span><br>`
+    + `Ph.2 ${fmtIDR(m.monthlyOpexP2)} <span style="color:var(--muted)">(${m.laundryP2 + m.aceRoomsP2} units − ${m.opexFreeUnits} free)</span>`;
   const sensNote = $('sens-note');
   if (sensNote) sensNote.textContent =
     `Room revenue moves with occupancy; rent, operating cost and the reception sublet do not. The highlighted bar is ${occHi}, the planning case.`;
@@ -1417,12 +1435,13 @@ function breakevenDetail(key, m) {
   }[key];
   const rent  = isLaundry ? (key === 'lp1' ? m.laundryRent_moP1 : m.laundryRent_moP2) : m.aceRent_mo;
   const opex  = { lp1:m.laundryOpexP1, lp2:m.laundryOpexP2, ap1:m.aceOpexP1, ap2:m.aceOpexP2 }[key];
-  const units = { lp1:m.laundryP1, lp2:m.laundryP2, ap1:m.aceRoomsP1, ap2:m.aceRoomsP2 }[key];
-  const charged = Math.max(0, units - m.opexFreeUnits);
+  const units    = { lp1:m.laundryP1, lp2:m.laundryP2, ap1:m.aceRoomsP1, ap2:m.aceRoomsP2 }[key];
+  const bizUnits = key[1] === 'p' && key[2] === '1' ? m.laundryP1 + m.aceRoomsP1 : m.laundryP2 + m.aceRoomsP2;
+  const charged  = Math.max(0, bizUnits - m.opexFreeUnits);
   const rentSrc = isLaundry ? (key === 'lp1' ? m.laundryAnnualP1 : m.laundryAnnualP2) : m.aceAnnual;
   const offset  = key === 'lp2' ? m.reception : 0;   // reception is Phase 2, laundry side only
   const fixed   = rent + opex - offset;
-  return { ...spec, rooms, rent, opex, units, charged, rentSrc, offset, fixed };
+  return { ...spec, rooms, rent, opex, units, bizUnits, charged, rentSrc, offset, fixed };
 }
 
 function showBreakeven(key) {
@@ -1459,8 +1478,8 @@ function showBreakeven(key) {
       ${row('Rent charged to this property', '− ' + fmtIDR(d.rent) + ' /mo', fmtIDR(d.rentSrc) + ' a year ÷ 12')}
       ${row('Operating cost charged', '− ' + fmtIDR(d.opex) + ' /mo',
             d.charged === 0
-              ? `${d.units} units, and the first ${m.opexFreeUnits} of each property cost nothing to run`
-              : `${d.units} units − ${m.opexFreeUnits} free = ${d.charged} × ${fmtIDR(m.opexPerUnit)} each`)}
+              ? `${d.units} units, and the first ${m.opexFreeUnits} across the business cost nothing to run`
+              : `${d.units} of ${d.bizUnits} units × ${fmtIDR(m.opexPerUnit)}, less this property's share of the ${m.opexFreeUnits} free units across the business`)}
       ${d.offset ? row('Reception rental', '+ ' + fmtIDR(d.offset) + ' /mo', 'a fixed sublet, so it offsets fixed cost rather than scaling with occupancy') : ''}
       ${row('<strong>Fixed cost to cover</strong>', '<strong>' + fmtIDR(d.fixed) + ' /mo</strong>')}
 
@@ -2358,7 +2377,7 @@ function renderRatings(m) {
       id: '—', sg: '—',
       score: marginScore, weight: 0.10,
       dynamic: true,
-      why: `Of every SGD earned in Phase 2 revenue, <strong>${margin.toFixed(1)}%</strong> flows to net profit after rental and operating costs. This reflects a lean cost structure — primary costs are fixed lease payments (IDR ${Math.round(m.aceAnnual/1e6)}M + IDR ${Math.round(m.laundryAnnualP2/1e6)}M annually in Phase 2) and IDR ${(m.monthlyOpexP2/1e6).toFixed(2)}M/mo operating cost (${m.laundryP2 + m.aceRoomsP2} units, first ${m.opexFreeUnits} of each free). Score: ${marginScore}/5 — ${marginScore===5?'above 60% margin is exceptional for a hospitality operation.':marginScore===4?'40–60% — healthy and well above industry norms.':'review cost structure.'}`
+      why: `Of every SGD earned in Phase 2 revenue, <strong>${margin.toFixed(1)}%</strong> flows to net profit after rental and operating costs. This reflects a lean cost structure — primary costs are fixed lease payments (IDR ${Math.round(m.aceAnnual/1e6)}M + IDR ${Math.round(m.laundryAnnualP2/1e6)}M annually in Phase 2) and IDR ${(m.monthlyOpexP2/1e6).toFixed(2)}M/mo operating cost (${m.laundryP2 + m.aceRoomsP2} units, first ${m.opexFreeUnits} free). Score: ${marginScore}/5 — ${marginScore===5?'above 60% margin is exceptional for a hospitality operation.':marginScore===4?'40–60% — healthy and well above industry norms.':'review cost structure.'}`
     },
     {
       metric: 'Revenue Diversification',

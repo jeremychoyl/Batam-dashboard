@@ -180,9 +180,15 @@ Per-property rent is now simply `annualLease / 12`. The old
 only looked like a cost allocation.
 
 ### Operating cost is a per-unit rule (2026-08-17)
-Two inputs, `in-opexFreeUnits` and `in-opexPerUnit`: the first N units of **each
-property** cost nothing to run, every unit after that costs the same amount.
-Owner's rule. ⚠️ The **live saved figure is 300,000** per unit — the owner raised
+Two inputs, `in-opexFreeUnits` and `in-opexPerUnit`: the first N units **across
+the whole business** cost nothing to run, every unit after that costs the same
+amount. Owner's rule — confirmed business-wide, *not* per property, on
+2026-08-17 after first being built the other way.
+
+The occupancy curve and the breakeven cards still need a cost per property, so
+`opexSplit()` charges every unit and then shares the free-unit discount out
+**pro-rata by unit count**. Any other split would leave the two property figures
+not summing to the business total; the calc harness asserts that they do. ⚠️ The **live saved figure is 300,000** per unit — the owner raised
 it from 250,000 on 2026-08-17, minutes after the feature shipped. This file's
 HTML default is still 250,000, which only applies to a fresh Reset, so **read the
 saved row (or the Inputs tab) before quoting a cost figure** rather than the
