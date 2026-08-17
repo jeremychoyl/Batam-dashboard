@@ -229,10 +229,24 @@ Ph.1 · Payback Ph.2 · Monthly Net Ph.1 · Monthly Net Ph.2 · 5-Year Cumulativ
 Profit · **5-Year Profit After Capital** (`cum5 − totalP2Invest`, the owner's own
 definition of "net").
 
-The 85% occupancy paybacks and the annual net yield live in the grey `kpi-sub`
-lines instead of taking four more tiles. ⚠️ There is deliberately **no "5-year
-yield" tile**: it is always exactly 5 × the annual yield (405.7% vs 81.1%), so it
-could only ever restate its neighbour. Don't add it back.
+Extended to **10 tiles** the same day: after-capital profit is split by phase
+(each measured against **its own** capital — Phase 1 never spends the Phase 2
+construction money), and **Annual Net Yield** is back as tile 10.
+
+The 85% occupancy paybacks live in the grey `kpi-sub` lines instead of taking two
+more tiles. ⚠️ There is deliberately **no "5-year yield" tile**: it is always
+exactly 5 × the annual yield (405.7% vs 81.1%), so it could only ever restate its
+neighbour. Don't add it back.
+
+**The yield tile compares against Singapore property TOTAL return** — price
+appreciation (`in-sgAppreciation`, 5.3%/yr, URA index since 2022) *plus* rental
+yield (`in-sgYield`, 3.3%) ≈ 8.6%/yr. Comparing an income yield against price
+growth alone would flatter this business by ignoring the rent a Singapore owner
+also collects. ⚠️ The footnote under the grid (`#yield-note`) carries the caveat
+that matters and must not be dropped: this is **income on capital, not capital
+growth**, and a Singapore flat is still an asset after five years whereas this is
+a lease — at the end there is no asset, only the refundable deposit. The
+appreciation figure is an input precisely because it ages.
 
 The after-capital tile turns red and shows a minus when the 5-year profit has not
 covered the capital, rather than printing a bare negative in teal.

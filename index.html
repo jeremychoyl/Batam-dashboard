@@ -519,6 +519,13 @@
             <span class="input-unit">%</span>
           </div>
         </div>
+        <div class="input-row">
+          <span class="input-label">SG property appreciation<div style="font-size:10px;color:var(--muted)">URA index, ~5.3%/yr since 2022 — edit as it ages</div></span>
+          <div class="input-field-wrap">
+            <input type="number" id="in-sgAppreciation" value="5.3" step="0.1" min="0" oninput="recalc()">
+            <span class="input-unit">%/yr</span>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -551,7 +558,8 @@
   <!-- ── OVERVIEW ─────────────────────────────────────────── -->
   <div id="panel-overview" class="panel active">
     <div class="sh"><h2>Investment Snapshot</h2><p>All figures SGD. Edit inputs in the ⚙️ Inputs tab to update everything.</p></div>
-    <div class="grid-kpi mb24" id="kpi-grid"></div>
+    <div class="grid-kpi" id="kpi-grid"></div>
+    <p class="kpi-sub mb24" id="yield-note" style="margin-top:10px;line-height:1.7"></p>
     <div class="grid-2 mb24">
       <div class="card">
         <div class="sh"><h2>Monthly P&amp;L</h2><p>SGD at 100% occupancy</p></div>
@@ -1145,6 +1153,7 @@ function calc() {
   const newAce       = val('in-newAce');
   const idYield      = val('in-idYield') / 100;
   const sgYield      = val('in-sgYield') / 100;
+  const sgAppr       = val('in-sgAppreciation') / 100;   // price growth, NOT rental yield
 
   // Investment
   const totalInvestSGD = (deposit + advRental + reno) / fx;
@@ -1242,7 +1251,7 @@ function calc() {
     fx, deposit, advRental, reno, laundryRent, laundryP1, laundryP2, aceRent, aceP1, aceP2,
     aceRent2, aceP1b, aceP2b, aceRoomsP1, aceRoomsP2,
     reception, aceAnnual, laundryAnnualP1, laundryAnnualP2, constructCost, newLaundry, newAce,
-    idYield, sgYield,
+    idYield, sgYield, sgAppr,
     totalInvestSGD, phase2Capex, totalP2Invest, newRooms,
     monthlyRentalP1, monthlyRentalP2, monthlyOpexP1, monthlyOpexP2, totalMonthlyCostP1, totalMonthlyCostP2,
     opexFreeUnits, opexPerUnit, laundryOpexP1, laundryOpexP2, aceOpexP1, aceOpexP2,
@@ -1291,7 +1300,10 @@ function renderKPIs(m) {
   const money = n => 'SGD ' + Math.round(n).toLocaleString();
   const cum5  = m.annualP2_SGD * 5;
   // What the owner is actually up after the capital has come back out.
-  const net5  = cum5 - m.totalP2Invest;
+  const net5   = cum5 - m.totalP2Invest;
+  const cum5P1 = m.annualP1_SGD * 5;
+  const net5P1 = cum5P1 - m.totalInvestSGD;
+  const sgTotal = (m.sgAppr + m.sgYield) * 100;
   const occ   = Math.round(m.OCC_STRESS * 100);
   const stress = v => isFinite(v) ? v.toFixed(1) + ' mo at ' + occ + '% occupancy' : 'never at ' + occ + '% occupancy';
 
@@ -1303,9 +1315,19 @@ function renderKPIs(m) {
     {l:'Monthly Net — Ph.1',            v:money(m.netP1_SGD), s:m.laundryP1+' laundry + '+m.aceRoomsP1+' hotel rooms'},
     {l:'Monthly Net — Ph.2',            v:money(m.netP2_SGD), s:m.laundryP2+' laundry + '+m.aceRoomsP2+' hotel rooms', acc:true},
     {l:'5-Year Cumulative Profit',      v:money(cum5), s:'Phase 2 stabilised · ' + money(m.annualP2_SGD) + ' a year'},
-    {l:'5-Year Profit After Capital',   v:(net5 < 0 ? '−' : '') + money(Math.abs(net5)),
-      s:money(cum5) + ' less ' + money(m.totalP2Invest) + ' capital · annual net yield ' + (m.yieldP2*100).toFixed(1) + '%',
-      acc: net5 >= 0, neg: net5 < 0},
+    // Each phase measured against ITS OWN capital: Phase 1 never spends the
+    // Phase 2 construction money, so charging it that would understate Phase 1.
+    {l:'5-Yr Profit After Capital — Ph.1', v:(net5P1 < 0 ? '−' : '') + money(Math.abs(net5P1)),
+      s:money(cum5P1) + ' less ' + money(m.totalInvestSGD) + ' capital', acc: net5P1 >= 0, neg: net5P1 < 0},
+    {l:'5-Yr Profit After Capital — Ph.2', v:(net5 < 0 ? '−' : '') + money(Math.abs(net5)),
+      s:money(cum5) + ' less ' + money(m.totalP2Invest) + ' capital', acc: net5 >= 0, neg: net5 < 0},
+    // Restored as its own tile. The comparison is to Singapore property TOTAL
+    // return — appreciation plus rental yield — because comparing an income yield
+    // to price growth alone would flatter this business by ignoring the rent a
+    // Singapore owner also collects.
+    {l:'Annual Net Yield — Ph.2', v:(m.yieldP2*100).toFixed(1)+'%',
+      s:'income on capital · SG property ≈ ' + sgTotal.toFixed(1) + '%/yr ('
+        + (m.sgAppr*100).toFixed(1) + '% growth + ' + (m.sgYield*100).toFixed(1) + '% rent)', acc:true},
   ];
   $('kpi-grid').innerHTML = items.map(i =>
     `<div class="card ${i.neg ? 'red-border' : i.acc ? 'teal-border' : ''}">
@@ -1313,6 +1335,20 @@ function renderKPIs(m) {
        <div class="kpi-value ${i.neg ? '' : i.acc ? 'teal' : ''}" ${i.neg ? 'style="color:var(--red)"' : ''}>${i.v}</div>
        <div class="kpi-sub">${i.s}</div>
      </div>`).join('');
+
+  // The yield comparison needs its caveat next to it, not left to the reader.
+  // A Singapore flat is still an asset after five years; this is a lease on
+  // someone else's building, so the capital is spent, not parked. Saying the
+  // yield is 9x Singapore's total return without that is the kind of claim a
+  // partner should not have to catch.
+  const sgGain = m.totalP2Invest * (Math.pow(1 + m.sgAppr, 5) - 1);
+  const note = $('yield-note');
+  if (note) note.innerHTML =
+    `<strong style="color:var(--subtle)">On the yield comparison:</strong> this is <em>income on capital</em>, not capital growth. `
+    + `Singapore private home prices rose about ${(m.sgAppr*100).toFixed(1)}% a year since 2022 (URA index: +8.6% 2022, +6.8% 2023, +3.9% 2024, +3.4% 2025, +1.4% in H1 2026) — `
+    + `the same ${money(m.totalP2Invest)} would gain roughly ${money(sgGain)} in price over five years, against ${money(net5)} of profit here. `
+    + `But a Singapore flat is still yours to sell afterwards, and this is a lease on someone else's building: at the end there is no asset, only the refundable deposit. `
+    + `Both benchmark figures are editable in <strong style="color:var(--subtle)">Inputs → Market Benchmarks</strong>.`;
 }
 
 function renderPL(m) {
@@ -1866,7 +1902,7 @@ const DEFAULTS = {
   'in-laundryAnnualRentP1': 30000000, 'in-laundryAnnualRentP2': 60000000,
   'in-opexFreeUnits': 2, 'in-opexPerUnit': 250000,
   'in-constructCost': 1000, 'in-newLaundry': 4, 'in-newAce': 3,
-  'in-idYield': 8.3, 'in-sgYield': 3.3
+  'in-idYield': 8.3, 'in-sgYield': 3.3, 'in-sgAppreciation': 5.3
 };
 
 // Base collect/apply — extended below by the renovation and accounts modules.
