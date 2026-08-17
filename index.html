@@ -291,6 +291,7 @@
   <button class="tab" onclick="switchTab('accounts',this)">📒 Laundry</button>
   <button class="tab" onclick="switchTab('transfers',this)">💸 Cash Transfers</button>
   <button class="tab" onclick="switchTab('market',this)">📊 Market</button>
+  <button class="tab" onclick="switchTab('acerooms',this)">🏨 Ace Rooms</button>
 </div>
 
 <div class="content">
@@ -1014,6 +1015,30 @@
     <div id="mkt-charts"></div>
 
   </div>
+
+  <div id="panel-acerooms" class="panel">
+
+    <h2 style="margin:0 0 4px">Ace Hotel — Room Tracker</h2>
+    <p class="kpi-sub" style="margin:0 0 18px">
+      Room-by-room rent and proof of payment for the Ace Hotel rooms. Separate from
+      Edi's hostel tracker on <code>/edi</code> — different business, and this page needs the edit password to save.
+    </p>
+
+    <div class="grid-kpi mb24" id="ace-kpis"></div>
+
+    <div class="card mb24">
+      <h3 style="margin:0 0 2px">Section A — Room Details</h3>
+      <div class="kpi-sub" style="margin:0 0 12px">Fill in each room as the details come. A room counts as occupied once it has a tenant name.</div>
+      <div id="ace-rooms-wrap"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 2px">Section B — Payment Tracker</h3>
+      <div class="kpi-sub" style="margin:0 0 12px">May 2026 – Apr 2027 · tap a cell to cycle ⬜ unpaid → ✅ paid → — not due → ⬜. Tap 📎 under a room to attach a photo of the transfer slip.</div>
+      <div id="ace-grid-wrap"></div>
+    </div>
+
+  </div>
 </div>
 
 <script>
@@ -1670,7 +1695,11 @@ function markDirty(e) {
   const t = e.target;
   if (!t) return;
   // The transfers ledger uses <select> for From/To, so watch those too.
-  if ((t.tagName === 'INPUT' || t.tagName === 'SELECT') && t.id !== 'snapshot-name' && t.id !== 'pw-input') {
+  // A photo picker is not a model edit: proof-of-payment uploads go straight to
+  // Storage and change no figure here, so they must not flag the model dirty and
+  // stall the cloud poll behind a save that has nothing to save.
+  if ((t.tagName === 'INPUT' || t.tagName === 'SELECT') && t.type !== 'file'
+      && t.id !== 'snapshot-name' && t.id !== 'pw-input') {
     hasUnsavedEdits = true;
   }
 }
@@ -3964,6 +3993,365 @@ switchTab = function (id, btn) {
   _origSwitchMKT(id, btn);
   if (id === 'market') mktLoad();
 };
+</script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACE HOTEL ROOM TRACKER — scaffold, added 2026-08-17
+   ═══════════════════════════════════════════════════════════════════════════
+   Room-by-room rent tracking for the 13 Ace Hotel rooms, deliberately EMPTY:
+   13 rooms with no tenant, no rent and nothing ticked. The owner supplies the
+   real figures — inventing a per-room rent here would put unverified numbers
+   into an investor-facing page, and the model only says 11 rooms at 3m and 2 at
+   1.2m, never which room is which.
+
+   Separate from Edi's tracker on /edi on purpose: different business, and this
+   page needs the edit password to save while /edi deliberately does not.
+   Proof-of-payment photos share the ONE storage bucket under the `ace__` scope,
+   so neither tracker can see the other's slips.
+
+   Calendar is MONTHS_12 (May 2026 – Apr 2027), the same window Part 3 uses, so
+   this page never ends up carrying two different month baselines.
+
+   Every name in here is prefixed `ace` on purpose. This file already has
+   renderRooms, togglePayment and renderPaymentGrid for the laundry tracker, and
+   a duplicate top-level name silently replaces the earlier one — that is exactly
+   what blanked the Occupancy tab for two weeks.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const ACE_ROOM_COUNT = 13;
+const aceBlankRooms = () => Array.from({ length: ACE_ROOM_COUNT }, (_, i) => ({
+  room: 'Room ' + (i + 1), tenant: '', checkIn: '', dueDay: 0, rent: 0, deposit: 0, remarks: ''
+}));
+let aceRooms    = aceBlankRooms();
+let acePayments = aceRooms.map(() => Array(12).fill(0));
+
+/* ── Photos: same bucket as /edi, different scope ─────────────────────────── */
+const ACE_RC_BUCKET  = 'receipts';
+const ACE_RC_SCOPE   = 'ace';
+const ACE_RC_MAX_PX  = 1400;
+const ACE_RC_QUALITY = 0.75;
+let aceReceipts      = {};      // "room-slug|monthIndex" -> [filename]
+let aceReceiptsReady = null;    // null = unchecked, false = no bucket, 'noread', true
+const aceReceiptUrls = {};
+
+const aceSlug    = s => String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || 'room';
+const aceRcKey   = (slug, mi) => slug + '|' + mi;
+const aceRcFor   = (roomName, mi) => aceReceipts[aceRcKey(aceSlug(roomName), mi)] || [];
+const aceRcCount = roomName => {
+  const p = aceSlug(roomName) + '|';
+  return Object.keys(aceReceipts).filter(k => k.startsWith(p)).reduce((a,k)=>a+aceReceipts[k].length, 0);
+};
+
+// Readiness cannot come from the list call: Supabase answers 200 [] for a bucket
+// that was never created, exactly as it does for a real empty one. Only a missing
+// bucket says NoSuchBucket. Same probe as /edi, same reason.
+async function aceProbeBucket() {
+  try {
+    const res = await fetch(`${SUPA_URL}/storage/v1/object/${ACE_RC_BUCKET}/__probe__.jpg`, { headers: SUPA_READ_HEADERS });
+    if (res.ok) return true;
+    const body = await res.text().catch(()=> '');
+    return /nosuchbucket|bucket not found/i.test(body) ? false : true;
+  } catch(e) { return null; }
+}
+
+async function aceLoadReceipts() {
+  aceReceiptsReady = await aceProbeBucket();
+  if (aceReceiptsReady !== true) { aceReceipts = {}; return; }
+  try {
+    const res = await fetch(`${SUPA_URL}/storage/v1/object/list/${ACE_RC_BUCKET}`, {
+      method: 'POST',
+      headers: { ...SUPA_READ_HEADERS, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prefix: '', limit: 1000, sortBy: { column: 'name', order: 'asc' } })
+    });
+    if (!res.ok) { aceReceiptsReady = 'noread'; return; }
+    const files = await res.json();
+    const map = {};
+    (Array.isArray(files) ? files : []).forEach(f => {
+      const m = /^([a-z0-9]+)__(.+?)__m(\d{2})__/.exec(f.name || '');
+      if (!m || m[1] !== ACE_RC_SCOPE) return;      // edi__ slips stay invisible here
+      const k = aceRcKey(m[2], parseInt(m[3], 10));
+      (map[k] = map[k] || []).push(f.name);
+    });
+    aceReceipts = map;
+  } catch(e) { aceReceiptsReady = 'noread'; }
+}
+
+function aceRcNote() {
+  if (aceReceiptsReady === false)
+    return 'Photo storage is not switched on yet — run <strong style="color:var(--amber)">SETUP-RECEIPTS.sql</strong> in Supabase once.';
+  if (aceReceiptsReady === 'noread')
+    return 'The <strong style="color:var(--amber)">receipts</strong> bucket exists but this page cannot read it — the anon <strong style="color:var(--amber)">select</strong> policy is missing.';
+  return '';
+}
+
+function aceShrinkImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, ACE_RC_MAX_PX / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width  = Math.max(1, Math.round(img.width  * scale));
+      c.height = Math.max(1, Math.round(img.height * scale));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(b => b ? resolve(b) : reject(new Error('could not re-save that image')), 'image/jpeg', ACE_RC_QUALITY);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url);
+      reject(new Error('could not read that file as a photo — if it came straight off an iPhone as HEIC, open it and share it as a JPEG')); };
+    img.src = url;
+  });
+}
+
+async function aceUploadReceipt(roomName, mi, file) {
+  const blob = await aceShrinkImage(file);
+  const name = `${ACE_RC_SCOPE}__${aceSlug(roomName)}__m${String(mi).padStart(2,'0')}__${Date.now()}.jpg`;
+  const res = await fetch(`${SUPA_URL}/storage/v1/object/${ACE_RC_BUCKET}/${name}`, {
+    method: 'POST',
+    headers: { ...SUPA_READ_HEADERS, 'Content-Type': 'image/jpeg', 'x-upsert': 'false' },
+    body: blob
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(()=> '');
+    if (/nosuchbucket|bucket not found/i.test(body)) aceReceiptsReady = false;
+    throw new Error(
+      /nosuchbucket|bucket not found/i.test(body) ? 'photo storage is not set up yet — run SETUP-RECEIPTS.sql once'
+      : (res.status === 401 || res.status === 403 || /row-level security|violates/i.test(body))
+        ? 'storage refused the upload — the anon insert policy is missing'
+      : `upload failed (${res.status}) ${body.slice(0,120)}`);
+  }
+  const k = aceRcKey(aceSlug(roomName), mi);
+  (aceReceipts[k] = aceReceipts[k] || []).push(name);
+  aceReceiptsReady = true;
+  return name;
+}
+
+async function aceReceiptURL(name) {
+  if (aceReceiptUrls[name]) return aceReceiptUrls[name];
+  const res = await fetch(`${SUPA_URL}/storage/v1/object/${ACE_RC_BUCKET}/${name}`, { headers: SUPA_READ_HEADERS });
+  if (!res.ok) throw new Error('could not load that photo');
+  return (aceReceiptUrls[name] = URL.createObjectURL(await res.blob()));
+}
+
+function aceCloseReceipts() { const m = document.getElementById('ace-rc-modal'); if (m) m.remove(); }
+
+async function aceOpenReceipts(ri) {
+  const r = aceRooms[ri];
+  if (!r) return;
+  aceCloseReceipts();
+  const m = document.createElement('div');
+  m.id = 'ace-rc-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto';
+  m.innerHTML = `
+    <div style="background:#0e1929;border:1px solid var(--teal);border-radius:14px;padding:20px;max-width:540px;width:100%;margin:auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#f1f5f9">📎 Proof of payment</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Ace Hotel · ${htmlAttr(r.room)} · photo of the transfer slip, per month</div>
+        </div>
+        <button onclick="aceCloseReceipts()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:0 4px">✕</button>
+      </div>
+      <div id="ace-rc-body" style="margin-top:14px"><div style="font-size:12px;color:var(--muted)">Loading photos…</div></div>
+    </div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click', e => { if (e.target === m) aceCloseReceipts(); });
+  await aceLoadReceipts();
+  aceRenderReceiptBody(ri);
+}
+
+function aceRenderReceiptBody(ri) {
+  const body = document.getElementById('ace-rc-body');
+  const r = aceRooms[ri];
+  if (!body || !r) return;
+  if (aceReceiptsReady === false) {
+    body.innerHTML = `<div style="border:1px solid var(--amber);background:rgba(245,158,11,0.08);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--subtle);line-height:1.7">⚠️ ${aceRcNote()}</div>`;
+    return;
+  }
+  const head = aceReceiptsReady === 'noread'
+    ? `<div style="border:1px solid var(--amber);background:rgba(245,158,11,0.08);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--subtle);line-height:1.6;margin-bottom:10px">⚠️ ${aceRcNote()}</div>` : '';
+  body.innerHTML = head + MONTHS_12.map((label, mi) => {
+    const files = aceRcFor(r.room, mi);
+    const paid  = acePayments[ri] && acePayments[ri][mi] === 1;
+    const state = paid ? '<span style="color:var(--teal)">paid</span>'
+                : !r.tenant ? '<span style="color:var(--muted)">no tenant</span>'
+                : '<span style="color:var(--muted)">not ticked</span>';
+    const thumbs = files.map(n => `<img data-arc="${htmlAttr(n)}" onclick="aceViewReceipt('${htmlAttr(n)}')"
+        style="width:54px;height:54px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer;background:var(--surface2)" alt="slip">`).join('');
+    return `<div style="border-bottom:1px solid var(--border);padding:9px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="min-width:96px">
+        <div style="font-size:12px;font-weight:600;color:#f1f5f9">${label}</div>
+        <div style="font-size:10px;color:var(--muted)">${htmlAttr(r.tenant || '')}${r.tenant ? ' · ' : ''}${state}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex:1;flex-wrap:wrap">${thumbs || '<span style="font-size:11px;color:var(--muted)">no photo yet</span>'}</div>
+      <label style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap">
+        + Photo<input type="file" accept="image/*" style="display:none" onchange="aceHandleReceiptPick(${ri},${mi},this)">
+      </label>
+    </div>`;
+  }).join('') + `<div id="ace-rc-msg" style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6">
+      Photos upload on their own — they do not wait for Save Changes and never touch the model's figures.</div>`;
+
+  body.querySelectorAll('img[data-arc]').forEach(async img => {
+    try { img.src = await aceReceiptURL(img.dataset.arc); }
+    catch(e) { img.replaceWith(Object.assign(document.createElement('span'),
+      { textContent: '⚠ photo missing', style: 'font-size:11px;color:var(--red)' })); }
+  });
+}
+
+async function aceHandleReceiptPick(ri, mi, input) {
+  const file = input.files && input.files[0];
+  const msg  = document.getElementById('ace-rc-msg');
+  if (!file) return;
+  input.value = '';
+  const say = (t, c) => { if (msg) { msg.textContent = t; msg.style.color = c || 'var(--muted)'; } };
+  say('Uploading ' + MONTHS_12[mi] + '…', 'var(--amber)');
+  try {
+    await aceUploadReceipt(aceRooms[ri].room, mi, file);
+    aceRenderReceiptBody(ri);
+    renderAceTracker();
+    const m2 = document.getElementById('ace-rc-msg');
+    if (m2) { m2.textContent = '✓ ' + MONTHS_12[mi] + ' photo saved'; m2.style.color = 'var(--teal)'; }
+  } catch(e) { say('⚠ ' + e.message, 'var(--red)'); }
+}
+
+function aceViewReceipt(name) {
+  const url = aceReceiptUrls[name];
+  if (!url) return;
+  const v = document.createElement('div');
+  v.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1100;display:flex;align-items:center;justify-content:center;padding:14px;cursor:zoom-out';
+  v.innerHTML = `<img src="${url}" style="max-width:100%;max-height:100%;border-radius:8px" alt="proof of payment">`;
+  v.onclick = () => v.remove();
+  document.body.appendChild(v);
+}
+
+/* ── Editing ──────────────────────────────────────────────────────────────── */
+function aceSetField(ri, field, value) {
+  const r = aceRooms[ri];
+  if (!r) return;
+  r[field] = (field === 'rent' || field === 'deposit' || field === 'dueDay') ? (parseFloat(value) || 0) : value;
+  if (field === 'checkIn') r.checkIn = fromISO(value);      // stored DD/MM/YYYY, as everywhere else here
+  renderAceTracker();
+}
+function aceTogglePayment(ri, mi) {
+  acePayments[ri][mi] = NEXT_PAYMENT_STATE[acePayments[ri][mi]] ?? 1;
+  hasUnsavedEdits = true;                                   // a tap is a real edit, and taps fire no input event
+  renderAceTracker();
+}
+
+/* ── Render ───────────────────────────────────────────────────────────────── */
+function renderAceTracker() {
+  const roomsWrap = document.getElementById('ace-rooms-wrap');
+  const gridWrap  = document.getElementById('ace-grid-wrap');
+  if (!roomsWrap || !gridWrap) return;
+  while (acePayments.length < aceRooms.length) acePayments.push(Array(12).fill(0));
+
+  const dayOpts = ['<option value="0">—</option>']
+    .concat(Array.from({length:31}, (_,d)=>`<option value="${d+1}">${ordinal(d+1)}</option>`)).join('');
+
+  // Section A
+  roomsWrap.innerHTML = `<div style="overflow-x:auto"><table style="font-size:12px;min-width:820px;border-collapse:collapse">
+    <thead><tr style="border-bottom:1px solid var(--border)">
+      <th style="padding:8px 6px;text-align:left">Room</th>
+      <th style="padding:8px 6px;text-align:left">Tenant</th>
+      <th style="padding:8px 6px;text-align:left">Check-in</th>
+      <th style="padding:8px 6px;text-align:left">Due day</th>
+      <th style="padding:8px 6px;text-align:right">Rent / month</th>
+      <th style="padding:8px 6px;text-align:right">Deposit</th>
+      <th style="padding:8px 6px;text-align:left">Remarks</th>
+    </tr></thead><tbody>` +
+    aceRooms.map((r,i) => `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:6px"><input class="tr-input" style="width:78px" value="${htmlAttr(r.room)}" oninput="aceRooms[${i}].room=this.value" onchange="renderAceTracker()"></td>
+      <td style="padding:6px"><input class="tr-input" style="width:130px" placeholder="empty" value="${htmlAttr(r.tenant)}" oninput="aceRooms[${i}].tenant=this.value" onchange="renderAceTracker()"></td>
+      <td style="padding:6px"><input type="date" class="tr-input field-date" style="width:130px" value="${toISO(r.checkIn)}" onchange="aceSetField(${i},'checkIn',this.value)"></td>
+      <td style="padding:6px"><select class="tr-input" style="width:72px" onchange="aceSetField(${i},'dueDay',this.value)">${
+          dayOpts.replace(`value="${r.dueDay}"`, `value="${r.dueDay}" selected`)}</select></td>
+      <td style="padding:6px;text-align:right"><input type="number" min="0" class="tr-input" style="width:110px;text-align:right" value="${r.rent||0}" oninput="aceSetField(${i},'rent',this.value)"></td>
+      <td style="padding:6px;text-align:right"><input type="number" min="0" class="tr-input" style="width:96px;text-align:right" value="${r.deposit||0}" oninput="aceSetField(${i},'deposit',this.value)"></td>
+      <td style="padding:6px"><input class="tr-input" style="width:150px;font-size:11px;color:var(--muted)" placeholder="Notes" value="${htmlAttr(r.remarks||'')}" oninput="aceRooms[${i}].remarks=this.value"></td>
+    </tr>`).join('') + `</tbody></table></div>`;
+
+  // Section B — payment grid
+  let html = `<div style="overflow-x:auto"><table style="font-size:12px;min-width:940px;border-collapse:collapse">
+    <thead><tr>
+      <th style="padding:8px 6px;text-align:left;min-width:74px">Room</th>
+      <th style="padding:8px 4px;text-align:left;min-width:96px">Tenant</th>
+      ${MONTHS_12.map(m=>`<th style="padding:8px 4px;text-align:center;min-width:48px;font-size:11px">${m}</th>`).join('')}
+      <th style="padding:8px 6px;text-align:right;min-width:88px">Total Paid</th>
+    </tr></thead><tbody>`;
+  const monthTotals = Array(12).fill(0);
+  let grandPaid = 0, paidCells = 0;
+  aceRooms.forEach((r, ri) => {
+    let paidAmt = 0;
+    const rc = aceRcCount(r.room);
+    html += `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${htmlAttr(r.room)}
+        <button onclick="aceOpenReceipts(${ri})" title="Proof of payment photos for ${htmlAttr(r.room)}"
+          style="display:block;margin-top:3px;background:none;border:none;padding:0;cursor:pointer;font-size:10px;color:${rc?'var(--teal)':'var(--muted)'}">📎 ${rc||'add'}</button></td>
+      <td style="padding:7px 4px;font-size:11px;color:var(--subtle)">${r.tenant ? htmlAttr(r.tenant) : '<span style="color:var(--red)">empty</span>'}</td>`;
+    MONTHS_12.forEach((_, mi) => {
+      const state = acePayments[ri][mi];
+      const shown = state === 1 ? 1 : (!r.tenant || state === 3) ? 3 : 0;
+      if (state === 1) { paidCells++; paidAmt += (r.rent||0); monthTotals[mi] += (r.rent||0); }
+      const bg = shown === 1 ? 'rgba(0,212,184,0.1)' : '';
+      const cellRc = aceRcFor(r.room, mi).length;
+      html += `<td style="padding:4px;text-align:center">
+        <button onclick="aceTogglePayment(${ri},${mi})" title="${htmlAttr(MONTHS_12[mi] + ' · ' + (r.tenant||'no tenant'))}"
+          style="background:${bg};border:1px solid transparent;border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:34px;opacity:${!r.tenant&&shown!==1?'.5':'1'}">${PAYMENT_STATES[shown]}</button>
+        ${cellRc ? `<div style="font-size:9px;color:var(--teal)" title="${cellRc} photo${cellRc===1?'':'s'}">📎${cellRc>1?cellRc:''}</div>` : ''}</td>`;
+    });
+    grandPaid += paidAmt;
+    html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${paidAmt?fmtIDR(paidAmt):'—'}</td></tr>`;
+  });
+  html += `<tr style="border-top:2px solid var(--teal);background:rgba(0,212,184,0.05)">
+    <td colspan="2" style="padding:8px 6px;font-weight:700;color:#f1f5f9;font-size:12px">Monthly Total</td>
+    ${monthTotals.map(t=>`<td style="padding:8px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:${t>0?'var(--teal)':'var(--muted)'};font-weight:700">${t>0?(t/1e6).toFixed(1)+'m':'—'}</td>`).join('')}
+    <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${fmtIDR(grandPaid)}</td>
+  </tr></tbody></table></div>`;
+
+  const note = aceRcNote();
+  if (note) html += `<div style="margin-top:10px;padding:9px 14px;border-radius:8px;font-size:11px;line-height:1.7;border:1px solid var(--amber);background:rgba(245,158,11,0.06);color:var(--subtle)">📎 ${note}</div>`;
+  gridWrap.innerHTML = html;
+
+  // KPIs. Rents start at 0, so say the tracker is empty rather than printing
+  // Rp 0 as though it were a measured figure.
+  const occupied = aceRooms.filter(r => r.tenant).length;
+  const dueMo    = aceRooms.filter(r => r.tenant).reduce((a,r)=>a+(r.rent||0), 0);
+  const noRents  = aceRooms.every(r => !r.rent);
+  const deposits = aceRooms.reduce((a,r)=>a+(r.deposit||0), 0);
+  const kpi = (l,v,s,acc) => `<div class="card ${acc?'teal-border':''}"><div class="kpi-label">${l}</div><div class="kpi-value ${acc?'teal':''}" style="font-size:22px">${v}</div><div class="kpi-sub">${s}</div></div>`;
+  document.getElementById('ace-kpis').innerHTML =
+    kpi('Rooms', ACE_ROOM_COUNT, aceRooms.length + ' in the tracker') +
+    kpi('Occupied', occupied, occupied ? 'has a tenant name' : 'no tenants entered yet') +
+    kpi('Rent due / month', noRents ? '—' : fmtIDR(dueMo), noRents ? 'no rents entered yet' : 'occupied rooms only', true) +
+    kpi('Collected', paidCells ? fmtIDR(grandPaid) : '—', paidCells ? paidCells + ' month' + (paidCells===1?'':'s') + ' ticked' : 'nothing ticked yet') +
+    kpi('Deposits held', deposits ? fmtIDR(deposits) : '—', deposits ? 'refundable' : 'none entered yet');
+}
+
+/* ── Persist into row 1, chaining the collect/apply pair ──────────────────── */
+const _origCollectACE = collectInputs;
+collectInputs = function() {
+  const data = _origCollectACE();
+  data._aceRooms    = JSON.parse(JSON.stringify(aceRooms));
+  data._acePayments = JSON.parse(JSON.stringify(acePayments));
+  return data;
+};
+const _origApplyACE = applyInputs;
+applyInputs = function(data) {
+  _origApplyACE(data);
+  if (Array.isArray(data._aceRooms) && data._aceRooms.length) aceRooms = data._aceRooms;
+  if (Array.isArray(data._acePayments) && data._acePayments.length) acePayments = data._acePayments;
+  while (acePayments.length < aceRooms.length) acePayments.push(Array(12).fill(0));
+  renderAceTracker();
+};
+
+const _origSwitchACE = switchTab;
+switchTab = function(id, btn) {
+  _origSwitchACE(id, btn);
+  if (id === 'acerooms') renderAceTracker();
+};
+
+renderAceTracker();
+aceLoadReceipts().then(renderAceTracker);
 </script>
 </body>
 </html>

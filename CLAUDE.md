@@ -104,7 +104,7 @@ Live: **https://batam-dashboard.vercel.app/**
 
 ## Tabs (each an `#panel-*` + its own `<script>` block)
 Inputs · Overview · Projections · Occupancy · Benchmarks · Risks · Timeline ·
-Renovation · Ratings · Laundry (Accounts) · Cash Transfers · Market.
+Renovation · Ratings · Laundry (Accounts) · Cash Transfers · Market · Ace Rooms.
 Each feature-script patches `collectInputs`/`applyInputs`/`switchTab` to persist
 and render its own slice — keep that chaining intact when adding features.
 
@@ -152,6 +152,30 @@ against the owner's own room rates, so the two are not interchangeable. And
 exact figures are used wherever a number is read; the compact `1.8 m` form is
 for axis ticks only, because `(2.05).toFixed(1)` floats down to `"2.0"` and
 would print a 2,050,000 median as "IDR 2 m".
+
+### Ace Rooms tab (scaffolded 2026-08-17)
+Room-by-room rent tracking for the **13 Ace Hotel rooms** — Section A (room
+details) + Section B (12-month payment grid), persisted in row 1 under
+`_aceRooms` / `_acePayments`. Deliberately **empty**: 13 rooms named Room 1–13
+with no tenant, no rent, nothing ticked. The model only says 11 rooms at 3m and
+2 at 1.2m, never *which* room is which, so filling any of it in would be
+inventing figures on an investor-facing page. KPIs print **—**, not `Rp 0`, while
+a column is unfilled, because zero reads as a measured figure.
+
+Distinct from the **laundry** 7-room tracker in Cash Transfers Part 3 and from
+Edi's hostel on `/edi` — different business, and this page needs the edit
+password to save while `/edi` deliberately does not. It shares `/edi`'s one
+Storage bucket for proof-of-payment photos under the **`ace__` scope**, so
+neither tracker can see the other's slips (unit-tested: `ace__room-2__…` and
+`edi__room-2__…` never cross). Calendar is the existing `MONTHS_12`
+(May 2026–Apr 2027) so the page never carries two month baselines.
+
+⚠️ Every identifier in that block is prefixed `ace`. This file already has
+`renderRooms`, `togglePayment` and `renderPaymentGrid` for the laundry tracker,
+and a duplicate top-level name silently replaces the earlier one — see the
+`renderOccupancy` note above for what that costs. `markDirty` now also ignores
+`type="file"`, so picking a photo does not flag the model dirty and stall the
+cloud poll behind a save with nothing in it.
 
 ### Cash Transfers tab (rebuilt 2026-08-02)
 Three sections: **Part 1 — Capital Expenditure** (renovation spend ledger,
