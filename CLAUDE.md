@@ -85,6 +85,13 @@ Renovation · Ratings · Laundry (Accounts) · Cash Transfers · Market.
 Each feature-script patches `collectInputs`/`applyInputs`/`switchTab` to persist
 and render its own slice — keep that chaining intact when adding features.
 
+`switchTab` also calls **`settlePanelCharts()`** on the panel it reveals (added
+2026-08-17). `recalc()` builds every chart at once, including those on
+`display:none` panels where the canvas has no size and Chart.js falls back to
+300×150; revealing the panel resized the axes but left the datasets unpainted,
+which is why the Occupancy tab drew a complete grid with no lines on it. It is
+not dead code just because the Benchmarks radar happens to survive without it.
+
 ### Market tab (added 2026-08-14)
 
 Charts scraped **asking prices by area** from BatamPropBot's archive — the only
