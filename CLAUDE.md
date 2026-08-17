@@ -110,8 +110,21 @@ Live: **https://batam-dashboard.vercel.app/**
     omitted for them — never back-filled.
 
 ## Tabs (each an `#panel-*` + its own `<script>` block)
-Inputs · Overview · Projections · Occupancy · Benchmarks · Risks · Timeline ·
-Renovation · Ratings · Laundry (Accounts) · Cash Transfers · Market · Ace Rooms.
+Reordered 2026-08-18 to the owner's ordering. **On the bar:** Overview · Inputs ·
+Renovation · Occupancy · Cash Transfers · Ace Rooms · **More ▾**. **Behind More:**
+Projections · Benchmarks · Risks · Timeline · Market · Laundry (Accounts) ·
+Ratings. *Ratings* was not in the owner's list; it sits with the secondary tabs
+rather than being dropped, since removing an unmentioned page would lose it
+silently — raise it if they want it gone.
+
+**Overview is the landing tab** (`panel-overview` carries `active`, and the last
+script block calls `switchTab('overview', …)` once at load). The More menu is a
+**centred sheet, not a dropdown**: `.tabs` is a horizontally scrolling flex row,
+so an absolutely positioned menu inside it is clipped — invisibly, until someone
+taps on an iPad. `switchFromMore()` routes through `switchTab` passing the More
+button as the clicked tab so the bar still shows something active, and the
+outermost `switchTab` patch resets the More label when a bar tab is chosen. That
+patch must stay in the **last** script block to remain outermost.
 Each feature-script patches `collectInputs`/`applyInputs`/`switchTab` to persist
 and render its own slice — keep that chaining intact when adding features.
 
