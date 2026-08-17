@@ -1279,16 +1279,40 @@ function renderLiveSummary(m) {
   ].map(([k,v]) => `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">${k}</div><div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--teal)">${v}</div></div>`).join('');
 }
 
+/* Ordered to the owner's ask (2026-08-18): money in, how fast it comes back, what
+   it earns, what it totals. The 85% occupancy paybacks and the annual yield ride
+   in the grey sub-lines rather than taking tiles of their own — four fewer tiles
+   for the same information.
+
+   Deliberately NOT shown: a "5-year yield". It is arithmetically always exactly
+   five times the annual yield (405.7% against 81.1%), so it can only ever agree
+   with its neighbour while taking up space. */
 function renderKPIs(m) {
+  const money = n => 'SGD ' + Math.round(n).toLocaleString();
+  const cum5  = m.annualP2_SGD * 5;
+  // What the owner is actually up after the capital has come back out.
+  const net5  = cum5 - m.totalP2Invest;
+  const occ   = Math.round(m.OCC_STRESS * 100);
+  const stress = v => isFinite(v) ? v.toFixed(1) + ' mo at ' + occ + '% occupancy' : 'never at ' + occ + '% occupancy';
+
   const items = [
-    {l:'Initial Investment', v:'SGD '+Math.round(m.totalInvestSGD).toLocaleString(), s:'Deposit + Advance + Reno', acc:false},
-    {l:'Phase 1 Monthly Net', v:'SGD '+Math.round(m.netP1_SGD).toLocaleString(), s:m.laundryP1+' laundry + '+m.aceRoomsP1+' hotel rooms', acc:false},
-    {l:'Phase 2 Monthly Net', v:'SGD '+Math.round(m.netP2_SGD).toLocaleString(), s:m.laundryP2+' laundry + '+m.aceRoomsP2+' hotel rooms', acc:true},
-    {l:'Payback Period', v:m.breakevenP2.toFixed(1)+' mo', s:'Phase 2 capital recovery', acc:false},
-    {l:'5-Year Cumulative', v:'SGD '+Math.round(m.annualP2_SGD*5).toLocaleString(), s:'Phase 2 stabilised', acc:false},
-    {l:'Income Yield (Ph.2)', v:(m.yieldP2*100).toFixed(1)+'%', s:'vs ID '+(m.idYield*100).toFixed(1)+'% / SG '+(m.sgYield*100).toFixed(1)+'%', acc:true},
+    {l:'Initial Investment — Ph.1',     v:money(m.totalInvestSGD), s:'Deposit + advance rental + renovation'},
+    {l:'Total Investment — Ph.1 + 2',   v:money(m.totalP2Invest),  s:'plus ' + money(m.phase2Capex) + ' Phase 2 construction'},
+    {l:'Payback — Ph.1',                v:m.breakevenP1.toFixed(1)+' mo', s:stress(m.breakevenP1_occ)},
+    {l:'Payback — Ph.2',                v:m.breakevenP2.toFixed(1)+' mo', s:stress(m.breakevenP2_occ)},
+    {l:'Monthly Net — Ph.1',            v:money(m.netP1_SGD), s:m.laundryP1+' laundry + '+m.aceRoomsP1+' hotel rooms'},
+    {l:'Monthly Net — Ph.2',            v:money(m.netP2_SGD), s:m.laundryP2+' laundry + '+m.aceRoomsP2+' hotel rooms', acc:true},
+    {l:'5-Year Cumulative Profit',      v:money(cum5), s:'Phase 2 stabilised · ' + money(m.annualP2_SGD) + ' a year'},
+    {l:'5-Year Profit After Capital',   v:(net5 < 0 ? '−' : '') + money(Math.abs(net5)),
+      s:money(cum5) + ' less ' + money(m.totalP2Invest) + ' capital · annual net yield ' + (m.yieldP2*100).toFixed(1) + '%',
+      acc: net5 >= 0, neg: net5 < 0},
   ];
-  $('kpi-grid').innerHTML = items.map(i => `<div class="card ${i.acc?'teal-border':''}"><div class="kpi-label">${i.l}</div><div class="kpi-value ${i.acc?'teal':''}">${i.v}</div><div class="kpi-sub">${i.s}</div></div>`).join('');
+  $('kpi-grid').innerHTML = items.map(i =>
+    `<div class="card ${i.neg ? 'red-border' : i.acc ? 'teal-border' : ''}">
+       <div class="kpi-label">${i.l}</div>
+       <div class="kpi-value ${i.neg ? '' : i.acc ? 'teal' : ''}" ${i.neg ? 'style="color:var(--red)"' : ''}>${i.v}</div>
+       <div class="kpi-sub">${i.s}</div>
+     </div>`).join('');
 }
 
 function renderPL(m) {

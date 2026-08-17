@@ -222,6 +222,21 @@ not once across the business. That reading of "first 2 units … applies to both
 is worth 500,000/month against the business-wide reading — confirm before
 treating either as settled.
 
+### Investment Snapshot tiles (reordered 2026-08-18)
+Owner's ordering: money in → how fast it comes back → what it earns → what it
+totals. Eight tiles: Initial Investment Ph.1 · Total Investment Ph.1+2 · Payback
+Ph.1 · Payback Ph.2 · Monthly Net Ph.1 · Monthly Net Ph.2 · 5-Year Cumulative
+Profit · **5-Year Profit After Capital** (`cum5 − totalP2Invest`, the owner's own
+definition of "net").
+
+The 85% occupancy paybacks and the annual net yield live in the grey `kpi-sub`
+lines instead of taking four more tiles. ⚠️ There is deliberately **no "5-year
+yield" tile**: it is always exactly 5 × the annual yield (405.7% vs 81.1%), so it
+could only ever restate its neighbour. Don't add it back.
+
+The after-capital tile turns red and shows a minus when the 5-year profit has not
+covered the capital, rather than printing a bare negative in teal.
+
 ### Phase 2 Expansion Capex box (split 2026-08-18)
 Phase 1 → Phase 2 is **two unrelated things at once**, and this box used to blend
 them into one "return on incremental capex": the rooms you build, and a laundry
