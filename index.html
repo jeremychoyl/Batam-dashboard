@@ -465,11 +465,22 @@
           </div>
         </div>
         <div class="input-row">
-          <span class="input-label">Monthly Operating Cost</span>
+          <span class="input-label">Units with no operating cost</span>
           <div class="input-field-wrap">
-            <input type="number" id="in-opex" value="5000000" min="0" oninput="recalc()">
+            <input type="number" id="in-opexFreeUnits" value="2" min="0" max="50" oninput="recalc()">
+            <span class="input-unit">units</span>
+          </div>
+        </div>
+        <div class="input-row">
+          <span class="input-label">Operating cost per unit after that</span>
+          <div class="input-field-wrap">
+            <input type="number" id="in-opexPerUnit" value="250000" min="0" oninput="recalc()">
             <span class="input-unit">IDR/mo</span>
           </div>
+        </div>
+        <div class="input-row">
+          <span class="input-label" style="color:var(--muted)">Operating cost this produces</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);text-align:right;line-height:1.6" id="opex-derived">—</div>
         </div>
       </div>
 
@@ -1111,7 +1122,14 @@ function calc() {
   // run than it is.
   const laundryAnnualP1 = val('in-laundryAnnualRentP1');
   const laundryAnnualP2 = val('in-laundryAnnualRentP2');
-  const opex         = val('in-opex');
+  // Operating cost is a per-unit rule, not one lump figure: the first N units of
+  // EACH property cost nothing to run, and every unit after that costs the same
+  // amount. Owner's rule, 2026-08-17. This replaced a flat monthly figure that
+  // was then split ⅔ Ace / ⅓ laundry by a hardcoded fraction — an allocation
+  // nobody had chosen and which alone set the laundry's breakeven occupancy.
+  const opexFreeUnits = val('in-opexFreeUnits');
+  const opexPerUnit   = val('in-opexPerUnit');
+  const opexFor = units => Math.max(0, units - opexFreeUnits) * opexPerUnit;
   const constructCost= val('in-constructCost');
   const newLaundry   = val('in-newLaundry');
   const newAce       = val('in-newAce');
@@ -1124,12 +1142,19 @@ function calc() {
   const phase2Capex     = newRooms * constructCost;
   const totalP2Invest   = totalInvestSGD + phase2Capex;
 
-  // Monthly costs — per phase, because the laundry lease steps up in Phase 2
-  const monthlyOpex      = opex;
+  // Monthly costs — per phase, because the laundry lease steps up in Phase 2 and
+  // the unit rule means opex follows the room count too. Each property gets its
+  // own free allowance; the rule applies to the laundry and to Ace alike.
+  const laundryOpexP1 = opexFor(laundryP1);
+  const laundryOpexP2 = opexFor(laundryP2);
+  const aceOpexP1     = opexFor(aceRoomsP1);
+  const aceOpexP2     = opexFor(aceRoomsP2);
+  const monthlyOpexP1 = laundryOpexP1 + aceOpexP1;
+  const monthlyOpexP2 = laundryOpexP2 + aceOpexP2;
   const monthlyRentalP1  = (aceAnnual + laundryAnnualP1) / 12;
   const monthlyRentalP2  = (aceAnnual + laundryAnnualP2) / 12;
-  const totalMonthlyCostP1 = monthlyRentalP1 + monthlyOpex;
-  const totalMonthlyCostP2 = monthlyRentalP2 + monthlyOpex;
+  const totalMonthlyCostP1 = monthlyRentalP1 + monthlyOpexP1;
+  const totalMonthlyCostP2 = monthlyRentalP2 + monthlyOpexP2;
 
   // Phase 1 revenue (IDR)
   const laundryRevP1 = laundryRent * laundryP1;
@@ -1181,26 +1206,25 @@ function calc() {
   const aceRent_mo       = aceAnnual / 12;
   const laundryRent_moP1 = laundryAnnualP1 / 12;
   const laundryRent_moP2 = laundryAnnualP2 / 12;
-  const aceOpex       = (monthlyOpex * 2/3);
-  const laundryOpex   = (monthlyOpex * 1/3);
   // P1
-  const laundryP1_100 = laundryRevP1/fx - laundryRent_moP1/fx - laundryOpex/fx;
-  const aceP1_100     = aceRevP1/fx     - aceRent_mo/fx      - aceOpex/fx;
+  const laundryP1_100 = laundryRevP1/fx - laundryRent_moP1/fx - laundryOpexP1/fx;
+  const aceP1_100     = aceRevP1/fx     - aceRent_mo/fx      - aceOpexP1/fx;
   // P2
-  const laundryP2_100 = (laundryRevP2 + reception)/fx - laundryRent_moP2/fx - laundryOpex/fx;
-  const aceP2_100     = aceRevP2/fx     - aceRent_mo/fx      - aceOpex/fx;
+  const laundryP2_100 = (laundryRevP2 + reception)/fx - laundryRent_moP2/fx - laundryOpexP2/fx;
+  const aceP2_100     = aceRevP2/fx     - aceRent_mo/fx      - aceOpexP2/fx;
   // Breakeven occupancy: fixed cost / revenue at 100%
   const laundryP1_rev100 = laundryRevP1/fx;
   const laundryP2_rev100 = (laundryRevP2)/fx; // room revenue only for breakeven calc
   const aceP1_rev100     = aceRevP1/fx;
   const aceP2_rev100     = aceRevP2/fx;
-  const laundryP1_fixedCost = laundryRent_moP1/fx + laundryOpex/fx;
-  const laundryP2_fixedCost = laundryRent_moP2/fx + laundryOpex/fx - reception/fx;
-  const aceFixedCost    = aceRent_mo/fx + aceOpex/fx;
+  const laundryP1_fixedCost = laundryRent_moP1/fx + laundryOpexP1/fx;
+  const laundryP2_fixedCost = laundryRent_moP2/fx + laundryOpexP2/fx - reception/fx;
+  const aceP1_fixedCost = aceRent_mo/fx + aceOpexP1/fx;
+  const aceP2_fixedCost = aceRent_mo/fx + aceOpexP2/fx;
   const beLP1 = laundryP1_rev100 > 0 ? laundryP1_fixedCost / laundryP1_rev100 : 1;
   const beLP2 = laundryP2_rev100 > 0 ? Math.max(0, laundryP2_fixedCost / laundryP2_rev100) : 1;
-  const beAP1 = aceP1_rev100 > 0 ? aceFixedCost / aceP1_rev100 : 1;
-  const beAP2 = aceP2_rev100 > 0 ? aceFixedCost / aceP2_rev100 : 1;
+  const beAP1 = aceP1_rev100 > 0 ? aceP1_fixedCost / aceP1_rev100 : 1;
+  const beAP2 = aceP2_rev100 > 0 ? aceP2_fixedCost / aceP2_rev100 : 1;
 
   return {
     fx, deposit, advRental, reno, laundryRent, laundryP1, laundryP2, aceRent, aceP1, aceP2,
@@ -1208,14 +1232,15 @@ function calc() {
     reception, aceAnnual, laundryAnnualP1, laundryAnnualP2, opex, constructCost, newLaundry, newAce,
     idYield, sgYield,
     totalInvestSGD, phase2Capex, totalP2Invest, newRooms,
-    monthlyRentalP1, monthlyRentalP2, monthlyOpex, totalMonthlyCostP1, totalMonthlyCostP2,
+    monthlyRentalP1, monthlyRentalP2, monthlyOpexP1, monthlyOpexP2, totalMonthlyCostP1, totalMonthlyCostP2,
+    opexFreeUnits, opexPerUnit, laundryOpexP1, laundryOpexP2, aceOpexP1, aceOpexP2,
     laundryRevP1, aceRevP1, totalRevP1, netP1_IDR, netP1_SGD, annualP1_SGD,
     laundryRevP2, aceRevP2, totalRevP2, netP2_IDR, netP2_SGD, annualP2_SGD,
     breakevenP1, breakevenP2, yieldP1, yieldP2,
     OCC_STRESS, netP1_occ_SGD, netP2_occ_SGD, breakevenP1_occ, breakevenP2_occ,
     // The pieces each breakeven percentage is built from, so the tap-through
     // detail shows the model's own numbers instead of recomputing its own.
-    aceRent_mo, laundryRent_moP1, laundryRent_moP2, aceOpex, laundryOpex, aceOpexShare: 2/3, laundryOpexShare: 1/3,
+    aceRent_mo, laundryRent_moP1, laundryRent_moP2,
     incrProfit, incrReturn, incrPayback,
     laundryP1_100, laundryP2_100, aceP1_100, aceP2_100,
     beLP1, beLP2, beAP1, beAP2
@@ -1262,7 +1287,7 @@ function renderPL(m) {
     <div class="pl-row"><span class="pl-label">Ace Hotel Ph.2 (${m.aceRoomsP2} rooms — ${m.aceP2} @ ${m.aceRent/1e6}m + ${m.aceP2b} @ ${m.aceRent2/1e6}m)</span><span class="pl-val pos">+${Math.round(m.aceRevP2/m.fx).toLocaleString()}</span></div>
     <div class="pl-row"><span class="pl-label">Reception rental (Ph.2 only)</span><span class="pl-val pos">+${Math.round(m.reception/m.fx).toLocaleString()}</span></div>
     <div class="pl-row"><span class="pl-label">Monthly rental cost (Ph.2 lease)</span><span class="pl-val neg">−${Math.round(m.monthlyRentalP2/m.fx).toLocaleString()}</span></div>
-    <div class="pl-row"><span class="pl-label">Monthly operating expenses</span><span class="pl-val neg">−${Math.round(m.monthlyOpex/m.fx).toLocaleString()}</span></div>
+    <div class="pl-row"><span class="pl-label">Monthly operating expenses (Ph.2 — ${m.laundryP2 + m.aceRoomsP2} units, first ${m.opexFreeUnits} of each free)</span><span class="pl-val neg">−${Math.round(m.monthlyOpexP2/m.fx).toLocaleString()}</span></div>
     <div class="pl-divider"><span>Phase 2 Monthly Net</span><span>SGD ${Math.round(m.netP2_SGD).toLocaleString()}</span></div>`;
 }
 
@@ -1308,14 +1333,16 @@ function renderOccupancy(m) {
   const aceRentMo   = m.aceAnnual / 12 / fx;
   const laundryRentMoP1 = m.laundryAnnualP1 / 12 / fx;
   const laundryRentMoP2 = m.laundryAnnualP2 / 12 / fx;
-  const aceOpexMo   = m.opex / fx * 2/3;
-  const laundryOpexMo = m.opex / fx * 1/3;
+  const aceOpexMoP1     = m.aceOpexP1 / fx;
+  const aceOpexMoP2     = m.aceOpexP2 / fx;
+  const laundryOpexMoP1 = m.laundryOpexP1 / fx;
+  const laundryOpexMoP2 = m.laundryOpexP2 / fx;
 
   const d = {
-    lP1: occs.map(o=> Math.round(lR_mo_per*m.laundryP1*o - laundryRentMoP1 - laundryOpexMo)),
-    lP2: occs.map(o=> Math.round(lR_mo_per*m.laundryP2*o + m.reception/fx - laundryRentMoP2 - laundryOpexMo)),
-    aP1: occs.map(o=> Math.round(aceRevP1_SGD*o - aceRentMo - aceOpexMo)),
-    aP2: occs.map(o=> Math.round(aceRevP2_SGD*o - aceRentMo - aceOpexMo)),
+    lP1: occs.map(o=> Math.round(lR_mo_per*m.laundryP1*o - laundryRentMoP1 - laundryOpexMoP1)),
+    lP2: occs.map(o=> Math.round(lR_mo_per*m.laundryP2*o + m.reception/fx - laundryRentMoP2 - laundryOpexMoP2)),
+    aP1: occs.map(o=> Math.round(aceRevP1_SGD*o - aceRentMo - aceOpexMoP1)),
+    aP2: occs.map(o=> Math.round(aceRevP2_SGD*o - aceRentMo - aceOpexMoP2)),
   };
 
   upsertChart('chartOcc',{type:'line',data:{labels:occLabels,datasets:[
@@ -1342,6 +1369,12 @@ function renderOccupancy(m) {
   const roomRevP2_SGD = (m.laundryRevP2 + m.aceRevP2) / fx;
   const sensProfits = sensOccs.map(o =>
     Math.round((roomRevP2_SGD * o + m.reception/fx - m.totalMonthlyCostP2/fx) * 12));
+  // Operating cost is now derived from the unit rule, so show what it produces
+  // right next to the two inputs that drive it.
+  const opexOut = $('opex-derived');
+  if (opexOut) opexOut.innerHTML =
+    `Ph.1 ${fmtIDR(m.monthlyOpexP1)} <span style="color:var(--muted)">(${m.laundryP1}+${m.aceRoomsP1} units)</span><br>`
+    + `Ph.2 ${fmtIDR(m.monthlyOpexP2)} <span style="color:var(--muted)">(${m.laundryP2}+${m.aceRoomsP2} units)</span>`;
   const sensNote = $('sens-note');
   if (sensNote) sensNote.textContent =
     `Room revenue moves with occupancy; rent, operating cost and the reception sublet do not. The highlighted bar is ${occHi}, the planning case.`;
@@ -1383,12 +1416,13 @@ function breakevenDetail(key, m) {
     ap2: { title:'Ace Hotel — Phase 2',        rev:m.aceRevP2,     be:m.beAP2, accent:'var(--teal)' }
   }[key];
   const rent  = isLaundry ? (key === 'lp1' ? m.laundryRent_moP1 : m.laundryRent_moP2) : m.aceRent_mo;
-  const opex  = isLaundry ? m.laundryOpex    : m.aceOpex;
-  const share = isLaundry ? m.laundryOpexShare : m.aceOpexShare;
+  const opex  = { lp1:m.laundryOpexP1, lp2:m.laundryOpexP2, ap1:m.aceOpexP1, ap2:m.aceOpexP2 }[key];
+  const units = { lp1:m.laundryP1, lp2:m.laundryP2, ap1:m.aceRoomsP1, ap2:m.aceRoomsP2 }[key];
+  const charged = Math.max(0, units - m.opexFreeUnits);
   const rentSrc = isLaundry ? (key === 'lp1' ? m.laundryAnnualP1 : m.laundryAnnualP2) : m.aceAnnual;
   const offset  = key === 'lp2' ? m.reception : 0;   // reception is Phase 2, laundry side only
   const fixed   = rent + opex - offset;
-  return { ...spec, rooms, rent, opex, share, rentSrc, offset, fixed };
+  return { ...spec, rooms, rent, opex, units, charged, rentSrc, offset, fixed };
 }
 
 function showBreakeven(key) {
@@ -1424,7 +1458,9 @@ function showBreakeven(key) {
       ${row('Revenue at 100% occupancy', fmtIDR(d.rev) + ' /mo', d.rooms)}
       ${row('Rent charged to this property', '− ' + fmtIDR(d.rent) + ' /mo', fmtIDR(d.rentSrc) + ' a year ÷ 12')}
       ${row('Operating cost charged', '− ' + fmtIDR(d.opex) + ' /mo',
-            Math.round(d.share*100) + '% of the ' + fmtIDR(m.opex) + ' /mo you entered — a fixed assumption in the model, not an input')}
+            d.charged === 0
+              ? `${d.units} units, and the first ${m.opexFreeUnits} of each property cost nothing to run`
+              : `${d.units} units − ${m.opexFreeUnits} free = ${d.charged} × ${fmtIDR(m.opexPerUnit)} each`)}
       ${d.offset ? row('Reception rental', '+ ' + fmtIDR(d.offset) + ' /mo', 'a fixed sublet, so it offsets fixed cost rather than scaling with occupancy') : ''}
       ${row('<strong>Fixed cost to cover</strong>', '<strong>' + fmtIDR(d.fixed) + ' /mo</strong>')}
 
@@ -1741,7 +1777,8 @@ const DEFAULTS = {
   'in-laundryP2': 11, 'in-aceRent': 3000000, 'in-aceP1': 11, 'in-aceP2': 14,
   'in-aceRent2': 1200000, 'in-aceP1b': 2, 'in-aceP2b': 2,
   'in-reception': 2000000, 'in-aceAnnualRent': 110000000,
-  'in-laundryAnnualRentP1': 30000000, 'in-laundryAnnualRentP2': 60000000, 'in-opex': 5000000,
+  'in-laundryAnnualRentP1': 30000000, 'in-laundryAnnualRentP2': 60000000,
+  'in-opexFreeUnits': 2, 'in-opexPerUnit': 250000,
   'in-constructCost': 1000, 'in-newLaundry': 4, 'in-newAce': 3,
   'in-idYield': 8.3, 'in-sgYield': 3.3
 };
@@ -2321,7 +2358,7 @@ function renderRatings(m) {
       id: '—', sg: '—',
       score: marginScore, weight: 0.10,
       dynamic: true,
-      why: `Of every SGD earned in Phase 2 revenue, <strong>${margin.toFixed(1)}%</strong> flows to net profit after rental and operating costs. This reflects a lean cost structure — primary costs are fixed lease payments (IDR ${Math.round(m.aceAnnual/1e6)}M + IDR ${Math.round(m.laundryAnnualP2/1e6)}M annually in Phase 2) and IDR ${Math.round(m.opex/1e6)}M/mo opex. Score: ${marginScore}/5 — ${marginScore===5?'above 60% margin is exceptional for a hospitality operation.':marginScore===4?'40–60% — healthy and well above industry norms.':'review cost structure.'}`
+      why: `Of every SGD earned in Phase 2 revenue, <strong>${margin.toFixed(1)}%</strong> flows to net profit after rental and operating costs. This reflects a lean cost structure — primary costs are fixed lease payments (IDR ${Math.round(m.aceAnnual/1e6)}M + IDR ${Math.round(m.laundryAnnualP2/1e6)}M annually in Phase 2) and IDR ${(m.monthlyOpexP2/1e6).toFixed(2)}M/mo operating cost (${m.laundryP2 + m.aceRoomsP2} units, first ${m.opexFreeUnits} of each free). Score: ${marginScore}/5 — ${marginScore===5?'above 60% margin is exceptional for a hospitality operation.':marginScore===4?'40–60% — healthy and well above industry norms.':'review cost structure.'}`
     },
     {
       metric: 'Revenue Diversification',

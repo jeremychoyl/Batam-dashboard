@@ -179,6 +179,25 @@ Per-property rent is now simply `annualLease / 12`. The old
 `monthlyRental × share-of-total` formula computed exactly the same number and
 only looked like a cost allocation.
 
+### Operating cost is a per-unit rule (2026-08-17)
+Two inputs, `in-opexFreeUnits` (2) and `in-opexPerUnit` (250,000): the first N
+units of **each property** cost nothing to run, every unit after that costs the
+same amount. Owner's rule. It replaced a flat `in-opex` figure that was then
+split ⅔ Ace / ⅓ laundry by a hardcoded fraction — an allocation nobody had
+chosen, which alone set the laundry's breakeven occupancy and was invisible on
+screen.
+
+So opex is now **per property and per phase** and follows the room counts:
+`laundryOpexP1/P2`, `aceOpexP1/P2`, summed into `monthlyOpexP1/P2`. Adding a room
+anywhere raises cost automatically — there is no longer a cost figure to keep in
+step by hand. The Inputs card shows what the rule produces for both phases, and
+the breakeven cards' tap-through spells out `units − free = charged × per-unit`.
+
+⚠️ The free allowance is applied **per property** (laundry gets 2, Ace gets 2),
+not once across the business. That reading of "first 2 units … applies to both"
+is worth 500,000/month against the business-wide reading — confirm before
+treating either as settled.
+
 ### Occupancy tab
 ⚠️ **Occupancy scales room REVENUE, never profit.** Rent, operating cost and the
 reception sublet do not fall when rooms sit empty, so profit at 70% occupancy is
