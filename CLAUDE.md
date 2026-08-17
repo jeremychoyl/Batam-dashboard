@@ -153,6 +153,21 @@ exact figures are used wherever a number is read; the compact `1.8 m` form is
 for axis ticks only, because `(2.05).toFixed(1)` floats down to `"2.0"` and
 would print a 2,050,000 median as "IDR 2 m".
 
+### Occupancy tab
+⚠️ **Occupancy scales room REVENUE, never profit.** Rent, operating cost and the
+reception sublet do not fall when rooms sit empty, so profit at 70% occupancy is
+*far* below 70% of full-occupancy profit. The "Ph.2 Annual Profit by Occupancy"
+bars got this wrong until 2026-08-17 — they multiplied `annualP2_SGD` by the
+occupancy rate and ran the axis to **130%**, which an occupancy rate cannot do.
+At 70% that printed SGD 17.1k against a true 12.2k, 40% too high, in exactly the
+range the owner plans around. Both charts now use the same arithmetic, so the
+100% bar equals the model's annual net and the two cannot disagree.
+`Payback @ 70% occupancy` in the Live Output Summary comes from the same
+`OCC_STRESS` figure in `calc()`; it prints "never at 70%" rather than a negative
+month count when the phase loses money at that level.
+The Ace Ph.2 curve is **dashed** because it sits exactly on Ph.1 whenever both
+phases hold the same rooms, and a hidden series reads as a missing one.
+
 ### Ace Rooms tab (scaffolded 2026-08-17)
 Room-by-room rent tracking for the **13 Ace Hotel rooms** — Section A (room
 details) + Section B (12-month payment grid), persisted in row 1 under
