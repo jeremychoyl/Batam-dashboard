@@ -180,9 +180,14 @@ Per-property rent is now simply `annualLease / 12`. The old
 only looked like a cost allocation.
 
 ### Operating cost is a per-unit rule (2026-08-17)
-Two inputs, `in-opexFreeUnits` (2) and `in-opexPerUnit` (250,000): the first N
-units of **each property** cost nothing to run, every unit after that costs the
-same amount. Owner's rule. It replaced a flat `in-opex` figure that was then
+Two inputs, `in-opexFreeUnits` and `in-opexPerUnit`: the first N units of **each
+property** cost nothing to run, every unit after that costs the same amount.
+Owner's rule. ⚠️ The **live saved figure is 300,000** per unit — the owner raised
+it from 250,000 on 2026-08-17, minutes after the feature shipped. This file's
+HTML default is still 250,000, which only applies to a fresh Reset, so **read the
+saved row (or the Inputs tab) before quoting a cost figure** rather than the
+default in the source. At 300,000 the rule produces 4,800,000/mo in Phase 1 and
+5,700,000 in Phase 2. It replaced a flat `in-opex` figure that was then
 split ⅔ Ace / ⅓ laundry by a hardcoded fraction — an allocation nobody had
 chosen, which alone set the laundry's breakeven occupancy and was invisible on
 screen.
