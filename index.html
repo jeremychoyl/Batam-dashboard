@@ -2800,7 +2800,7 @@ function renderRooms() {
   }).join('');
 
   renderDelinquency(delinquent);
-  renderOccupancy();   // tenancy edits feed Section C
+  renderRoomOccupancy();   // tenancy edits feed Section C
 }
 
 // The expandable "who lived here before" sub-row under a room.
@@ -2885,7 +2885,7 @@ function togglePayment(ri, mi) {
   payments[ri][mi] = NEXT_PAYMENT_STATE[payments[ri][mi]] ?? 1;
   hasUnsavedEdits = true;
   renderPaymentGrid();
-  renderOccupancy();   // "months paid" column in the table twin
+  renderRoomOccupancy();   // "months paid" column in the table twin
 }
 
 // Month index 0 = May 2026 … 11 = Apr 2027
@@ -3073,7 +3073,12 @@ function occupancyStats() {
 
 const pos = d => ((d - OCC_START) / (OCC_END - OCC_START)) * 100;   // % across the track
 
-function renderOccupancy() {
+// Named renderRoomOccupancy, not renderOccupancy: this block is parsed after the
+// model script, so a bare `renderOccupancy` here silently replaced the model's
+// own renderOccupancy(m) and left the Occupancy TAB blank — no chart, no
+// breakeven cards, no error. Section C's room timeline is a different thing from
+// the model's occupancy-sensitivity curve; keep the names apart.
+function renderRoomOccupancy() {
   const tl = document.getElementById('occ-timeline');
   if (!tl) return;
   migrateTenancies(rooms);
@@ -3207,7 +3212,7 @@ function renderArchive() {
 function renderTransfers() {
   const carryOver = renderP1();
   renderP2(carryOver);
-  renderRooms();          // ends with renderOccupancy()
+  renderRooms();          // ends with renderRoomOccupancy()
   renderPaymentGrid();
 }
 // Compatibility alias: the live-FX module calls renderTransferDerived() to

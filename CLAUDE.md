@@ -131,6 +131,15 @@ Part 1's closing balance, IDR+SGD), **Part 3 — Room Management** (7-room table
 archiving). Replaced the old single flat `_transfers` ledger; the live-FX puller
 still refreshes it via a `renderTransferDerived()` alias.
 
+⚠️ Its Section C renderer is **`renderRoomOccupancy()`**, renamed 2026-08-17.
+It was called `renderOccupancy()` — and because this block is parsed *after* the
+model script, that declaration silently replaced the model's own
+`renderOccupancy(m)`, leaving the **Occupancy tab blank** (no chart, no
+breakeven cards, no console error) from the 2026-08-02 rebuild until the rename.
+Same trap as `renderTimeline`/`renderMilestones` below: these blocks share one
+global scope, so a duplicate `function` name is a silent overwrite, not an
+error. Check for a clash before naming a new top-level function.
+
 ### Dates
 All date entry uses native `<input type="date">` (tap = OS calendar picker).
 The *stored* value for table rows stays `DD/MM/YYYY` — `toISO()` / `fromISO()` /
