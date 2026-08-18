@@ -216,12 +216,25 @@ would be 5,400,000 and 7,200,000 — the old note's "4,800,000 / 5,700,000" did
 not match any live room count and was wrong on its own terms.
 
 The gap is worth roughly **SGD 5,162** on the headline five-year profit, so it
-is the owner's number to settle, not one to infer. **Do not press Save to
-"fix" this** — saving writes whatever is on screen into the shared row and would
-silently commit the default as though it were chosen. Ask, then let them save.
-Until they do, the same applies to `in-laundryAnnualRentP1`: the legacy key
-migrates into the Phase 2 field as designed, but Phase 1's 30,000,000 is also an
-unsaved default.
+was the owner's number to settle, not one to infer.
+
+✅ **Settled: the owner confirmed 250,000 per unit on 2026-08-18**, asked
+directly after the audit above. So the figure the page has been showing is the
+right one — it was only ever *unbacked*, not wrong. It stops being a default and
+becomes a saved value the first time anyone presses Save Changes.
+
+⚠️ **Never press Save on the owner's behalf to "persist" a default.** Saving
+writes whatever is on screen into the shared row that partners read, it needs
+the edit password, and it commits **every** unsaved field at once, not the one
+you came to change. Eight keys are in that state as of 2026-08-18 —
+`in-opexPerUnit`, `in-opexFreeUnits`, `in-laundryAnnualRentP1/P2`,
+`in-aceRent2`, `in-aceP1b`, `in-aceP2b`, `in-sgAppreciation` — every one of them
+currently the file's default rather than a chosen figure. Ask, list what would
+be written, then let the owner save.
+
+Of those, `in-laundryAnnualRentP1` (30,000,000) is the one still worth checking:
+the legacy key migrates into the **Phase 2** field as designed, so Phase 1's
+figure is this file's guess and has never been confirmed by anyone.
 
 The per-unit rule replaced a flat `in-opex` figure that was then
 split ⅔ Ace / ⅓ laundry by a hardcoded fraction — an allocation nobody had
