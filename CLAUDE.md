@@ -448,6 +448,36 @@ A sheet rather than a dropdown, for the reason the More menu already documents:
 an absolutely positioned menu inside a scrolling flex row gets clipped,
 invisibly, until someone taps it on a real device.
 
+### Home-screen icons and link previews (added 2026-08-18)
+Each page has its own icon, manifest and preview card, all committed as static
+files — there is no build step to generate them. They were produced by rendering
+`icon.html` / `og.html` templates in headless Chrome through `.claude/chrome`;
+regenerate the same way rather than hand-editing a PNG.
+
+| | `index.html` | `edi.html` |
+|---|---|---|
+| touch icon | `icon-180.png` | `edi-icon-180.png` |
+| manifest icons | `icon-192/512.png` | `edi-icon-192/512.png` |
+| manifest | `manifest.json` | `edi-manifest.json` |
+| preview | `og.png` | `edi-og.png` |
+
+Five things that are deliberate:
+
+- ⚠️ **No `orientation` key in either manifest.** Pinning portrait is the
+  mistake this exact feature caused on another dashboard, and here turning the
+  phone sideways is how the wide tables and the occupancy Gantt are meant to be
+  read. Do not add it.
+- ⚠️ **The preview cards and the `og:`/`twitter:` text carry no figures.** An OG
+  image is fetched and cached by WhatsApp, Slack and every scraper that sees the
+  URL, so a number printed there escapes a shared-but-unlisted financial page
+  and cannot be recalled once cached. `/edi`'s card also carries no tenant
+  names — that page saves without a password, so its link travels furthest.
+- **`og:image` is an absolute URL.** WhatsApp will not resolve a relative one.
+- **Icons are full-bleed squares, not pre-rounded.** iOS applies its own
+  squircle mask, and rounding first shows as a dark halo inside it.
+- **Edi's icon is a blue "E", not the dashboard's teal "A".** He adds *that*
+  page to his home screen; two identical icons would be a coin-flip every time.
+
 The rule that matters most is `input, select, textarea { font-size:16px }`. iOS
 Safari magnifies the whole page whenever a focused field is under 16px and does
 **not** zoom back out; every input here was 11–13px. This is the same fix

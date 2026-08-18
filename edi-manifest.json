@@ -1,0 +1,14 @@
+{
+  "name": "Edi Haron — Hostel Rent Tracker",
+  "short_name": "Edi Rent",
+  "description": "Room-by-room rent collection for Edi Haron's Batam hostel.",
+  "start_url": "/edi",
+  "scope": "/edi",
+  "display": "standalone",
+  "background_color": "#07101f",
+  "theme_color": "#07101f",
+  "icons": [
+    { "src": "/edi-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/edi-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
