@@ -435,6 +435,18 @@ at 390 / 430 / 768px on any tab, and all 84 laundry and 156 Ace room-months
 remain individually tappable in the card view — the same counts the wide table
 offers.
 
+**`edi.html` was brought to the same standard later the same day.** It already
+had the 16px rule and the payment cards from its own commit; what it lacked was
+`.rt-stack` (its two rent ledgers and Section A were 820–900px and still had to
+be dragged sideways), the 44px minimum — its ✅/❌ room-status toggles measured
+**18px**, less than half the guideline and adjacent to each other — the two-up
+tiles, the Gantt hint and `clearFooterBar()`. Both pages now carry the same
+patterns under the same names, so a fix to one is a fix worth porting to the
+other; check both before assuming a phone problem is page-specific. One
+deliberate difference: edi's `min-height:44px` rule also covers `.header button`,
+because unlike `index.html` this page keeps 💾 Save Changes in the header, and
+that is the control Edi presses after every rent update.
+
 ## Working rules for this repo
 - **Change flow: branch → PR → Vercel preview → owner approves → merge to main.**
   Never push straight to `main` for anything non-trivial.
