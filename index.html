@@ -176,6 +176,39 @@
   /* OCCUPANCY (Section C) — single-hue marks; identity comes from labels, not
      extra colours, so no categorical palette is in play. */
   .occ-scroll { overflow-x:auto; padding-top:6px; }
+
+  /* ── SCROLL SHADOW ──────────────────────────────────────────────────────────
+     Some things genuinely have to scroll sideways and should not be stacked:
+     the occupancy Gantt is a twelve-month timeline, the market dot strips are a
+     shared axis, and between 600px and ~940px the ledgers are still tables —
+     `.rt-stack` only stacks them BELOW 600. 768px is an iPad in portrait, which
+     is where the owner actually reads this, so the affordance matters most at
+     exactly the width that had none.
+
+     Four background layers, the standard pure-CSS pattern. Two "covers" are
+     pinned to the CONTENT (`local`) and two shadows to the CONTAINER (`scroll`).
+     At either end of the travel the cover sits over its own shadow and hides
+     it, so a shadow appears only on the side that still has something to show —
+     and when nothing overflows, both stay hidden. No JS and no scroll listener,
+     which also means it cannot fall out of step with the actual scroll position.
+
+     Matched on the inline style rather than a class so it covers every scroller
+     already in these files and any added later. `.tabs` sets its overflow in
+     the stylesheet, not inline, so the nav bar is deliberately untouched.
+
+     The trailing `var(--surface)` is not decoration: the shorthand resets
+     background-color, and without it the cards that ARE the scroller would lose
+     their fill and show the page behind them. The fade ends in `rgba(14,25,41,0)`
+     — --surface at zero alpha — rather than `transparent`, which some engines
+     interpolate through grey and leave a dirty band mid-gradient. */
+  [style*="overflow-x:auto"], .occ-scroll {
+    background:
+      linear-gradient(to right, var(--surface) 40%, rgba(14,25,41,0)) left center / 30px 100% no-repeat local,
+      linear-gradient(to left,  var(--surface) 40%, rgba(14,25,41,0)) right center / 30px 100% no-repeat local,
+      radial-gradient(farthest-side at 0% 50%,   rgba(0,0,0,.55), rgba(0,0,0,0)) left center / 18px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.55), rgba(0,0,0,0)) right center / 18px 100% no-repeat scroll,
+      var(--surface);
+  }
   .occ-grid { min-width:640px; }
   .occ-row { display:grid; grid-template-columns:120px 1fr; align-items:center; gap:10px; margin-bottom:7px; }
   .occ-name { font-size:11px; color:var(--subtle); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
