@@ -192,6 +192,38 @@
   .snap-btn.del:hover { border-color:var(--red); color:var(--red); }
   @media(max-width:600px) { .snap-row { grid-template-columns:1fr; } }
 
+  /* ── PHONE ─────────────────────────────────────────────────────────────────
+     Edi collects rent on a phone, so this page is used there more than anywhere.
+     The zoom rule below is the one that matters: iOS Safari magnifies the whole
+     page whenever a focused input is smaller than 16px, and it does NOT zoom
+     back out afterwards — so every rent field tapped left him pinching to
+     recover. 16px is a floor imposed by the browser, not a design choice. */
+  @media(max-width:600px) {
+    input, select, textarea { font-size:16px !important; }
+    .content { padding:16px 12px 48px; }
+    .header  { padding:12px 14px; }
+    .tabs    { padding:0 12px; position:sticky; top:0; }
+    .tab     { padding:12px 12px; }
+    .card    { padding:14px; }
+    /* Number fields are fixed-width for the desktop table; let them breathe */
+    .acc-input-idr, .tr-input, .field-date { width:100%; min-width:0; }
+  }
+
+  /* ── PHONE PAYMENT CARDS ───────────────────────────────────────────────────
+     The 12-month grid is ~1000px wide. It scrolls inside its card, but ticking
+     one room's month meant dragging a 1000px table through a 340px window. On a
+     phone the same data is one card per room with the months as a 6x2 pad. */
+  .pay-cards { display:grid; gap:10px; }
+  .pay-card  { border:1px solid var(--border); border-radius:10px; padding:12px; background:var(--surface2); }
+  .pay-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+  .pay-cells { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin:10px 0 8px; }
+  .pay-cell  { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+               min-height:44px; border-radius:8px; border:1px solid transparent; background:none;
+               cursor:pointer; padding:5px 0; font-size:15px; transition:background .15s; }
+  .pay-cell small { font-size:9px; color:var(--muted); letter-spacing:.02em; }
+  .pay-card-foot { display:flex; flex-wrap:wrap; gap:10px; font-size:11px;
+                   font-family:'JetBrains Mono',monospace; border-top:1px solid var(--border); padding-top:8px; }
+
   /* RENOVATION TABLE */
   .reno-input { background:var(--input-bg); border:1px solid var(--input-border); border-radius:5px; color:#e2e8f0; font-family:'Inter',sans-serif; font-size:12px; padding:5px 8px; outline:none; width:100%; transition:border-color .15s; }
   .reno-input:focus { border-color:var(--teal); }
@@ -897,11 +929,17 @@ const PAYMENT_STATES = ['⬜','✅','🔴','—'];
 const NEXT_PAYMENT_STATE = { 0:1, 1:3, 2:1, 3:0 };
 function togglePayment(ri,mi){ payments[ri][mi]=NEXT_PAYMENT_STATE[payments[ri][mi]] ?? 1; hasUnsavedEdits=true; renderAll(); }
 
+// True on a phone. The card layout and the wide table are built from the SAME
+// loop below — the arithmetic runs once and is rendered two ways, so the two
+// views cannot disagree about what is paid.
+const isNarrow = () => window.matchMedia('(max-width:600px)').matches;
+
 function renderPaymentGrid(collectedP2) {
   const wrap=document.getElementById('payment-grid-wrap');
   if(!wrap) return;
   migrateTenancies(rooms);
   const today=new Date();
+  const cards=[];                     // phone view, filled as the table is built
   let html=`<div style="overflow-x:auto"><table style="font-size:12px;min-width:1000px;border-collapse:collapse">
     <thead><tr>
       <th style="padding:8px 6px;text-align:left;min-width:70px">Room</th>
@@ -919,6 +957,7 @@ function renderPaymentGrid(collectedP2) {
     const whoAll=tenantsAcrossYear(r), multi=whoAll.length>1;
     let paidAmt=0, arrAmt=0, laterAmt=0;
     const rcCount = receiptsForRoom(r.room);
+    const cardCells=[];               // this room's 12 month buttons, phone view
     html += `<tr style="border-bottom:1px solid var(--border)">
       <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${htmlAttr(r.room)}
         <button onclick="openReceipts(${ri})" title="Proof of payment photos for ${htmlAttr(r.room)}"
@@ -949,8 +988,27 @@ function renderPaymentGrid(collectedP2) {
       html += `<td style="padding:4px;text-align:center">
         <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:36px;opacity:${noTenant&&shown!==1?'.5':'1'};transition:all .15s" title="${htmlAttr(hint)}">${PAYMENT_STATES[shown]}</button>${label}
       </td>`;
+      // Same state, same handler, thumb-sized — with the month named on the cell
+      // because a phone card has no column header to read it from.
+      cardCells.push(`<button class="pay-cell" onclick="togglePayment(${ri},${mi})" title="${htmlAttr(hint)}"
+        style="background:${bg};border:${border};opacity:${noTenant&&shown!==1?'.45':'1'}">
+        <small>${EDI_MONTHS[mi].split(' ')[0]}</small>${PAYMENT_STATES[shown]}${
+          rc ? `<small style="color:var(--teal)">📎${rc>1?rc:''}</small>` : ''}</button>`);
     });
     grandPaid+=paidAmt; grandArr+=arrAmt; grandLater+=laterAmt;
+    cards.push(`<div class="pay-card">
+      <div class="pay-card-head">
+        <div><span style="font-weight:600;color:#f1f5f9">${htmlAttr(r.room)}</span>
+          <div style="font-size:11px;color:var(--subtle);margin-top:2px">${
+            whoAll.length ? whoAll.map(htmlAttr).join(' → ') : '<span style="color:var(--red)">VACANT</span>'}</div></div>
+        <button onclick="openReceipts(${ri})" style="background:none;border:none;padding:0;cursor:pointer;font-size:12px;white-space:nowrap;color:${rcCount?'var(--teal)':'var(--muted)'}">📎 ${rcCount||'add'}</button>
+      </div>
+      <div class="pay-cells">${cardCells.join('')}</div>
+      <div class="pay-card-foot">
+        <span style="color:var(--teal)">paid ${paidAmt?fmtRP(paidAmt):'—'}</span>
+        <span style="color:${arrAmt>0?'var(--red)':'var(--muted)'}">arrears ${arrAmt>0?fmtRP(arrAmt):'clear'}</span>
+        ${laterAmt>0?`<span style="color:var(--muted)">not due ${fmtRP(laterAmt)}</span>`:''}
+      </div></div>`);
     html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${paidAmt?fmtRP(paidAmt):'—'}</td>
       <td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${arrAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${arrAmt>0?fmtRP(arrAmt):'✅ Clear'}</td>
       <td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">${laterAmt>0?fmtRP(laterAmt):'—'}</td></tr>`;
@@ -964,9 +1022,20 @@ function renderPaymentGrid(collectedP2) {
     <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);font-weight:700">${fmtRP(grandLater)}</td>
   </tr></tbody></table></div>`;
 
+  // The table is finished; everything below is shown under EITHER view.
+  const tableHtml = html;
+  const cardsHtml = `<div class="pay-cards">${cards.join('')}</div>
+    <div class="pay-card" style="background:rgba(0,212,184,0.05);border-color:var(--teal)">
+      <div class="pay-card-foot" style="border-top:none;padding-top:0">
+        <span style="color:var(--teal)">all rooms paid ${fmtRP(grandPaid)}</span>
+        <span style="color:${grandArr>0?'var(--red)':'var(--muted)'}">arrears ${fmtRP(grandArr)}</span>
+        <span style="color:var(--muted)">not yet due ${fmtRP(grandLater)}</span>
+      </div></div>`;
+  let footer = '';
+
   const diff = grandPaid - (collectedP2||0);
   const ok = Math.abs(diff) < 1;
-  html += `<div style="margin-top:14px;padding:10px 14px;border-radius:8px;font-size:11px;line-height:1.7;
+  footer += `<div style="margin-top:14px;padding:10px 14px;border-radius:8px;font-size:11px;line-height:1.7;
       border:1px solid ${ok?'var(--teal)':'var(--amber)'};background:${ok?'rgba(0,212,184,0.07)':'rgba(245,158,11,0.08)'};color:var(--subtle)">
     ${ok?'✅':'⚠️'} Tracker <strong style="color:var(--teal)">${fmtRP(grandPaid)}</strong> (${paidCells} paid month${paidCells===1?'':'s'})
     · Part 2 collected <strong style="color:var(--teal)">${fmtRP(collectedP2||0)}</strong>
@@ -978,10 +1047,10 @@ function renderPaymentGrid(collectedP2) {
   // "no slips have been uploaded", which is a different thing entirely.
   const rcNote = receiptSetupNote();
   if (rcNote) {
-    html += `<div style="margin-top:8px;padding:9px 14px;border-radius:8px;font-size:11px;line-height:1.7;
+    footer += `<div style="margin-top:8px;padding:9px 14px;border-radius:8px;font-size:11px;line-height:1.7;
         border:1px solid var(--amber);background:rgba(245,158,11,0.06);color:var(--subtle)">📎 ${rcNote}</div>`;
   }
-  wrap.innerHTML = html;
+  wrap.innerHTML = (isNarrow() ? cardsHtml : tableHtml) + footer;
 
   // KPIs
   const thisMonth = new Date().getMonth();
@@ -1432,6 +1501,10 @@ loadFromSupabase();
 // Photo index is independent of row 2, so it loads on its own and re-renders the
 // grid once the paperclip counts are known.
 loadReceipts().then(renderAll);
+
+// Rotating the phone crosses the 600px line. Re-render so the tracker is never
+// left in the layout meant for the other width.
+window.matchMedia('(max-width:600px)').addEventListener('change', () => renderAll());
 </script>
 </body>
 </html>
