@@ -333,8 +333,12 @@
     .rt-stack td > div > input { width:100% !important; min-width:0 !important; }
     .rt-stack td > div { flex:1; min-width:0; }
     .rt-stack td.rt-act { padding-top:8px !important; }
+    /* min-height is not belt-and-braces — see the same note in index.html.
+       9px of padding around a 13px line is 33px, not 44, and these are excluded
+       from the blanket rule below. Edi's ledgers start empty, so the checker
+       cannot see these buttons at all; they are fixed here by inspection. */
     .rt-stack td.rt-act .tr-del, .rt-stack td.rt-act .reno-del {
-      width:100%; border:1px solid var(--border) !important; border-radius:8px;
+      width:100%; min-height:44px; border:1px solid var(--border) !important; border-radius:8px;
       padding:9px 0 !important; color:var(--muted); font-size:13px;
     }
     .rt-stack td.rt-act .tr-del::after, .rt-stack td.rt-act .reno-del::after { content:' Remove'; }

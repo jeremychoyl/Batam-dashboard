@@ -444,8 +444,13 @@
     /* The row's delete control, given a thumb-sized target and a word, so it is
        never a stray ✕ floating in a card with no column header to explain it. */
     .rt-stack td.rt-act { padding-top: 8px !important; }
+    /* min-height is not belt-and-braces. These are excluded from the blanket
+       44px rule below on the assumption that this block already sizes them —
+       and 9px of padding around a 13px line comes to 33px, not 44. The
+       responsive checker caught it; without the explicit floor the row's
+       DESTRUCTIVE control is the smallest target on the page. */
     .rt-stack td.rt-act .tr-del, .rt-stack td.rt-act .reno-del {
-      width: 100%; border: 1px solid var(--border) !important; border-radius: 8px;
+      width: 100%; min-height: 44px; border: 1px solid var(--border) !important; border-radius: 8px;
       padding: 9px 0 !important; color: var(--muted); font-size: 13px;
     }
     .rt-stack td.rt-act .tr-del::after, .rt-stack td.rt-act .reno-del::after { content: ' Remove'; }
