@@ -421,8 +421,32 @@ against the previous commit.
 
 Two breakpoints. **≤900px** pins the tab bar (`position:sticky`; it already had
 a `z-index` that did nothing without a position) and tightens page padding —
-fourteen panels reachable only from that bar, and the panels are long. **≤600px**
+thirteen panels reachable only from that bar, and the panels are long. **≤600px**
 is the phone tier.
+
+**Below 600px the tab bar is replaced by a ☰ menu** (added 2026-08-18). Sticky
+kept the bar on screen but did nothing about *reach*: measured on the live page
+at 390px the bar needs **694px**, so 304px sat off the right edge — 💸 Cash
+Transfers, 🏨 Ace Rooms and the More ▾ button all past it. That put **9 of the
+13 panels**, including both rent trackers, behind a sideways drag on a row that
+gives no hint it scrolls. The CSS hides every `.tab` and reveals `#menu-btn`,
+which opens a sheet listing all 13.
+
+Three things about it are deliberate:
+- **`ALL_TABS` is derived from the bar's own buttons plus `MORE_TABS`**, not
+  hand-listed, so a tab added to the markup cannot go missing on phones.
+- **The button is appended, never prepended.** The load path does
+  `document.querySelector('.tabs .tab')` to mark the first tab active, and
+  putting the menu first would silently hand that role to it.
+- **The button's label carries the current panel name** ("☰  Cash Transfers"),
+  because with the bar hidden nothing else on screen says where you are. That is
+  a `switchTab` wrapper, and it now sits **outside** the More-label patch. Safe —
+  it calls straight through — but anything added after it must keep calling
+  through or the label stops tracking the panel.
+
+A sheet rather than a dropdown, for the reason the More menu already documents:
+an absolutely positioned menu inside a scrolling flex row gets clipped,
+invisibly, until someone taps it on a real device.
 
 The rule that matters most is `input, select, textarea { font-size:16px }`. iOS
 Safari magnifies the whole page whenever a focused field is under 16px and does
