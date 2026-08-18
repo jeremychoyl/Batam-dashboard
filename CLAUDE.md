@@ -448,6 +448,38 @@ A sheet rather than a dropdown, for the reason the More menu already documents:
 an absolutely positioned menu inside a scrolling flex row gets clipped,
 invisibly, until someone taps it on a real device.
 
+### Scroll shadow on the things that still scroll (added 2026-08-18)
+`.rt-stack` only stacks the ledgers **below 600px**. Between 600 and ~940px they
+are still 820–940px tables inside a scrolling card — and **768px is an iPad in
+portrait**, which is where the owner reads this. So the width with the least
+affordance was the one being used most. The Gantt and the market dot strips
+scroll at every width by design; a twelve-month timeline has no row-per-line
+form.
+
+One rule, `[style*="overflow-x:auto"], .occ-scroll`, gives all of them the
+standard four-layer background: two covers pinned to the **content**
+(`background-attachment:local`) over two shadows pinned to the **container**
+(`scroll`). At either end of the travel the cover hides its own shadow, so a
+shadow shows only on the side that still has something to show, and disappears
+entirely when nothing overflows. No JS and no scroll listener, so it cannot drift
+out of step with the real scroll position.
+
+Three things to know before editing it:
+- **It is matched on the inline style, not a class**, so every scroller in these
+  files — and any added later — gets it without being remembered. `.tabs` sets
+  its overflow in the **stylesheet**, so the nav bar is deliberately excluded;
+  moving that declaration inline would give the tab bar a shadow.
+- **The trailing `var(--surface)` is load-bearing.** The `background` shorthand
+  resets `background-color`, so without it the cards that *are* the scroller
+  lose their fill and show the page through.
+- **The fade ends at `rgba(14,25,41,0)`, not `transparent`** — same colour at
+  zero alpha. Some engines interpolate `transparent` through grey and leave a
+  dirty band across the middle of the gradient.
+
+Nested scrollers are fine: a payment grid's inner `overflow-x:auto` sits inside a
+card that also has one, and the outer never scrolls, so its covers sit at both
+ends and it stays invisible.
+
 ### Home-screen icons and link previews (added 2026-08-18)
 Each page has its own icon, manifest and preview card, all committed as static
 files — there is no build step to generate them. They were produced by rendering
