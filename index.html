@@ -260,6 +260,138 @@
   .tr-bal-pos { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); font-weight:600; text-align:right; }
   .tr-bal-neg { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--red); font-weight:600; text-align:right; }
   .tr-mono { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--subtle); text-align:right; }
+
+  /* ══ PHONE & TABLET ═════════════════════════════════════════════════════════
+     This page was laid out for a desktop and is read on an iPad and a phone.
+     Everything below is additive: it lives entirely inside media queries, so a
+     wide screen renders exactly what it rendered before. */
+
+  /* Tablet and down. Fourteen panels reachable only from the tab bar, and the
+     panels are long — pin the bar so changing tab never means scrolling back
+     to the top. (`.tabs` already carried a z-index that did nothing without a
+     position; sticky is what makes it mean something.) */
+  @media(max-width:900px) {
+    .tabs { position: sticky; top: 0; }
+    .content { padding: 20px 16px 56px; }
+  }
+
+  /* Phone. */
+  @media(max-width:600px) {
+    /* THE important one. iOS Safari magnifies the whole page whenever a focused
+       field is smaller than 16px — and does not zoom back out afterwards. Every
+       input here was 11–13px, so tapping any figure left you pinching to
+       recover, every time. 16px is a floor the browser imposes, not a choice.
+       (Same fix as edi.html; that page hit it first because rent is collected
+       on a phone.) */
+    input, select, textarea { font-size: 16px !important; }
+
+    .content { padding: 16px 12px 48px; }
+    .header { padding: 12px 14px; }
+    .header-title { font-size: 17px; }
+    .header-sub, .eyebrow { font-size: 10px; }
+    .rating-badge { padding: 6px 12px; min-width: 0; }
+    .rating-grade { font-size: 16px; }
+    .tabs { padding: 0 8px; }
+    .tab { padding: 13px 11px; }
+    .card { padding: 14px; }
+    .input-group { padding: 14px; }
+    .sh h2 { font-size: 15px; }
+
+    /* Tiles two-up. At this width `minmax(170–200px, 1fr)` resolves to a single
+       column, which turns the ten-tile Investment Snapshot into ten screens.
+       The inline grid-template on those divs is why this needs !important —
+       `.tile-grid` is a hook added to them for exactly this override. */
+    .grid-kpi, .tile-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    .kpi-value { font-size: 16px !important; overflow-wrap: anywhere; }
+    .kpi-label { font-size: 9px; letter-spacing: .07em; }
+    .kpi-sub { font-size: 10px; }
+
+    /* Inputs tab keeps label and field on one line. A ten-digit rupiah figure
+       at 16px JetBrains Mono needs ~116px, so the field still fits and the
+       label wraps beside it — stacking ~45 rows would add a screen and a half
+       of scrolling to a page that is read straight down. */
+    .input-label { font-size: 12px; }
+    input[type="number"] { width: 118px; }
+
+    /* A twelve-month Gantt genuinely needs width, so it keeps scrolling — but a
+       narrower room-name column means there is less of it to drag through. */
+    .occ-grid { min-width: 520px; }
+    .occ-row, .occ-months { grid-template-columns: 84px 1fr; }
+    .occ-barrow { grid-template-columns: 84px 1fr 76px; }
+
+    /* The fixed bottom bar wraps to three lines here and eats 93px of a 844px
+       screen. Tighten it; clearFooterBar() then pads the content by whatever
+       height it actually ends up with. Inline styles, hence !important. */
+    #footer-bar { padding: 6px 12px !important; gap: 3px 10px !important; font-size: 10px !important; }
+
+    /* Thumb-sized controls. Measured on a phone, the page's action buttons came
+       out at 23–39px ("↻ Refresh rate" was the worst); 44px is the guideline.
+       The month cells and the in-row ✕ are excluded because they are sized
+       deliberately elsewhere, and the tabs are already 49px. */
+    .content button:not(.pay-cell):not(.tr-del):not(.reno-del):not(.tab) { min-height: 44px; }
+
+    /* Shown only here — for the few things that genuinely still scroll. */
+    .phone-hint { display: block !important; }
+  }
+
+  /* ── PHONE: WIDE EDIT TABLES BECOME STACKED CARDS ───────────────────────────
+     The ledgers and room-detail tables are 580–940px of columns. They scrolled
+     inside their card, so correcting one tenant's name meant dragging a table
+     through a 340px window. Below 600px each ROW becomes a card and each CELL a
+     labelled line, the label coming from that cell's own `data-label`.
+
+     Note what this is NOT: there is no second markup path. It is the same DOM
+     the desktop table renders, restyled — so a phone and a desktop cannot show
+     different figures, and a renderer changed later cannot leave a card view
+     behind. Only the 12-month payment grids are built separately, because a
+     grid of month buttons has no sensible row-per-line form. */
+  .phone-hint { display: none; font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+  @media(max-width:600px) {
+    .rt-stack table { min-width: 0 !important; width: 100%; }
+    .rt-stack thead { display: none; }
+    .rt-stack tbody, .rt-stack tfoot, .rt-stack tr, .rt-stack td { display: block; width: auto; }
+    .rt-stack tr { border: 1px solid var(--border) !important; border-radius: 10px;
+                   background: var(--surface2); padding: 8px 12px; margin-bottom: 10px; }
+    .rt-stack td { border: none !important; padding: 5px 0 !important; display: flex;
+                   align-items: center; gap: 10px; text-align: left !important; }
+    .rt-stack td[data-label] { justify-content: space-between; }
+    .rt-stack td[data-label]::before {
+      content: attr(data-label); flex: 0 0 40%; min-width: 0;
+      font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+    }
+    /* Beats the inline width="110px" etc. the renderers write per cell. */
+    .rt-stack td > input, .rt-stack td > select,
+    .rt-stack td > div > input { width: 100% !important; min-width: 0 !important; }
+    .rt-stack td > div { flex: 1; min-width: 0; }
+    /* The row's delete control, given a thumb-sized target and a word, so it is
+       never a stray ✕ floating in a card with no column header to explain it. */
+    .rt-stack td.rt-act { padding-top: 8px !important; }
+    .rt-stack td.rt-act .tr-del, .rt-stack td.rt-act .reno-del {
+      width: 100%; border: 1px solid var(--border) !important; border-radius: 8px;
+      padding: 9px 0 !important; color: var(--muted); font-size: 13px;
+    }
+    .rt-stack td.rt-act .tr-del::after, .rt-stack td.rt-act .reno-del::after { content: ' Remove'; }
+    .rt-stack tfoot tr { border-color: var(--teal) !important; background: rgba(0,212,184,0.06); }
+    /* Sub-rows that span the whole table (tenancy history) carry no data-label
+       and must keep the full width rather than being squeezed beside one. */
+    .rt-stack td[colspan] { display: block; }
+  }
+
+  /* ── PHONE: 12-MONTH PAYMENT CARDS ──────────────────────────────────────────
+     One card per room: tenant, a 6x2 pad of month buttons, and the money
+     underneath. Built from the same loop as the wide table (see
+     renderPaymentGrid / renderAceTracker), so the two renderings cannot
+     disagree about what has been paid. */
+  .pay-cards { display: grid; gap: 10px; }
+  .pay-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: var(--surface2); }
+  .pay-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .pay-cells { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 10px 0 8px; }
+  .pay-cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+              min-height: 44px; border-radius: 8px; border: 1px solid transparent; background: none;
+              cursor: pointer; padding: 5px 0; font-size: 15px; transition: background .15s; }
+  .pay-cell small { font-size: 9px; color: var(--muted); letter-spacing: .02em; }
+  .pay-card-foot { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px;
+                   font-family: 'JetBrains Mono', monospace; border-top: 1px solid var(--border); padding-top: 8px; }
 </style>
 </head>
 <body>
@@ -533,7 +665,7 @@
     <!-- Live summary panel -->
     <div style="margin-top:24px;" class="card teal-border">
       <div class="sh"><h2>Live Output Summary</h2><p>Updates as you type above</p></div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="live-summary"></div>
+      <div class="tile-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="live-summary"></div>
     </div>
 
     <!-- Snapshot / Version History -->
@@ -653,13 +785,13 @@
       </div>
       <button onclick="addRenovationRow()" style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:9px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer">+ Add Item</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px">
+    <div class="tile-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px">
       <div class="card teal-border"><div class="kpi-label">Total Renovation (IDR)</div><div class="kpi-value teal" id="reno-total-idr">—</div></div>
       <div class="card teal-border"><div class="kpi-label">Total Renovation (SGD)</div><div class="kpi-value teal" id="reno-total-sgd">—</div></div>
       <div class="card"><div class="kpi-label">Items</div><div class="kpi-value" id="reno-item-count">—</div><div class="kpi-sub">flows into all calculations</div></div>
     </div>
     <div class="card">
-      <div style="overflow-x:auto">
+      <div class="rt-stack" style="overflow-x:auto">
         <table id="reno-table" style="font-size:13px;min-width:580px">
           <thead>
             <tr>
@@ -713,7 +845,7 @@
     <!-- Scorecard table -->
     <div class="card mb24">
       <div class="sh"><h2>Scorecard Breakdown</h2><p>Each metric scored 1–5 and weighted. Scores for the top 4 metrics update automatically as you change inputs.</p></div>
-      <div style="overflow-x:auto">
+      <div class="rt-stack" style="overflow-x:auto">
         <table style="font-size:13px;min-width:600px">
           <thead>
             <tr>
@@ -793,7 +925,7 @@
     </div>
 
     <!-- KPI Summary -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px">
+    <div class="tile-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px">
       <div class="card teal-border"><div class="kpi-label">Monthly Revenue</div><div class="kpi-value teal" id="acc-kpi-rev">—</div><div class="kpi-sub" id="acc-kpi-rev-idr">—</div></div>
       <div class="card teal-border"><div class="kpi-label">Net Profit (Month)</div><div class="kpi-value teal" id="acc-kpi-profit">—</div><div class="kpi-sub" id="acc-kpi-profit-idr">—</div></div>
       <div class="card"><div class="kpi-label">Net Profit Margin</div><div class="kpi-value" id="acc-kpi-margin">—</div><div class="kpi-sub">Revenue → Profit</div></div>
@@ -852,7 +984,7 @@
     </div>
 
     <!-- Part 1 Summary Cards -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+    <div class="tile-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
       <div class="card"><div class="kpi-label">Total Invested</div><div class="kpi-value" id="p1-invested" style="font-size:18px">—</div><div class="kpi-sub">Jeremy → Laundry</div></div>
       <div class="card"><div class="kpi-label">Total Spent</div><div class="kpi-value" id="p1-spent" style="font-size:18px;color:var(--red)">—</div><div class="kpi-sub">Renovation & Furniture</div></div>
       <div class="card"><div class="kpi-label">Net Balance to Part 2</div><div class="kpi-value" id="p1-balance" style="font-size:18px">—</div><div class="kpi-sub">Carry-over</div></div>
@@ -864,6 +996,7 @@
         <div style="font-size:12px;color:var(--muted)">All amounts IDR. Negative balance = cumulative investment outstanding.</div>
         <button onclick="addP1Row()" style="background:#1e2d1a;color:#86efac;border:1px solid #22c55e;border-radius:7px;padding:7px 14px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600">+ Add Row</button>
       </div>
+      <div class="rt-stack">
       <table style="font-size:12px;min-width:820px">
         <thead>
           <tr>
@@ -880,6 +1013,7 @@
         <tbody id="p1-body"></tbody>
         <tfoot id="p1-foot"></tfoot>
       </table>
+      </div>
     </div>
 
     <!-- ═══ PART 2: RENTAL COLLECTIONS ═══ -->
@@ -896,7 +1030,7 @@
     </div>
 
     <!-- Part 2 Summary Cards -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+    <div class="tile-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:16px">
       <div class="card"><div class="kpi-label">Carry-over from Part 1</div><div class="kpi-value" id="p2-carryover" style="font-size:18px">—</div></div>
       <div class="card teal-border"><div class="kpi-label">Total Rent Collected</div><div class="kpi-value teal" id="p2-collected" style="font-size:18px">—</div></div>
       <div class="card"><div class="kpi-label">Total Expenses</div><div class="kpi-value" id="p2-expenses" style="font-size:18px;color:var(--red)">—</div></div>
@@ -922,6 +1056,7 @@
         <div style="font-size:12px;color:var(--muted)">Positive = money to Jeremy. Negative = expenses deducted.</div>
         <button onclick="addP2Row()" style="background:#1e4060;color:var(--teal);border:1px solid var(--teal);border-radius:7px;padding:7px 14px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600">+ Add Row</button>
       </div>
+      <div class="rt-stack">
       <table style="font-size:12px;min-width:820px">
         <thead>
           <tr>
@@ -938,6 +1073,7 @@
         <tbody id="p2-body"></tbody>
         <tfoot id="p2-foot"></tfoot>
       </table>
+      </div>
     </div>
 
     <!-- ═══ PART 3: ROOM MANAGEMENT ═══ -->
@@ -960,6 +1096,7 @@
     <!-- Section A: Room Details -->
     <div class="card mb16" style="overflow-x:auto">
       <div style="font-size:13px;font-weight:600;color:#f1f5f9;margin-bottom:14px">Section A — Room Details</div>
+      <div class="rt-stack">
       <table style="font-size:12px;min-width:760px">
         <thead>
           <tr>
@@ -974,6 +1111,7 @@
         </thead>
         <tbody id="room-body"></tbody>
       </table>
+      </div>
     </div>
 
     <!-- Section B: 12-Month Payment Tracker -->
@@ -2338,13 +2476,15 @@ function renderRenoTable() {
 
   tbody.innerHTML = renoRows.map((r, i) => {
     const total = (r.unitCost || 0) * (r.qty || 0);
+    // data-label is what the phone's stacked-card CSS prints in place of the
+    // column header it can no longer show. Desktop ignores the attribute.
     return `<tr>
-      <td><input class="reno-input" placeholder="Item description" value="${htmlAttr(r.item)}" oninput="updateRenoRow(${i},'item',this.value)"></td>
-      <td><input class="reno-input mono" type="number" min="0" placeholder="0" value="${r.unitCost || ''}" oninput="updateRenoRow(${i},'unitCost',this.value)"></td>
-      <td><input class="reno-input qty" type="number" min="0" placeholder="1" value="${r.qty || ''}" oninput="updateRenoRow(${i},'qty',this.value)"></td>
-      <td class="reno-total-cell" id="reno-row-idr-${i}">${total > 0 ? formatIDR(total) : '—'}</td>
-      <td class="reno-total-cell" id="reno-row-sgd-${i}">${total > 0 ? formatSGD(total) : '—'}</td>
-      <td><button class="reno-del" onclick="deleteRenoRow(${i})" title="Remove">✕</button></td>
+      <td data-label="Item"><input class="reno-input" placeholder="Item description" value="${htmlAttr(r.item)}" oninput="updateRenoRow(${i},'item',this.value)"></td>
+      <td data-label="Unit cost (IDR)"><input class="reno-input mono" type="number" min="0" placeholder="0" value="${r.unitCost || ''}" oninput="updateRenoRow(${i},'unitCost',this.value)"></td>
+      <td data-label="Qty"><input class="reno-input qty" type="number" min="0" placeholder="1" value="${r.qty || ''}" oninput="updateRenoRow(${i},'qty',this.value)"></td>
+      <td data-label="Total (IDR)" class="reno-total-cell" id="reno-row-idr-${i}">${total > 0 ? formatIDR(total) : '—'}</td>
+      <td data-label="Total (SGD)" class="reno-total-cell" id="reno-row-sgd-${i}">${total > 0 ? formatSGD(total) : '—'}</td>
+      <td class="rt-act"><button class="reno-del" onclick="deleteRenoRow(${i})" title="Remove">✕</button></td>
     </tr>`;
   }).join('');
 
@@ -2544,13 +2684,13 @@ function renderRatings(m) {
       const wt = (r.score * r.weight).toFixed(2);
       const sc = scoreColor(r.score);
       return `<tr>
-        <td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--subtle)">${r.metric}${r.dynamic?'  <span style="font-size:10px;color:var(--teal);font-weight:600">LIVE</span>':''}</td>
-        <td class="r mono teal" style="padding:10px 0;border-bottom:1px solid var(--border)">${r.project}</td>
-        <td class="r mono dim" style="padding:10px 0;border-bottom:1px solid var(--border)">${r.id}</td>
-        <td class="r mono dim" style="padding:10px 0;border-bottom:1px solid var(--border)">${r.sg}</td>
-        <td class="r" style="padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${sc}">${r.score}/5</span></td>
-        <td class="r mono dim" style="padding:10px 0;border-bottom:1px solid var(--border)">${(r.weight*100).toFixed(0)}%</td>
-        <td class="r mono" style="padding:10px 0;border-bottom:1px solid var(--border);color:${sc};font-weight:700">${wt}</td>
+        <td data-label="Metric" style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--subtle)">${r.metric}${r.dynamic?'  <span style="font-size:10px;color:var(--teal);font-weight:600">LIVE</span>':''}</td>
+        <td data-label="Project value" class="r mono teal" style="padding:10px 0;border-bottom:1px solid var(--border)">${r.project}</td>
+        <td data-label="Indonesia" class="r mono dim" style="padding:10px 0;border-bottom:1px solid var(--border)">${r.id}</td>
+        <td data-label="Singapore" class="r mono dim" style="padding:10px 0;border-bottom:1px solid var(--border)">${r.sg}</td>
+        <td data-label="Score" class="r" style="padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${sc}">${r.score}/5</span></td>
+        <td data-label="Weight" class="r mono dim" style="padding:10px 0;border-bottom:1px solid var(--border)">${(r.weight*100).toFixed(0)}%</td>
+        <td data-label="Weighted" class="r mono" style="padding:10px 0;border-bottom:1px solid var(--border);color:${sc};font-weight:700">${wt}</td>
       </tr>`;
     }).join('');
   }
@@ -2929,14 +3069,14 @@ function renderP1() {
     const catOpts = cats.map(c=>`<option ${r.category===c?'selected':''}>${c}</option>`).join('');
 
     html += `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:6px 4px"><input type="date" class="tr-input date" value="${toISO(r.date)}" title="Tap to pick a date" onchange="p1Rows[${i}].date=fromISO(this.value);renderTransfers()"></td>
-      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${begin<0?'var(--red)':'var(--muted)'}"><input class="tr-input mono" style="width:110px" value="${begin||''}" readonly tabindex="-1" style="background:transparent;border-color:transparent;cursor:default"></td>
-      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${spent||''}" placeholder="0" oninput="p1Rows[${i}].spent=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
-      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${dep||''}" placeholder="0" oninput="p1Rows[${i}].deposited=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
-      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;${runClass}">${fmtRP(running)}</td>
-      <td style="padding:6px 4px"><select class="tr-input" style="width:95px" oninput="p1Rows[${i}].category=this.value">${catOpts}</select></td>
-      <td style="padding:6px 4px"><input class="tr-input" value="${r.remarks.replace(/"/g,'&quot;')}" placeholder="Remarks" oninput="p1Rows[${i}].remarks=this.value" style="width:100%"></td>
-      <td style="padding:6px 4px"><button class="tr-del" onclick="p1Rows.splice(${i},1);renderTransfers()">✕</button></td>
+      <td data-label="Date" style="padding:6px 4px"><input type="date" class="tr-input date" value="${toISO(r.date)}" title="Tap to pick a date" onchange="p1Rows[${i}].date=fromISO(this.value);renderTransfers()"></td>
+      <td data-label="Beginning" style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${begin<0?'var(--red)':'var(--muted)'}"><input class="tr-input mono" style="width:110px" value="${begin||''}" readonly tabindex="-1" style="background:transparent;border-color:transparent;cursor:default"></td>
+      <td data-label="Money spent" style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${spent||''}" placeholder="0" oninput="p1Rows[${i}].spent=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
+      <td data-label="Deposited" style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${dep||''}" placeholder="0" oninput="p1Rows[${i}].deposited=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
+      <td data-label="Running total" style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;${runClass}">${fmtRP(running)}</td>
+      <td data-label="Category" style="padding:6px 4px"><select class="tr-input" style="width:95px" oninput="p1Rows[${i}].category=this.value">${catOpts}</select></td>
+      <td data-label="Remarks" style="padding:6px 4px"><input class="tr-input" value="${r.remarks.replace(/"/g,'&quot;')}" placeholder="Remarks" oninput="p1Rows[${i}].remarks=this.value" style="width:100%"></td>
+      <td class="rt-act" style="padding:6px 4px"><button class="tr-del" onclick="p1Rows.splice(${i},1);renderTransfers()">✕</button></td>
     </tr>`;
   });
 
@@ -2947,9 +3087,9 @@ function renderP1() {
   tfoot.innerHTML = `
     <tr style="border-top:2px solid var(--amber)">
       <td style="padding:10px 4px;color:#f1f5f9;font-weight:700" colspan="2">PART 1 SUMMARY</td>
-      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--red);font-weight:700">${fmtRP(totalSpent)}</td>
-      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtRP(totalDeposited)}</td>
-      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtRP(running)}</td>
+      <td data-label="Total spent" style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--red);font-weight:700">${fmtRP(totalSpent)}</td>
+      <td data-label="Total deposited" style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtRP(totalDeposited)}</td>
+      <td data-label="Closing balance" style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtRP(running)}</td>
       <td colspan="3" style="padding:10px 4px;font-size:11px;color:var(--muted)">Avg/room: <strong style="color:var(--teal)">${fmtRP(perRoom)}</strong> · Balance carries to Part 2</td>
     </tr>`;
 
@@ -2984,14 +3124,14 @@ function renderP2(carryOver) {
     const runClass = running >= 0 ? 'color:var(--teal)' : 'color:var(--red)';
 
     html += `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:6px 4px"><input type="date" class="tr-input date" value="${toISO(r.date)}" title="Tap to pick a date" onchange="p2Rows[${i}].date=fromISO(this.value)"></td>
-      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${open>=0?'var(--teal)':'var(--red)'}">${fmtRP(open)}</td>
-      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${col||''}" placeholder="0" oninput="p2Rows[${i}].collected=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
-      <td style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${exp||''}" placeholder="0" oninput="p2Rows[${i}].expenses=parseFloat(this.value)||0;renderTransfers()" style="width:100px"></td>
-      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;${runClass}">${fmtRP(running)}</td>
-      <td style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;${runClass}">${fmtSGDtr(running)}</td>
-      <td style="padding:6px 4px"><input class="tr-input" value="${r.remarks.replace(/"/g,'&quot;')}" placeholder="Remarks" oninput="p2Rows[${i}].remarks=this.value" style="width:100%"></td>
-      <td style="padding:6px 4px"><button class="tr-del" onclick="p2Rows.splice(${i},1);renderTransfers()">✕</button></td>
+      <td data-label="Date" style="padding:6px 4px"><input type="date" class="tr-input date" value="${toISO(r.date)}" title="Tap to pick a date" onchange="p2Rows[${i}].date=fromISO(this.value)"></td>
+      <td data-label="Opening" style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${open>=0?'var(--teal)':'var(--red)'}">${fmtRP(open)}</td>
+      <td data-label="Rent collected" style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${col||''}" placeholder="0" oninput="p2Rows[${i}].collected=parseFloat(this.value)||0;renderTransfers()" style="width:110px"></td>
+      <td data-label="Expenses" style="padding:6px 4px"><input class="tr-input mono" type="number" min="0" value="${exp||''}" placeholder="0" oninput="p2Rows[${i}].expenses=parseFloat(this.value)||0;renderTransfers()" style="width:100px"></td>
+      <td data-label="Running (IDR)" style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;${runClass}">${fmtRP(running)}</td>
+      <td data-label="Running (SGD)" style="padding:6px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;${runClass}">${fmtSGDtr(running)}</td>
+      <td data-label="Remarks" style="padding:6px 4px"><input class="tr-input" value="${r.remarks.replace(/"/g,'&quot;')}" placeholder="Remarks" oninput="p2Rows[${i}].remarks=this.value" style="width:100%"></td>
+      <td class="rt-act" style="padding:6px 4px"><button class="tr-del" onclick="p2Rows.splice(${i},1);renderTransfers()">✕</button></td>
     </tr>`;
   });
 
@@ -3000,10 +3140,10 @@ function renderP2(carryOver) {
   tfoot.innerHTML = `
     <tr style="border-top:2px solid var(--teal)">
       <td style="padding:10px 4px;color:#f1f5f9;font-weight:700" colspan="2">PART 2 SUMMARY</td>
-      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtRP(totalCollected)}</td>
-      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--red);font-weight:700">${fmtRP(totalExpenses)}</td>
-      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtRP(running)}</td>
-      <td style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtSGDtr(running)}</td>
+      <td data-label="Total collected" style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:700">${fmtRP(totalCollected)}</td>
+      <td data-label="Total expenses" style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--red);font-weight:700">${fmtRP(totalExpenses)}</td>
+      <td data-label="Closing (IDR)" style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtRP(running)}</td>
+      <td data-label="Closing (SGD)" style="padding:10px 4px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;${running>=0?'color:var(--teal)':'color:var(--red)'}">${fmtSGDtr(running)}</td>
       <td colspan="2" style="padding:10px 4px;font-size:11px;color:var(--muted)">Net return: <strong style="color:var(--teal)">${fmtRP(totalCollected - totalExpenses)}</strong> from rent so far</td>
     </tr>`;
 
@@ -3159,20 +3299,20 @@ function renderRooms() {
     const histLbl  = past ? `${past} past` : 'history';
 
     return `<tr style="border-bottom:${open?'none':'1px solid var(--border)'};${isVacant?'background:rgba(239,68,68,0.04)':''}">
-      <td style="padding:7px 4px;font-weight:700;color:#f1f5f9;font-size:12px">${r.room}</td>
-      <td style="padding:7px 4px;text-align:center">
+      <td data-label="Room" style="padding:7px 4px;font-weight:700;color:#f1f5f9;font-size:12px">${r.room}</td>
+      <td data-label="Status" style="padding:7px 4px;text-align:center">
         <button onclick="toggleRoomStatus(${i})" style="background:none;border:none;font-size:18px;cursor:pointer;line-height:1" title="Click to toggle">${statusIcon}</button>
       </td>
-      <td style="padding:7px 4px">
+      <td data-label="Tenant" style="padding:7px 4px">
         <div style="display:flex;align-items:center;gap:5px">
           <input class="tr-input" value="${htmlAttr(r.tenant||'')}" placeholder="${isVacant?'VACANT':'Tenant name'}" oninput="setRoomTenant(${i}, this.value)">
           <button onclick="toggleRoomHistory(${i})" title="Previous tenants of this room" style="background:none;border:1px solid var(--border);border-radius:5px;color:${past?'var(--amber)':'var(--muted)'};font-size:10px;padding:3px 6px;cursor:pointer;white-space:nowrap">${open?'▾':'▸'} ${histLbl}</button>
         </div>
       </td>
-      <td style="padding:7px 4px"><input type="date" class="tr-input date" value="${toISO(r.checkIn)}" title="Tap to pick a check-in date" onchange="setCheckIn(${i}, this.value)"></td>
-      <td style="padding:7px 4px;text-align:center"><select class="tr-input" style="width:78px" title="Day of the month rent falls due" onchange="setDueDay(${i}, this.value)">${dayOpts}</select></td>
-      <td style="padding:7px 4px"><select class="tr-input" style="width:100px" oninput="rooms[${i}].category=this.value;renderDelinquency()">${catOpts}</select></td>
-      <td style="padding:7px 4px"><input class="tr-input" value="${htmlAttr(r.remarks||'')}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
+      <td data-label="Check-in" style="padding:7px 4px"><input type="date" class="tr-input date" value="${toISO(r.checkIn)}" title="Tap to pick a check-in date" onchange="setCheckIn(${i}, this.value)"></td>
+      <td data-label="Due day" style="padding:7px 4px;text-align:center"><select class="tr-input" style="width:78px" title="Day of the month rent falls due" onchange="setDueDay(${i}, this.value)">${dayOpts}</select></td>
+      <td data-label="Category" style="padding:7px 4px"><select class="tr-input" style="width:100px" oninput="rooms[${i}].category=this.value;renderDelinquency()">${catOpts}</select></td>
+      <td data-label="Remarks" style="padding:7px 4px"><input class="tr-input" value="${htmlAttr(r.remarks||'')}" placeholder="Notes" oninput="rooms[${i}].remarks=this.value" style="font-size:11px;color:var(--muted)"></td>
     </tr>${open ? tenancyRow(r, i) : ''}`;
   }).join('');
 
@@ -3258,6 +3398,15 @@ const PAYMENT_STATES = ['⬜','✅','🔴','—'];
 // immediately rewrote it to 2, and ✅ could never be reached.
 const NEXT_PAYMENT_STATE = { 0:1, 1:3, 2:1, 3:0 };   // ⬜ → ✅ → — → ⬜
 
+// True on a phone, matching the CSS breakpoint. Both payment grids are ~1000px
+// of month columns: they scrolled inside their card, but ticking one room's
+// month meant dragging that table through a 340px window. Below this width the
+// same data is one card per room with the months as a 6x2 pad. The card view is
+// built from the SAME loop as the table — the arithmetic runs once and is
+// rendered twice — so the two cannot disagree about what has been paid.
+const PHONE_MQ = window.matchMedia('(max-width:600px)');
+const isPhone  = () => PHONE_MQ.matches;
+
 function togglePayment(ri, mi) {
   payments[ri][mi] = NEXT_PAYMENT_STATE[payments[ri][mi]] ?? 1;
   hasUnsavedEdits = true;
@@ -3301,6 +3450,7 @@ function renderPaymentGrid() {
     return row.every(c => c !== 0 && c !== 2);
   });
 
+  const cards = [];                    // phone view, filled as the table is built
   let html = `<div style="overflow-x:auto"><table style="font-size:12px;min-width:900px;border-collapse:collapse">
     <thead><tr>
       <th style="padding:8px 6px;text-align:left;min-width:80px">Room</th>
@@ -3321,6 +3471,7 @@ function renderPaymentGrid() {
     const whoAll   = tenantsAcrossYear(r);      // e.g. ['Ara','Olivia & Fitri']
     const multi    = whoAll.length > 1;         // label the cells when it changed hands
     let paid = 0, arrears = 0, notYetDue = 0;
+    const cardCells = [];              // this room's 12 month buttons, phone view
 
     html += `<tr style="border-bottom:1px solid var(--border)">
       <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${r.room}</td>
@@ -3361,6 +3512,12 @@ function renderPaymentGrid() {
       html += `<td style="padding:4px;text-align:center">
         <button onclick="togglePayment(${ri},${mi})" style="background:${bg};border:${border};border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:38px;opacity:${exempt&&shown!==1?'.5':'1'};transition:all .15s" title="${htmlAttr(hint)}">${icon}</button>${label}
       </td>`;
+      // Same state, same handler, thumb-sized — with the month named on the cell
+      // because a phone card has no column header to read it from.
+      cardCells.push(`<button class="pay-cell" onclick="togglePayment(${ri},${mi})" title="${htmlAttr(hint)}"
+        style="background:${bg};border:${border};opacity:${exempt&&shown!==1?'.45':'1'}">
+        <small>${MONTHS_12[mi].split(' ')[0]}</small>${icon}${
+          multi && who ? `<small>${htmlAttr(who.split(/[\s&,]+/)[0])}</small>` : ''}</button>`);
     });
 
     paidCells += paid;
@@ -3368,6 +3525,21 @@ function renderPaymentGrid() {
     const arrAmt    = arrears * RENT;
     const laterAmt  = notYetDue * RENT;
     grandArr += arrAmt; grandLater += laterAmt;
+    // Same three figures the table's last three columns show, on one card.
+    cards.push(`<div class="pay-card"${isVacant?' style="background:rgba(239,68,68,0.05)"':''}>
+      <div class="pay-card-head">
+        <div><span style="font-weight:600;color:#f1f5f9">${r.room}</span>
+          <div style="font-size:11px;color:var(--subtle);margin-top:2px">${
+            whoAll.length ? whoAll.map(n=>htmlAttr(n)).join(' → ')
+            : isVacant ? '<span style="color:var(--red)">VACANT</span>' : (htmlAttr(r.tenant||'') || '—')}</div></div>
+        ${isNonRev ? '<span style="font-size:10px;color:var(--muted);white-space:nowrap">non-revenue</span>' : ''}
+      </div>
+      <div class="pay-cells">${cardCells.join('')}</div>
+      <div class="pay-card-foot">
+        <span style="color:var(--teal)">paid ${paid?fmtRP(paidAmt):'—'}</span>
+        <span style="color:${arrAmt>0?'var(--red)':'var(--muted)'}">arrears ${isVacant||isNonRev?'—':arrAmt>0?fmtRP(arrAmt):'clear'}</span>
+        ${laterAmt>0?`<span style="color:var(--muted)">not due ${fmtRP(laterAmt)}</span>`:''}
+      </div></div>`);
     html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${paid?fmtRP(paidAmt):'—'}</td>`;
     html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:${arrAmt>0?'var(--red)':'var(--muted)'};font-weight:700">${isVacant||isNonRev?'—':arrAmt>0?fmtRP(arrAmt):'✅ Clear'}</td>`;
     html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">${laterAmt>0?fmtRP(laterAmt):'—'}</td>`;
@@ -3385,6 +3557,24 @@ function renderPaymentGrid() {
 
   html += `</tbody></table></div>`;
 
+  // The table is finished. Everything appended from here shows under EITHER
+  // view, so it accumulates in `footer` rather than in `html`.
+  const tableHtml = html;
+  // The summary card carries the table's Monthly Total row too — as the same
+  // 6x2 month pad the room cards use, so a phone is not quietly missing the
+  // month-by-month figures the wide view shows along the bottom.
+  const cardsHtml = `<div class="pay-cards">${cards.join('')}</div>
+    <div class="pay-card" style="background:rgba(0,212,184,0.05);border-color:var(--teal);margin-top:10px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:2px">Collected each month</div>
+      <div class="pay-cells">${monthTotals.map((t,mi)=>`<div class="pay-cell" style="cursor:default;font-size:10px;font-family:'JetBrains Mono',monospace;color:${t>0?'var(--teal)':'var(--muted)'}">
+        <small>${MONTHS_12[mi].split(' ')[0]}</small>${t>0?fmtRP(t).replace('Rp ',''):'—'}</div>`).join('')}</div>
+      <div class="pay-card-foot">
+        <span style="color:var(--teal)">all rooms paid ${fmtRP(monthTotals.reduce((a,b)=>a+b,0))}</span>
+        <span style="color:${grandArr>0?'var(--red)':'var(--muted)'}">arrears ${fmtRP(grandArr)}</span>
+        <span style="color:var(--muted)">not yet due ${fmtRP(grandLater)}</span>
+      </div></div>`;
+  let footer = '';
+
   // Reconciliation — the tracker and Part 2 describe the same money, so say so
   // out loud instead of leaving it to be worked out by hand.
   const trackerTotal = monthTotals.reduce((a,b)=>a+b,0);
@@ -3392,7 +3582,7 @@ function renderPaymentGrid() {
   const diff         = trackerTotal - p2Total;
   const diffMonths   = RENT ? Math.abs(diff)/RENT : 0;
   const ok           = Math.abs(diff) < 1;
-  html += `<div style="margin-top:14px;padding:10px 14px;border-radius:8px;font-size:11px;line-height:1.7;
+  footer += `<div style="margin-top:14px;padding:10px 14px;border-radius:8px;font-size:11px;line-height:1.7;
       border:1px solid ${ok?'var(--teal)':'var(--amber)'};background:${ok?'rgba(0,212,184,0.07)':'rgba(245,158,11,0.08)'};color:var(--subtle)">
     ${ok?'✅':'⚠️'} Tracker <strong style="color:var(--teal)">${fmtRP(trackerTotal)}</strong>
     (${paidCells} paid month${paidCells===1?'':'s'} × ${fmtRP(RENT)})
@@ -3403,13 +3593,13 @@ function renderPaymentGrid() {
 
   // Archive button if all 12 months done
   if (allFilled && !archived) {
-    html += `<div style="margin-top:14px;padding:12px;background:rgba(245,158,11,0.1);border:1px solid var(--amber);border-radius:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    footer += `<div style="margin-top:14px;padding:12px;background:rgba(245,158,11,0.1);border:1px solid var(--amber);border-radius:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
       <span style="font-size:12px;color:var(--amber)">📦 All 12 months complete — ready to archive and start a new period.</span>
       <button onclick="archivePeriod()" style="background:var(--amber);color:#000;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer">Archive & Reset</button>
     </div>`;
   }
 
-  wrap.innerHTML = html;
+  wrap.innerHTML = (isPhone() ? cardsHtml : tableHtml) + footer;
   renderArchive();
 }
 
@@ -3496,6 +3686,7 @@ function renderRoomOccupancy() {
       <span><i style="background:var(--surface2)"></i>Vacant</span>
       <span><i style="background:var(--subtle);width:2px;height:12px;border-radius:0"></i>Today</span>
     </div>
+    <div class="phone-hint">Swipe the timeline sideways to reach the later months →</div>
     <div class="occ-scroll"><div class="occ-grid">
       ${stats.map(s => {
         const bars = s.spans.map(sp => {
@@ -4582,7 +4773,7 @@ function renderAceTracker() {
     .concat(Array.from({length:31}, (_,d)=>`<option value="${d+1}">${ordinal(d+1)}</option>`)).join('');
 
   // Section A
-  roomsWrap.innerHTML = `<div style="overflow-x:auto"><table style="font-size:12px;min-width:820px;border-collapse:collapse">
+  roomsWrap.innerHTML = `<div class="rt-stack" style="overflow-x:auto"><table style="font-size:12px;min-width:820px;border-collapse:collapse">
     <thead><tr style="border-bottom:1px solid var(--border)">
       <th style="padding:8px 6px;text-align:left">Room</th>
       <th style="padding:8px 6px;text-align:left">Tenant</th>
@@ -4593,17 +4784,19 @@ function renderAceTracker() {
       <th style="padding:8px 6px;text-align:left">Remarks</th>
     </tr></thead><tbody>` +
     aceRooms.map((r,i) => `<tr style="border-bottom:1px solid var(--border)">
-      <td style="padding:6px"><input class="tr-input" style="width:78px" value="${htmlAttr(r.room)}" oninput="aceRooms[${i}].room=this.value" onchange="renderAceTracker()"></td>
-      <td style="padding:6px"><input class="tr-input" style="width:130px" placeholder="empty" value="${htmlAttr(r.tenant)}" oninput="aceRooms[${i}].tenant=this.value" onchange="renderAceTracker()"></td>
-      <td style="padding:6px"><input type="date" class="tr-input field-date" style="width:130px" value="${toISO(r.checkIn)}" onchange="aceSetField(${i},'checkIn',this.value)"></td>
-      <td style="padding:6px"><select class="tr-input" style="width:72px" onchange="aceSetField(${i},'dueDay',this.value)">${
+      <td data-label="Room" style="padding:6px"><input class="tr-input" style="width:78px" value="${htmlAttr(r.room)}" oninput="aceRooms[${i}].room=this.value" onchange="renderAceTracker()"></td>
+      <td data-label="Tenant" style="padding:6px"><input class="tr-input" style="width:130px" placeholder="empty" value="${htmlAttr(r.tenant)}" oninput="aceRooms[${i}].tenant=this.value" onchange="renderAceTracker()"></td>
+      <td data-label="Check-in" style="padding:6px"><input type="date" class="tr-input field-date" style="width:130px" value="${toISO(r.checkIn)}" onchange="aceSetField(${i},'checkIn',this.value)"></td>
+      <td data-label="Due day" style="padding:6px"><select class="tr-input" style="width:72px" onchange="aceSetField(${i},'dueDay',this.value)">${
           dayOpts.replace(`value="${r.dueDay}"`, `value="${r.dueDay}" selected`)}</select></td>
-      <td style="padding:6px;text-align:right"><input type="number" min="0" class="tr-input" style="width:110px;text-align:right" value="${r.rent||0}" oninput="aceSetField(${i},'rent',this.value)"></td>
-      <td style="padding:6px;text-align:right"><input type="number" min="0" class="tr-input" style="width:96px;text-align:right" value="${r.deposit||0}" oninput="aceSetField(${i},'deposit',this.value)"></td>
-      <td style="padding:6px"><input class="tr-input" style="width:150px;font-size:11px;color:var(--muted)" placeholder="Notes" value="${htmlAttr(r.remarks||'')}" oninput="aceRooms[${i}].remarks=this.value"></td>
+      <td data-label="Rent / month" style="padding:6px;text-align:right"><input type="number" min="0" class="tr-input" style="width:110px;text-align:right" value="${r.rent||0}" oninput="aceSetField(${i},'rent',this.value)"></td>
+      <td data-label="Deposit" style="padding:6px;text-align:right"><input type="number" min="0" class="tr-input" style="width:96px;text-align:right" value="${r.deposit||0}" oninput="aceSetField(${i},'deposit',this.value)"></td>
+      <td data-label="Remarks" style="padding:6px"><input class="tr-input" style="width:150px;font-size:11px;color:var(--muted)" placeholder="Notes" value="${htmlAttr(r.remarks||'')}" oninput="aceRooms[${i}].remarks=this.value"></td>
     </tr>`).join('') + `</tbody></table></div>`;
 
-  // Section B — payment grid
+  // Section B — payment grid. Table and phone cards come out of one loop; see
+  // the note on isPhone().
+  const cards = [];
   let html = `<div style="overflow-x:auto"><table style="font-size:12px;min-width:940px;border-collapse:collapse">
     <thead><tr>
       <th style="padding:8px 6px;text-align:left;min-width:74px">Room</th>
@@ -4616,6 +4809,7 @@ function renderAceTracker() {
   aceRooms.forEach((r, ri) => {
     let paidAmt = 0;
     const rc = aceRcCount(r.room);
+    const cardCells = [];
     html += `<tr style="border-bottom:1px solid var(--border)">
       <td style="padding:7px 6px;font-weight:600;color:#f1f5f9;font-size:12px">${htmlAttr(r.room)}
         <button onclick="aceOpenReceipts(${ri})" title="Proof of payment photos for ${htmlAttr(r.room)}"
@@ -4631,8 +4825,27 @@ function renderAceTracker() {
         <button onclick="aceTogglePayment(${ri},${mi})" title="${htmlAttr(MONTHS_12[mi] + ' · ' + (r.tenant||'no tenant'))}"
           style="background:${bg};border:1px solid transparent;border-radius:6px;padding:4px 6px;cursor:pointer;font-size:14px;min-width:34px;opacity:${!r.tenant&&shown!==1?'.5':'1'}">${PAYMENT_STATES[shown]}</button>
         ${cellRc ? `<div style="font-size:9px;color:var(--teal)" title="${cellRc} photo${cellRc===1?'':'s'}">📎${cellRc>1?cellRc:''}</div>` : ''}</td>`;
+      cardCells.push(`<button class="pay-cell" onclick="aceTogglePayment(${ri},${mi})" title="${htmlAttr(MONTHS_12[mi] + ' · ' + (r.tenant||'no tenant'))}"
+        style="background:${bg};opacity:${!r.tenant&&shown!==1?'.45':'1'}">
+        <small>${MONTHS_12[mi].split(' ')[0]}</small>${PAYMENT_STATES[shown]}${
+          cellRc ? `<small style="color:var(--teal)">📎${cellRc>1?cellRc:''}</small>` : ''}</button>`);
     });
     grandPaid += paidAmt;
+    // The paperclip button lives on the card head, where the table puts it under
+    // the room name — same aceOpenReceipts(ri), same count.
+    cards.push(`<div class="pay-card">
+      <div class="pay-card-head">
+        <div><span style="font-weight:600;color:#f1f5f9">${htmlAttr(r.room)}</span>
+          <div style="font-size:11px;color:var(--subtle);margin-top:2px">${
+            r.tenant ? htmlAttr(r.tenant) : '<span style="color:var(--red)">empty</span>'}</div></div>
+        <button onclick="aceOpenReceipts(${ri})" title="Proof of payment photos for ${htmlAttr(r.room)}"
+          style="background:none;border:none;padding:0;cursor:pointer;font-size:12px;white-space:nowrap;color:${rc?'var(--teal)':'var(--muted)'}">📎 ${rc||'add'}</button>
+      </div>
+      <div class="pay-cells">${cardCells.join('')}</div>
+      <div class="pay-card-foot">
+        <span style="color:${paidAmt?'var(--teal)':'var(--muted)'}">paid ${paidAmt?fmtIDR(paidAmt):'—'}</span>
+        <span style="color:var(--muted)">rent ${r.rent?fmtIDR(r.rent)+'/mo':'not set'}</span>
+      </div></div>`);
     html += `<td style="padding:7px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${paidAmt?fmtIDR(paidAmt):'—'}</td></tr>`;
   });
   html += `<tr style="border-top:2px solid var(--teal);background:rgba(0,212,184,0.05)">
@@ -4641,9 +4854,23 @@ function renderAceTracker() {
     <td style="padding:8px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:700">${fmtIDR(grandPaid)}</td>
   </tr></tbody></table></div>`;
 
+  const tableHtml = html;
+  // As on the laundry tracker: the table's Monthly Total row survives on the
+  // phone as a month pad rather than being dropped.
+  const cardsHtml = `<div class="pay-cards">${cards.join('')}</div>
+    <div class="pay-card" style="background:rgba(0,212,184,0.05);border-color:var(--teal);margin-top:10px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:2px">Collected each month</div>
+      <div class="pay-cells">${monthTotals.map((t,mi)=>`<div class="pay-cell" style="cursor:default;font-size:10px;font-family:'JetBrains Mono',monospace;color:${t>0?'var(--teal)':'var(--muted)'}">
+        <small>${MONTHS_12[mi].split(' ')[0]}</small>${t>0?(t/1e6).toFixed(1)+'m':'—'}</div>`).join('')}</div>
+      <div class="pay-card-foot">
+        <span style="color:var(--teal)">all rooms collected ${paidCells?fmtIDR(grandPaid):'—'}</span>
+        <span style="color:var(--muted)">${paidCells} month${paidCells===1?'':'s'} ticked</span>
+      </div></div>`;
+  let footer = '';
+
   const note = aceRcNote();
-  if (note) html += `<div style="margin-top:10px;padding:9px 14px;border-radius:8px;font-size:11px;line-height:1.7;border:1px solid var(--amber);background:rgba(245,158,11,0.06);color:var(--subtle)">📎 ${note}</div>`;
-  gridWrap.innerHTML = html;
+  if (note) footer += `<div style="margin-top:10px;padding:9px 14px;border-radius:8px;font-size:11px;line-height:1.7;border:1px solid var(--amber);background:rgba(245,158,11,0.06);color:var(--subtle)">📎 ${note}</div>`;
+  gridWrap.innerHTML = (isPhone() ? cardsHtml : tableHtml) + footer;
 
   // KPIs. Rents start at 0, so say the tracker is empty rather than printing
   // Rp 0 as though it were a measured figure.
@@ -4756,6 +4983,44 @@ switchTab = function(id, btn) {
 // Overview is the landing tab now, so render it once at load — the model script
 // only calls recalc(), which fills panels but does not choose one.
 switchTab('overview', document.querySelector('.tabs .tab'));
+
+// Rotating a phone, or dragging a desktop window, crosses the 600px line. The
+// stacked-table views are pure CSS and follow on their own; the two payment
+// grids choose their markup at render time, so they have to be told. Without
+// this a tracker sits in the layout meant for the other width until something
+// else happens to re-render it.
+PHONE_MQ.addEventListener('change', () => {
+  if (typeof renderPaymentGrid === 'function') renderPaymentGrid();
+  if (typeof renderAceTracker  === 'function') renderAceTracker();
+  clearFooterBar();
+});
+
+/* #footer-bar is position:fixed along the bottom. On a desktop it is one 28px
+   line and the page's bottom padding clears it; on a phone it wraps to three
+   and stands 93px tall, hiding the end of every tab behind it.
+
+   The padding is set from the bar's measured height rather than hardcoded,
+   because that height is not a constant: the bar carries the save timestamp
+   ("Live model saved: 18 Aug 09:29:30 am" vs "not yet saved this session"), so
+   it re-wraps as the text changes. A fixed number would be right at one width
+   and wrong after the next save. */
+function clearFooterBar() {
+  const bar = document.getElementById('footer-bar');
+  const content = document.querySelector('.content');
+  if (!bar || !content) return;
+  content.style.paddingBottom = (bar.offsetHeight + 24) + 'px';
+}
+window.addEventListener('resize', clearFooterBar);
+// The bar's text is written by the save/snapshot paths, so re-measure after
+// them too rather than only at load.
+['saveToSupabase', 'setSyncStatus', 'renderSnapshots'].forEach(fn => {
+  if (typeof window[fn] === 'function') {
+    const orig = window[fn];
+    window[fn] = function (...a) { const r = orig.apply(this, a); setTimeout(clearFooterBar, 0); return r; };
+  }
+});
+clearFooterBar();
+setTimeout(clearFooterBar, 800);   // fonts land after first paint and re-wrap it
 </script>
 </body>
 </html>

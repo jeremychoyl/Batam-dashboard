@@ -374,6 +374,67 @@ One card system: `.input-group` + `.input-group-title` + `.input-row` +
 pickers and the Timeline editor all use it — don't hand-roll inline-styled boxes.
 `.field-date` is the picker equivalent of the global `input[type=number]` look.
 
+### Phone layout (added 2026-08-18)
+Everything lives inside media queries, so a wide screen renders exactly what it
+rendered before — verified by diffing the rendered text of all seven panels
+against the previous commit.
+
+Two breakpoints. **≤900px** pins the tab bar (`position:sticky`; it already had
+a `z-index` that did nothing without a position) and tightens page padding —
+fourteen panels reachable only from that bar, and the panels are long. **≤600px**
+is the phone tier.
+
+The rule that matters most is `input, select, textarea { font-size:16px }`. iOS
+Safari magnifies the whole page whenever a focused field is under 16px and does
+**not** zoom back out; every input here was 11–13px. This is the same fix
+`edi.html` got first, and 16px is a floor the browser imposes, not a preference.
+Measured on the real engine: 27 of 27 inputs now report exactly 16px.
+
+Two different techniques, chosen by what the table *is*:
+
+- **Wide edit tables → `.rt-stack`.** The ledgers and room-detail tables are
+  580–940px of columns; they scrolled inside their card, so fixing one tenant's
+  name meant dragging a table through a 340px window. Below 600px each row
+  becomes a card and each cell a labelled line, the label coming from that
+  cell's own **`data-label`**. There is deliberately **no second markup path** —
+  it is the same DOM restyled, so phone and desktop cannot show different
+  figures and a renderer edited later cannot leave a stale card view behind.
+  Six tables use it: reno, Ratings scorecard, Cash Transfers P1 and P2, laundry
+  Section A, Ace Section A. **A new `<td>` needs a `data-label`** or it renders
+  on a phone as a value with no column header; the cell holding the row's ✕ gets
+  `class="rt-act"` instead, which turns it into a full-width "✕ Remove".
+- **The two 12-month payment grids → cards.** A grid of month buttons has no
+  sensible row-per-line form, so these are built as one card per room with a 6×2
+  month pad — from the **same loop** as the table, exactly as `edi.html` does it,
+  so the arithmetic runs once and is rendered twice. `isPhone()` / `PHONE_MQ`
+  (defined next to `PAYMENT_STATES`) picks the markup, and a `change` listener at
+  the end of the file re-renders both on rotation, since these choose at render
+  time while `.rt-stack` follows on its own.
+  ⚠️ The summary card carries the table's **Monthly Total row** as a 12-cell
+  readout pad. Don't drop it — without it the phone silently loses the
+  month-by-month figures the wide view shows along the bottom.
+
+`#footer-bar` is `position:fixed` and wraps to **93px** on a phone against a
+28px desktop line, hiding the end of every tab. `clearFooterBar()` sets the
+content's bottom padding from the bar's *measured* height, on load, on resize
+and after the save/snapshot paths — **not** a hardcoded number, because the bar
+re-wraps as its own save-timestamp text changes length.
+
+Tiles go two-up (`.grid-kpi`, and `.tile-grid`, a hook added to the five
+inline-styled `auto-fill` grids): at this width `minmax(170–200px,1fr)` resolves
+to one column, which turned the ten-tile Investment Snapshot into ten screens.
+Phone buttons get `min-height:44px` — measured, several were 23–39px.
+
+The occupancy Gantt still scrolls, because twelve months genuinely need width;
+it gets a narrower name column and a `.phone-hint` telling you to swipe. That
+hint is the *only* element added to the desktop DOM, and it is `display:none`
+above 600px.
+
+Verified with headless Chrome via `.claude/chrome`: no horizontal page overflow
+at 390 / 430 / 768px on any tab, and all 84 laundry and 156 Ace room-months
+remain individually tappable in the card view — the same counts the wide table
+offers.
+
 ## Working rules for this repo
 - **Change flow: branch → PR → Vercel preview → owner approves → merge to main.**
   Never push straight to `main` for anything non-trivial.
