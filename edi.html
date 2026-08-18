@@ -4,6 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edi Haron — Hostel Rent Tracker</title>
+
+<!-- Home screen. Its own icon and blue accent, not the dashboard's teal "A":
+     Edi adds THIS page to his home screen, and two identical icons would be a
+     coin-flip every time he opens one.
+     ⚠️ No `orientation` in the manifest — see index.html. -->
+<link rel="apple-touch-icon" href="/edi-icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/edi-icon-192.png">
+<link rel="manifest" href="/edi-manifest.json">
+<meta name="theme-color" content="#07101f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Edi Rent">
+
+<!-- Link preview. No figures and no tenant names — this page saves without a
+     password, so its link travels, and a preview is cached by every scraper
+     that sees it. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Batam Dashboard">
+<meta property="og:title" content="Edi Haron — Hostel Rent Tracker">
+<meta property="og:description" content="Room-by-room rent collection · updates sync for everyone.">
+<meta property="og:url" content="https://batam-dashboard.vercel.app/edi">
+<meta property="og:image" content="https://batam-dashboard.vercel.app/edi-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Edi Haron — hostel rent tracker">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Edi Haron — Hostel Rent Tracker">
+<meta name="twitter:description" content="Room-by-room rent collection · updates sync for everyone.">
+<meta name="twitter:image" content="https://batam-dashboard.vercel.app/edi-og.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
