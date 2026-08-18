@@ -201,15 +201,35 @@ amount. Owner's rule — confirmed business-wide, *not* per property, on
 The occupancy curve and the breakeven cards still need a cost per property, so
 `opexSplit()` charges every unit and then shares the free-unit discount out
 **pro-rata by unit count**. Any other split would leave the two property figures
-not summing to the business total; the calc harness asserts that they do. ⚠️ The **live saved figure is 300,000** per unit — the owner raised
-it from 250,000 on 2026-08-17, minutes after the feature shipped. This file's
-HTML default is still 250,000, which only applies to a fresh Reset, so **read the
-saved row (or the Inputs tab) before quoting a cost figure** rather than the
-default in the source. At 300,000 the rule produces 4,800,000/mo in Phase 1 and
-5,700,000 in Phase 2. It replaced a flat `in-opex` figure that was then
+not summing to the business total; the calc harness asserts that they do.
+
+⚠️ **There is no saved per-unit figure at all — corrected 2026-08-18.** This
+file previously said the live saved value was 300,000, raised from 250,000 on
+2026-08-17. Audited against the actual row that day: **`in-opexPerUnit` is not a
+key in row 1**, which still carries the pre-rework `in-opex: 9000000` and
+`in-laundryAnnualRent: 60000000`. The saved row predates this feature and has
+never been re-saved, so every operating-cost figure on the live page comes from
+**this file's HTML default of 250,000**. Whatever raise was made was never
+persisted. At 250,000 and today's counts the rule produces **4,500,000/mo in
+Phase 1 and 6,000,000 in Phase 2** (18 and 24 charged units); at 300,000 it
+would be 5,400,000 and 7,200,000 — the old note's "4,800,000 / 5,700,000" did
+not match any live room count and was wrong on its own terms.
+
+The gap is worth roughly **SGD 5,162** on the headline five-year profit, so it
+is the owner's number to settle, not one to infer. **Do not press Save to
+"fix" this** — saving writes whatever is on screen into the shared row and would
+silently commit the default as though it were chosen. Ask, then let them save.
+Until they do, the same applies to `in-laundryAnnualRentP1`: the legacy key
+migrates into the Phase 2 field as designed, but Phase 1's 30,000,000 is also an
+unsaved default.
+
+The per-unit rule replaced a flat `in-opex` figure that was then
 split ⅔ Ace / ⅓ laundry by a hardcoded fraction — an allocation nobody had
 chosen, which alone set the laundry's breakeven occupancy and was invisible on
-screen.
+screen. That legacy key is the `in-opex: 9000000` still sitting unused in the
+saved row: the old flat figure was nearly double what the rule now computes, so
+the model's operating cost effectively halved when this shipped and no saved row
+has ever confirmed the new one.
 
 So opex is now **per property and per phase** and follows the room counts:
 `laundryOpexP1/P2`, `aceOpexP1/P2`, summed into `monthlyOpexP1/P2`. Adding a room
@@ -217,10 +237,17 @@ anywhere raises cost automatically — there is no longer a cost figure to keep 
 step by hand. The Inputs card shows what the rule produces for both phases, and
 the breakeven cards' tap-through spells out `units − free = charged × per-unit`.
 
-⚠️ The free allowance is applied **per property** (laundry gets 2, Ace gets 2),
-not once across the business. That reading of "first 2 units … applies to both"
-is worth 500,000/month against the business-wide reading — confirm before
-treating either as settled.
+The free allowance is granted **once across the whole business**, not per
+property: 20 units in Phase 1 less 2 free = 18 charged, which is what the live
+page computes. Commit `3009711` ("Grant the free operating-cost units once
+across the business, not per property") settled this on the owner's own reading,
+confirmed business-wide.
+
+⚠️ **This paragraph said the opposite until 2026-08-18** — it described the
+per-property split (laundry gets 2, Ace gets 2) as live, and that had been wrong
+since `3009711`. The two readings differ by 500,000/month, so a stale note here
+is not cosmetic: it names the cheaper option as the one in force. Verified
+against the running page, not the source, when corrected.
 
 ### Investment Snapshot tiles (reordered 2026-08-18)
 Owner's ordering: money in → how fast it comes back → what it earns → what it
