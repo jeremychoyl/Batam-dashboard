@@ -37,6 +37,8 @@
   .tabs::-webkit-scrollbar { height: 0; }
   .tab { background: none; border: none; padding: 12px 15px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; transition: color .15s, border-color .15s; pointer-events: auto; position: relative; z-index: 1; }
   .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+  /* Phone-only; the media query below reveals it and hides the real tabs. */
+  #menu-btn { display: none; }
   .tab:hover:not(.active) { color: var(--subtle); }
 
   /* LAYOUT */
@@ -293,6 +295,16 @@
     .rating-grade { font-size: 16px; }
     .tabs { padding: 0 8px; }
     .tab { padding: 13px 11px; }
+
+    /* The bar needs 694px at this width, so 9 of the 13 panels sit past the
+       right edge behind a sideways drag with nothing to suggest it scrolls.
+       Hide every tab and let the ☰ button (appended by the last script block)
+       stand in for the lot. */
+    .tabs .tab { display: none; }
+    #menu-btn {
+      display: block; color: var(--teal); font-weight: 600; font-size: 14px;
+      padding: 13px 4px; text-align: left;
+    }
     .card { padding: 14px; }
     .input-group { padding: 14px; }
     .sh h2 { font-size: 15px; }
@@ -4978,6 +4990,104 @@ switchTab = function(id, btn) {
   // panel you are no longer looking at.
   const more = document.getElementById('more-btn');
   if (more && btn !== more) more.textContent = 'More ▾';
+};
+
+/* ── PHONE: ☰ MENU ────────────────────────────────────────────────────────────
+   `.tabs` is a horizontally scrolling flex row. Measured on the live page at
+   390px it needs 694px, so 304px sits off the right edge: 💸 Cash Transfers,
+   🏨 Ace Rooms and the More ▾ button are all past it. That puts **9 of the 13
+   panels** behind a sideways drag on a bar that gives no hint it scrolls —
+   including both rent trackers. Making the bar sticky (see the CSS) kept it on
+   screen but did nothing about reach.
+
+   Below 600px every tab is hidden and this one button replaces them, listing all
+   13 in a single sheet. A sheet rather than a dropdown for the reason the More
+   menu already documents: an absolutely positioned menu inside a scrolling flex
+   row gets clipped, invisibly, until someone taps it on a real device.
+
+   The button carries the CURRENT panel's name, because with the bar hidden
+   there is nothing else on screen saying where you are. */
+
+// Derived from the bar itself rather than hand-listed, so a tab added to the
+// markup appears here automatically instead of going missing on phones.
+const ALL_TABS = (() => {
+  const bar = [...document.querySelectorAll('.tabs .tab')]
+    .filter(b => b.id !== 'more-btn' && b.id !== 'menu-btn')
+    .map(b => ({ id: ((b.getAttribute('onclick') || '').match(/'([^']+)'/) || [])[1],
+                 label: b.textContent.trim() }))
+    .filter(t => t.id);
+  return [...bar, ...MORE_TABS];
+})();
+
+// Appended, never prepended: the load path below does
+// `document.querySelector('.tabs .tab')` to mark the first tab active, and
+// putting this button first would silently hand that role to the menu.
+(function () {
+  const bar = document.querySelector('.tabs');
+  if (!bar) return;
+  const b = document.createElement('button');
+  b.className = 'tab';
+  b.id = 'menu-btn';
+  b.setAttribute('onclick', 'openAllTabs()');
+  b.textContent = '☰';
+  bar.appendChild(b);
+})();
+
+function closeAllTabs() {
+  const el = document.getElementById('tab-sheet');
+  if (el) el.remove();
+}
+
+function openAllTabs() {
+  closeAllTabs();
+  const cur = document.querySelector('.panel.active');
+  const curId = cur ? cur.id.replace('panel-', '') : '';
+  const el = document.createElement('div');
+  el.id = 'tab-sheet';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px';
+  el.innerHTML = `
+    <div style="background:#0e1929;border:1px solid var(--teal);border-radius:14px;padding:14px;max-width:340px;width:100%;max-height:82vh;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#f1f5f9">Go to</div>
+        <button onclick="closeAllTabs()" aria-label="Close" style="background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;padding:0 8px;min-height:44px">✕</button>
+      </div>
+      <div style="overflow-y:auto;-webkit-overflow-scrolling:touch">
+        ${ALL_TABS.map(t => `<button onclick="switchFromMenu('${t.id}')" style="display:block;width:100%;text-align:left;min-height:46px;background:${
+            t.id === curId ? 'rgba(0,212,184,0.12)' : 'none'};border:none;border-top:1px solid var(--border);padding:12px 8px;color:${
+            t.id === curId ? 'var(--teal)' : '#e2e8f0'};font-family:'Inter',sans-serif;font-size:15px;font-weight:${
+            t.id === curId ? '700' : '400'};cursor:pointer">${t.label}</button>`).join('')}
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click', e => { if (e.target === el) closeAllTabs(); });
+}
+
+function switchFromMenu(id) {
+  closeAllTabs();
+  // Route through the bar's own button where one exists, so the desktop active
+  // state is already correct if the window is later widened; secondary panels
+  // pass the More button, exactly as switchFromMore() does.
+  const btn = [...document.querySelectorAll('.tabs .tab')]
+      .find(b => (b.getAttribute('onclick') || '').includes(`'${id}'`))
+    || document.getElementById('more-btn');
+  switchTab(id, btn);
+}
+
+function setMenuLabel(id) {
+  const b = document.getElementById('menu-btn');
+  if (!b) return;
+  const t = ALL_TABS.find(x => x.id === id);
+  b.textContent = t ? '☰  ' + t.label : '☰';
+}
+
+/* This wrapper is now the outermost one, sitting outside the More-label patch
+   above. That is deliberate and safe: it calls straight through, so the More
+   reset still runs, and it only touches the menu button's own text. Anything
+   added after this must keep calling through for the label to track the panel. */
+const _origSwitchMENU = switchTab;
+switchTab = function (id, btn) {
+  _origSwitchMENU(id, btn);
+  setMenuLabel(id);
 };
 
 // Overview is the landing tab now, so render it once at load — the model script
