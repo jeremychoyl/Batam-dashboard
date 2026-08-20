@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-20T14:11:12+08:00",
+  "generated_at": "2026-08-20T14:12:30+08:00",
   "source": "BatamPropBot market archive — asking prices scraped from Mamikos, OLX, Rumah123.",
-  "caveat": "ASKING prices, not transacted. No public Batam transaction database exists, so this series is built forward from our own scans and cannot be backfilled.",
+  "caveat": "ASKING prices, not transacted — no public Batam transaction database exists. Built forward from our own scans since 11 Aug 2026. Shophouse history back to 2020 is recoverable from web archives but has not been added yet.",
   "coverage": {
     "room": {
       "scan_days_with_matches": 6,
