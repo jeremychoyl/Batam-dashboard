@@ -1242,10 +1242,14 @@
       <h2 style="margin:0">Market — Asking Prices by Area</h2>
       <span id="mkt-coverage" class="kpi-sub" style="margin:0"></span>
     </div>
-    <p class="kpi-sub" style="margin:0 0 18px">
+    <!-- Filled from the data file's own `caveat` by mktRender, not hardcoded.
+         The old fixed text said the series "cannot be backfilled", which stayed
+         on the page after it had been backfilled to 2022 — a caption that
+         contradicts the chart under it. Sourced from the data so it cannot
+         drift again. -->
+    <p id="mkt-caveat" class="kpi-sub" style="margin:0 0 18px">
       Live listings collected by BatamPropBot. <strong>Asking prices, not
-      transacted</strong> — no public Batam transaction database exists, so this
-      series is built forward from our own scans and cannot be backfilled.
+      transacted.</strong>
     </p>
 
     <div id="mkt-empty" style="display:none" class="card">
@@ -4473,22 +4477,57 @@ function mktSummary(key, cat) {
       category's data.</strong>`);
   }
 
-  // The honest bit about trend.
-  out.push(`<span style="color:var(--amber)">Trend: not yet available.</span>
-    The archive holds ${days} scan day${days === 1 ? '' : 's'} for this category
-    (${mktEsc(cov.first_scan || '?')} – ${mktEsc(cov.last_scan || '?')}) and every
-    listing has held one asking price throughout, so there is no movement to plot.
-    This is a <em>cross-section</em>, not a time series; it becomes a trend after
-    a few months of scans.`);
+  // Trend. This used to read "not yet available" and say the archive was a
+  // cross-section — true when written, false since the Wayback backfill brought
+  // in months going back to 2022. A dashboard that keeps saying there is no
+  // trend while a trend chart sits above it is worse than one that says nothing.
+  const h = (cat.history || []).filter(m => m.median_idr);
+  if (h.length < 2) {
+    out.push(`<span style="color:var(--amber)">Trend: not yet available.</span>
+      The archive holds ${days} scan day${days === 1 ? '' : 's'} for this category
+      (${mktEsc(cov.first_scan || '?')} – ${mktEsc(cov.last_scan || '?')}), which is
+      not enough months to plot movement. This is a <em>cross-section</em>, not a
+      time series.`);
+  } else {
+    const a = h[0], b = h[h.length - 1];
+    const pct = (b.median_idr / a.median_idr - 1) * 100;
+    const dir = Math.abs(pct) < 5 ? 'roughly flat'
+              : pct > 0 ? `up ${pct.toFixed(0)}%` : `down ${Math.abs(pct).toFixed(0)}%`;
+    const meds = h.map(m => m.median_idr).sort((x, z) => x - z);
+    const swing = meds[meds.length - 1] / meds[0];
+    const recM = h.filter(m => m.origin !== 'live');
+    const rec = recM.length;
+    // The typical size of a RECOVERED month, not of the last month. Using
+    // b.n put "about 197 listings" in a sentence describing archived captures
+    // that hold about ten — an error inside the very caveat warning the reader
+    // that these months are thin.
+    const recN = rec ? recM.map(m => m.n).sort((x, z) => x - z)[Math.floor(rec / 2)] : 0;
+    out.push(`<strong>Trend:</strong> ${h.length} months of observations,
+      ${mktEsc(a.month)} to ${mktEsc(b.month)} — median ${dir}
+      (${mktIDR(a.median_idr)} → ${mktIDR(b.median_idr)}).`);
+    // Said plainly, because the swing is large enough that someone would
+    // otherwise read it as the market halving and doubling.
+    out.push(`<span style="color:var(--amber)">Read the trend carefully.</span>
+      Month-to-month medians swing ${swing.toFixed(1)}×, and ${rec} of these
+      ${h.length} months come from a single archived capture of one index page —
+      about ${recN} listings each, whichever ones were on page one that day. Much of
+      the movement is that changing composition rather than the market. Direction
+      over years is meaningful here; any single month-to-month step is not.`);
+  }
 
   return out.map(p => `<p style="margin:0 0 10px">${p}</p>`).join('');
 }
 
 // ── table view (identity never by colour alone) ──────────────────────────────
 function mktTable(cat) {
+  // Sorted by date, not price, and carrying the date — since the backfill the
+  // table holds rows from 2022 alongside this morning's, and a price-ranked
+  // list with no dates silently invites comparing them.
   const rows = (cat.listings || []).slice()
-    .sort((a, b) => (b.price_idr || 0) - (a.price_idr || 0))
+    .sort((a, b) => String(b.last_seen || '').localeCompare(String(a.last_seen || ''))
+                 || (b.price_idr || 0) - (a.price_idr || 0))
     .map(l => `<tr>
+        <td style="white-space:nowrap;color:var(--muted)">${mktEsc((l.last_seen || '').slice(0, 7))}</td>
         <td>${mktEsc(mktAreaOf(l))}</td>
         <td style="text-align:right">${mktIDR(l.price_idr)}</td>
         <td style="text-align:right">${mktSGD(l.price_sgd)}</td>
@@ -4498,9 +4537,84 @@ function mktTable(cat) {
       </tr>`).join('');
   return `<table style="width:100%;border-collapse:collapse;font-size:12px">
       <thead><tr style="color:var(--muted);text-align:left">
-        <th>Area</th><th style="text-align:right">Asking (IDR)</th>
+        <th>Seen</th><th>Area</th><th style="text-align:right">Asking (IDR)</th>
         <th style="text-align:right">SGD</th><th>Source</th><th>Listing</th>
       </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ── History over time ───────────────────────────────────────────────────────
+// Added 2026-08-20 with the Wayback backfill, and it is what makes the backfill
+// mean anything: recovered months belong on a time axis, not blended into the
+// per-area medians beside them. The area chart is now deliberately limited to
+// the last `current_window_days`, so the two answer different questions —
+// "where is expensive" and "which way is it moving".
+//
+// Median only, no min-max band. The shophouse range runs 563m to 7bn, so a band
+// would fill the plot and flatten the line it is meant to give context to; the
+// spread per month is in the tooltip and the table instead.
+//
+// Recovered points are drawn hollow. They are ONE archived day's page-one
+// listings, so a move between two of them is partly the market and partly a
+// different nineteen listings being on that page — a solid line through them
+// would claim a continuity the data does not have.
+function mktHistory(cat) {
+  const h = (cat.history || []).filter(m => m.median_idr);
+  if (h.length < 2) return '';
+
+  const W = 640, H = 190, L = 62, R = 12, T = 14, B = 34;
+  const iw = W - L - R, ih = H - T - B;
+  const max = Math.max(...h.map(m => m.median_idr));
+  const ticks = mktNiceTicks(max, 4);
+  const top = ticks[ticks.length - 1] || max || 1;
+  const x = i => L + (h.length === 1 ? iw / 2 : (i * iw) / (h.length - 1));
+  const y = v => T + ih - (v / top) * ih;
+
+  const grid = ticks.map(t => `
+    <line x1="${L}" y1="${y(t).toFixed(1)}" x2="${W - R}" y2="${y(t).toFixed(1)}"
+          stroke="var(--border)" stroke-width="1" opacity=".5"/>
+    <text x="${L - 8}" y="${(y(t) + 4).toFixed(1)}" text-anchor="end"
+          font-size="10" fill="var(--muted)">${mktIDRShort(t)}</text>`).join('');
+
+  // Segments, not one polyline: a gap between observations that are months
+  // apart should not look like a measured trend across the gap.
+  const seg = h.slice(1).map((m, i) => {
+    const a = h[i], b = m;
+    const dashed = (a.origin !== 'live' || b.origin !== 'live');
+    return `<line x1="${x(i).toFixed(1)}" y1="${y(a.median_idr).toFixed(1)}"
+                  x2="${x(i + 1).toFixed(1)}" y2="${y(b.median_idr).toFixed(1)}"
+              stroke="${MKT_C.focus}" stroke-width="2" opacity=".75"
+              ${dashed ? 'stroke-dasharray="4 3"' : ''}/>`;
+  }).join('');
+
+  const dots = h.map((m, i) => {
+    const live = m.origin === 'live';
+    const label = `${m.month} — median ${mktIDR(m.median_idr)} (${mktSGD(
+      m.median_idr / 13936)}), ${m.n} listing${m.n === 1 ? '' : 's'}, `
+      + (live ? 'from our own scans' : 'recovered from an archived page capture');
+    return `<circle cx="${x(i).toFixed(1)}" cy="${y(m.median_idr).toFixed(1)}" r="4.5"
+              fill="${live ? MKT_C.focus : MKT_C.surface}" stroke="${MKT_C.focus}"
+              stroke-width="2" data-tip="${mktEsc(label)}"><title>${mktEsc(label)}</title></circle>`;
+  }).join('');
+
+  // Every other label on a phone; twelve "2026-05"s at 640px overlap.
+  const step = h.length > 8 ? 2 : 1;
+  const xlab = h.map((m, i) => (i % step === 0 || i === h.length - 1)
+    ? `<text x="${x(i).toFixed(1)}" y="${H - 12}" text-anchor="middle"
+             font-size="9.5" fill="var(--muted)">${m.month}</text>` : '').join('');
+
+  const recovered = h.filter(m => m.origin !== 'live').length;
+  return `
+    <div style="overflow-x:auto">
+      <svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:520px;display:block"
+           role="img" aria-label="Median asking price by month">
+        ${grid}${seg}${dots}${xlab}
+      </svg>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin:2px 0 12px">
+      ${recovered} of ${h.length} months recovered from archived page captures
+      (hollow points, dashed line) — each is one captured day, so part of the
+      movement between them is a different set of listings being on page one.
+    </div>`;
 }
 
 function mktRender() {
@@ -4510,6 +4624,12 @@ function mktRender() {
 
   const gen = (d.generated_at || '').slice(0, 10);
   $('mkt-coverage').textContent = `archive exported ${gen}`;
+  const cav = $('mkt-caveat');
+  if (cav && d.caveat) {
+    cav.innerHTML = 'Listings collected by BatamPropBot. <strong>'
+      + mktEsc(d.caveat.split('—')[0].trim()) + '</strong> — '
+      + mktEsc(d.caveat.split('—').slice(1).join('—').trim());
+  }
 
   const blocks = [
     ['room', 'Room Leases', 'monthly rent asked per kost room'],
@@ -4531,6 +4651,12 @@ function mktRender() {
           <span style="color:var(--muted)">each dot = one listing</span>
         </div>
 
+        ${mktHistory(cat)}
+
+        <div style="font-size:11.5px;color:var(--subtle);margin:2px 0 6px">
+          By area — listings seen in the last ${cat.current_window_days || 120} days
+          (${cat.n_current != null ? cat.n_current : cat.n} of ${cat.n})
+        </div>
         <div style="overflow-x:auto">${mktDotStrip(cat)}</div>
 
         <div style="margin-top:14px;font-size:13px;line-height:1.55">${mktSummary(key, cat)}</div>
