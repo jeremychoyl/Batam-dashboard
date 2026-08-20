@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-20T13:49:36+08:00",
-  "source": "BatamPropBot market archive — asking prices scraped from Mamikos, Rumah123.",
+  "generated_at": "2026-08-20T14:11:12+08:00",
+  "source": "BatamPropBot market archive — asking prices scraped from Mamikos, OLX, Rumah123.",
   "caveat": "ASKING prices, not transacted. No public Batam transaction database exists, so this series is built forward from our own scans and cannot be backfilled.",
   "coverage": {
     "room": {
@@ -10,16 +10,16 @@
       "archive_scan_days": 6
     },
     "shophouse": {
-      "scan_days_with_matches": 2,
+      "scan_days_with_matches": 3,
       "first_scan": "2026-08-11",
-      "last_scan": "2026-08-12",
+      "last_scan": "2026-08-20",
       "archive_scan_days": 6
     }
   },
   "categories": {
     "room": {
       "unit": "IDR / month",
-      "n": 194,
+      "n": 196,
       "coverage": {
         "scan_days_with_matches": 6,
         "first_scan": "2026-08-11",
@@ -28,6 +28,7 @@
       },
       "by_platform": {
         "Mamikos": 189,
+        "OLX": 2,
         "Rumah123": 5
       },
       "by_area": {
@@ -294,13 +295,15 @@
           ]
         },
         "Nagoya": {
-          "n": 5,
-          "priced_n": 5,
+          "n": 7,
+          "priced_n": 7,
           "min_idr": 1800000,
           "max_idr": 3500000,
           "median_idr": 2000000,
           "prices_idr": [
             1800000,
+            1800000,
+            1900000,
             2000000,
             2000000,
             3500000,
@@ -2356,6 +2359,28 @@
           "last_seen": "2026-08-20"
         },
         {
+          "title": "KOST EXCLUSIVE NAGOYA THAMRIN BATAM LUBUK BAJA, BATAM KOTA",
+          "price_idr": 1900000,
+          "price_sgd": 136.34,
+          "location": "Nagoya, Batam",
+          "url": "https://www.olx.co.id/item/kost-exclusive-nagoya-thamrin-batam-iid-947583543",
+          "platform": "OLX",
+          "category": "room",
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-20"
+        },
+        {
+          "title": "BRAND NEW KOST AT NAGOYA DC MALL LUBUK BAJA, BATAM KOTA",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "location": "Nagoya, Batam",
+          "url": "https://www.olx.co.id/item/brand-new-kost-at-nagoya-dc-mall-iid-939281744",
+          "platform": "OLX",
+          "category": "room",
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-20"
+        },
+        {
           "url": "https://www.rumah123.com/properti/batam-tiban/kos-brandddd-new-spektakuler-di-tiban-gajah-mada-ksr236573/",
           "title": "Kos Brandddd New Spektakuler di Tiban Gajah Mada",
           "category": "room",
@@ -2491,24 +2516,26 @@
     },
     "shophouse": {
       "unit": "IDR (asking, sale)",
-      "n": 5,
+      "n": 8,
       "coverage": {
-        "scan_days_with_matches": 2,
+        "scan_days_with_matches": 3,
         "first_scan": "2026-08-11",
-        "last_scan": "2026-08-12",
+        "last_scan": "2026-08-20",
         "archive_scan_days": 6
       },
       "by_platform": {
+        "OLX": 3,
         "Rumah123": 5
       },
       "by_area": {
         "Lubuk Baja": {
-          "n": 2,
-          "priced_n": 2,
-          "min_idr": 4000000000,
+          "n": 3,
+          "priced_n": 3,
+          "min_idr": 2900000000,
           "max_idr": 4500000000,
-          "median_idr": 4250000000,
+          "median_idr": 4000000000,
           "prices_idr": [
+            2900000000,
             4000000000,
             4500000000
           ]
@@ -2524,6 +2551,16 @@
             2800000000
           ]
         },
+        "Batam Kota": {
+          "n": 1,
+          "priced_n": 1,
+          "min_idr": 3150000000,
+          "max_idr": 3150000000,
+          "median_idr": 3150000000,
+          "prices_idr": [
+            3150000000
+          ]
+        },
         "Batu Ampar": {
           "n": 1,
           "priced_n": 1,
@@ -2533,9 +2570,52 @@
           "prices_idr": [
             7000000000
           ]
+        },
+        "Bengkong": {
+          "n": 1,
+          "priced_n": 1,
+          "min_idr": 4200000000,
+          "max_idr": 4200000000,
+          "median_idr": 4200000000,
+          "prices_idr": [
+            4200000000
+          ]
         }
       },
       "listings": [
+        {
+          "title": "Dijual Ruko Baloi 4 Lantai Dekat Awal Bros Lokasi Strategis LUBUK BAJA, BATAM KOTA",
+          "price_idr": 2900000000,
+          "price_sgd": 208094.14,
+          "location": "Lubuk Baja, Batam",
+          "url": "https://www.olx.co.id/item/dijual-ruko-baloi-4-lantai-dekat-awal-bros-lokasi-strategis-iid-947233416",
+          "platform": "OLX",
+          "category": "shophouse",
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-20"
+        },
+        {
+          "title": "dijual Ruko Hook 3,5 lantai Citra Indah Parkir terluas di Batam centre lokasi terbaik BENGKONG, BATAM KOTA",
+          "price_idr": 4200000000,
+          "price_sgd": 301377.73,
+          "location": "Bengkong, Batam",
+          "url": "https://www.olx.co.id/item/dijual-ruko-hook-35-lantai-citra-indah-parkir-terluas-di-batam-centre-lokasi-terbaik-iid-946650983",
+          "platform": "OLX",
+          "category": "shophouse",
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-20"
+        },
+        {
+          "title": "Ruko 3 Lantai di Pusat Kota Batam BATAM KOTA, BATAM KOTA",
+          "price_idr": 3150000000,
+          "price_sgd": 226033.3,
+          "location": "Batam Kota, Batam",
+          "url": "https://www.olx.co.id/item/ruko-3-lantai-di-pusat-kota-batam-iid-938369295",
+          "platform": "OLX",
+          "category": "shophouse",
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-20"
+        },
         {
           "url": "https://www.rumah123.com/properti/batam-nagoya/dijual-ruko-di-polaris-sakti-nagoya-shs9990628/",
           "title": "Dijual Ruko di Polaris Sakti, Nagoya",
