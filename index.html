@@ -4314,58 +4314,55 @@ function mktNiceTicks(max, count) {
 
 function mktTitle(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
 
-// Only the listings the row labels are counting.
-//
-// The export limits `by_area` to the last `current_window_days`, but this chart
-// drew its dots from cat.listings, which since the Wayback backfill also holds
-// 2022. Shophouse rows read "n=8" above 248 dots — the label and the picture
-// disagreeing about the same row, which is worse than either being wrong alone.
-function mktCurrent(cat) {
-  const days = cat.current_window_days || 120;
-  const cut = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
-  return (cat.listings || []).filter(l => (l.last_seen || '') >= cut);
+
+
+// Percentile from a sorted array, interpolating between neighbours.
+function mktQ(sorted, q) {
+  if (!sorted.length) return null;
+  if (sorted.length === 1) return sorted[0];
+  const pos = (sorted.length - 1) * q;
+  const b = Math.floor(pos), r = pos - b;
+  return sorted[b + 1] === undefined ? sorted[b]
+    : sorted[b] + r * (sorted[b + 1] - sorted[b]);
 }
 
-// Long area names would run under the plot; the full name stays in the tooltip.
-function mktClip(s, n) {
-  return s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s;
-}
-
-function mktDotStrip(cat) {
+function mktAreaBars(cat) {
   const entries = Object.entries(cat.by_area);
   if (!entries.length) return '<p class="kpi-sub">No priced listings.</p>';
 
-  // The four focus areas first, in the owner's own order, and a focus area with
-  // NO listings keeps its place among them rather than being appended at the
-  // bottom. Both halves matter. Sorting by listing count buried the areas the
-  // business is about somewhere inside eighteen rows; and appending the empty
-  // ones after every other area left Seraya and Penuin below fourteen places
-  // they do not care about, which is barely different from hiding them.
-  //
-  // Showing them at all is the digest's blocked-vs-empty rule again: an area
-  // asked about every week should say "nothing found" out loud.
+  // The four-then-six focus areas first, in the owner's own order, and a focus
+  // area with NO listings keeps its place among them rather than being appended
+  // at the bottom. Both halves matter. Sorting by listing count buried the areas
+  // the business is about somewhere inside eighteen rows; and appending the
+  // empty ones after every other area left Seraya and Penuin below fourteen
+  // places they do not care about, which is barely different from hiding them.
   const rowList = [];
   MKT_FOCUS.forEach(f => {
     const hit = entries.find(([a]) => a.toLowerCase().includes(f));
-    if (hit) rowList.push({ focus: true, area: hit[0], s: hit[1] });
-    else rowList.push({ focus: true, area: mktTitle(f), s: null });
+    rowList.push(hit ? { focus: true, area: hit[0], s: hit[1] }
+                     : { focus: true, area: mktTitle(f), s: null });
   });
   entries.filter(([a]) => !mktIsFocus(a))
     .sort((a, b) => b[1].n - a[1].n)
     .forEach(([a, st]) => rowList.push({ focus: false, area: a, s: st }));
 
-  // ── Layout ────────────────────────────────────────────────────────────────
-  // Labels sit ABOVE each row rather than in a left gutter, and that is what
-  // makes the type legible. An SVG scales its text with its viewBox: this panel
-  // renders about 336px wide on a phone, so at the old 760-wide box every label
-  // reached the eye at 44% of its stated size — a "12.5px" area name arrived at
-  // roughly 5.5px. Two changes fix it. The box is 440 wide, so the scale is
-  // ~0.76 and every size below is chosen for what it BECOMES after it (17 lands
-  // near 13px, and 12 is the floor because 11 would land under 9px). And
-  // dropping the 148-unit left gutter gives the dots the full width instead of
-  // a third of it, which is what a phone actually has.
+  // ── Why a range bar and not a dot per listing ─────────────────────────────
+  // This drew one dot per listing until 2026-08-20. It fails exactly where the
+  // data is richest: Nongsa has 34 rooms whose prices cluster inside one band,
+  // so on a ~336px-wide phone render they merge into a single smear and the row
+  // says less than one line of text would. Shrinking the dots makes it worse.
+  //
+  // A box plot does not degrade with n. The bar is the middle half of the
+  // listings (25th to 75th percentile) — where the market actually is — the
+  // whisker is the full min-to-max, and the bright line is the median. One
+  // listing or a hundred, it reads the same way, and it answers the question
+  // the dots were there for: how tight is this area's pricing.
+  //
+  // Percentiles are computed here rather than exported because by_area already
+  // carries the full sorted price list, and a second copy of the same numbers
+  // in the JSON is a second thing to keep in step.
   const W = 440, PAD = 4, TOP = 22, AXIS = 30;
-  const ROW_F = 52, ROW_O = 36;
+  const ROW_F = 54, ROW_O = 36;
 
   const tops = [];
   let yAcc = TOP;
@@ -4392,13 +4389,12 @@ function mktDotStrip(cat) {
   rowList.forEach((r, i) => {
     const foc = r.focus, st = r.s, top = tops[i];
     const h = foc ? ROW_F : ROW_O;
-    const laneY = top + (foc ? 34 : 24);
+    const laneY = top + (foc ? 36 : 25);
     const labelY = top + (foc ? 17 : 14);
     const col = foc ? MKT_C.focus : MKT_C.other;
 
     // A tinted band, not just a colour swap. Colour alone has to be decoded
-    // against a legend; a band reads as "these rows are the point" at a glance,
-    // and survives being looked at on a phone in daylight.
+    // against a legend; a band reads as "these rows are the point" at a glance.
     if (foc) rows += `<rect x="${PAD - 2}" y="${top + 1}" width="${W - 2 * (PAD - 2)}"
         height="${h - 3}" rx="6" fill="${MKT_C.focus}" opacity=".09"/>`;
 
@@ -4409,7 +4405,7 @@ function mktDotStrip(cat) {
                  font-size="12">  n=${st ? st.n : 0}</tspan></text>`;
 
     if (!st) {
-      rows += `<line x1="${plotL}" y1="${top + 34}" x2="${plotR}" y2="${top + 34}"
+      rows += `<line x1="${plotL}" y1="${laneY}" x2="${plotR}" y2="${laneY}"
                  stroke="var(--border)" stroke-width="1" stroke-dasharray="3 4"/>
                <text x="${plotR}" y="${labelY}" text-anchor="end" fill="var(--muted)"
                  font-size="12" font-style="italic">no listings found — not a price of zero</text>`;
@@ -4422,45 +4418,45 @@ function mktDotStrip(cat) {
                >${mktIDR(st.median_idr).replace('IDR ', '')}<tspan fill="var(--muted)"
                  font-weight="400" font-size="12"> med</tspan></text>`;
 
-    rows += `<line x1="${x(st.min_idr).toFixed(1)}" y1="${laneY}" x2="${x(st.max_idr).toFixed(1)}" y2="${laneY}"
-               stroke="var(--border)" stroke-width="${foc ? 2.5 : 1.5}" stroke-linecap="round"/>`;
+    const prices = (st.prices_idr || []).slice().sort((a, b) => a - b);
+    const q1 = mktQ(prices, 0.25), q3 = mktQ(prices, 0.75);
+    const xMin = x(st.min_idr), xMax = x(st.max_idr), xMed = x(st.median_idr);
+    const bh = foc ? 16 : 11;                  // box height
+    const cap = foc ? 6 : 4;                   // whisker end-cap half-height
 
-    // Iterate the LISTINGS, not the price list: two rooms asking the same rent
-    // are two dots, and looking each one up by price returned the same listing
-    // twice, so both tooltips named the same property.
-    const items = mktCurrent(cat)
-      .filter(l => l.price_idr && mktAreaOf(l) === r.area)
-      .sort((a, b) => a.price_idr - b.price_idr);
+    // Whisker: the full spread. Drawn in the row's own colour at low opacity
+    // rather than in var(--border) — at border contrast on this background it
+    // was invisible on a phone, which made the legend's "thin line = full
+    // range" a promise the chart did not keep.
+    const wStroke = `stroke="${col}" stroke-opacity=".5" stroke-width="${foc ? 2.5 : 2}"`;
+    rows += `<line x1="${xMin.toFixed(1)}" y1="${laneY}" x2="${xMax.toFixed(1)}" y2="${laneY}"
+               ${wStroke} stroke-linecap="round"/>
+             <line x1="${xMin.toFixed(1)}" y1="${laneY - cap}" x2="${xMin.toFixed(1)}" y2="${laneY + cap}"
+               ${wStroke} stroke-linecap="round"/>
+             <line x1="${xMax.toFixed(1)}" y1="${laneY - cap}" x2="${xMax.toFixed(1)}" y2="${laneY + cap}"
+               ${wStroke} stroke-linecap="round"/>`;
 
-    // Coincident prices are dodged vertically. Batam Centre has four listings
-    // at two prices; drawn flat they stack into two dots and the row silently
-    // contradicts its own "n=4".
-    const tally = {};
-    items.forEach(l => { tally[l.price_idr] = (tally[l.price_idr] || 0) + 1; });
-    const placed = {};
-    const R = foc ? 6 : 4.2;
-    const dodge = foc ? 7 : 5;
+    // Box: the middle half. Given a minimum width so an area whose listings all
+    // ask the same price still shows something rather than vanishing — n=1 is a
+    // real answer ("one listing, this price"), not an absent one.
+    const bx = Math.min(x(q1), x(q3)), bw = Math.max(3, Math.abs(x(q3) - x(q1)));
+    rows += `<rect x="${bx.toFixed(1)}" y="${laneY - bh / 2}" width="${bw.toFixed(1)}"
+               height="${bh}" rx="3" fill="${col}" fill-opacity=".55"
+               stroke="${col}" stroke-width="1.5"/>`;
 
-    items.forEach(l => {
-      const m = tally[l.price_idr];
-      const k = (placed[l.price_idr] = (placed[l.price_idr] || 0) + 1) - 1;
-      const dy = m > 1 ? (k - (m - 1) / 2) * dodge : 0;
-      rows += `<circle cx="${x(l.price_idr).toFixed(1)}" cy="${(laneY + dy).toFixed(1)}" r="${R}"
-                 fill="${col}" fill-opacity="${foc ? 1 : .8}"
-                 stroke="${MKT_C.surface}" stroke-width="${foc ? 2 : 1.4}"
-                 class="mkt-dot" tabindex="0"
-                 data-t="${mktEsc(l.title || '')}"
-                 data-p="${mktIDR(l.price_idr)}"
-                 data-s="${mktSGD(l.price_sgd)}"
-                 data-a="${mktEsc(r.area)}"
-                 data-f="${mktEsc(l.platform || '')}"><title>${mktEsc(l.title || r.area)} — ${mktIDR(l.price_idr)}</title></circle>`;
-    });
+    // Median: the figure the row is labelled with, marked where it falls.
+    rows += `<line x1="${xMed.toFixed(1)}" y1="${laneY - bh / 2 - 3}"
+               x2="${xMed.toFixed(1)}" y2="${laneY + bh / 2 + 3}"
+               stroke="var(--text)" stroke-width="${foc ? 3 : 2}" stroke-linecap="round"/>`;
 
-    const mh = foc ? 13 : 9;
-    rows += `<line x1="${x(st.median_idr).toFixed(1)}" y1="${laneY - mh}"
-               x2="${x(st.median_idr).toFixed(1)}" y2="${laneY + mh}"
-               stroke="var(--text)" stroke-width="${foc ? 2.5 : 1.75}"
-               stroke-linecap="round" opacity="${foc ? 1 : .65}"/>`;
+    // One hover target for the whole row, covering the lane.
+    const tip = `${r.area} — ${st.n} listing${st.n === 1 ? '' : 's'}`
+      + ` · median ${mktIDR(st.median_idr)}`
+      + ` · middle half ${mktIDR(Math.round(q1))}–${mktIDR(Math.round(q3))}`
+      + ` · full range ${mktIDR(st.min_idr)}–${mktIDR(st.max_idr)}`;
+    rows += `<rect x="${plotL}" y="${laneY - bh / 2 - 5}" width="${plotW}"
+               height="${bh + 10}" fill="transparent" tabindex="0"
+               data-tip="${mktEsc(tip)}"><title>${mktEsc(tip)}</title></rect>`;
   });
 
   return `<svg viewBox="0 0 ${W} ${H}" width="100%"
@@ -4622,70 +4618,65 @@ function mktHistory(cat, key) {
   const h = (cat.history || []).filter(m => m.median_idr);
   if (h.length < 2) return '';
 
-  // Same 440 viewBox as the area strip, for the same reason: an SVG scales its
-  // text with its viewBox, and this panel renders about 336px wide on a phone.
-  // At 440 that is a scale of ~0.76, so the sizes below are what they become
-  // after it — an 11 lands near 8.5px, a 12 near 9. Drawn 640 wide, as this
-  // chart first was, everything arrived at 52%.
-  const W = 440, H = 196, L = 46, R = 40, T = 16, B = 34;
+  // ── Columns, not a line ───────────────────────────────────────────────────
+  // A line was the first cut and it claimed something untrue. These months are
+  // not samples of a continuously measured price: each one is a single archived
+  // day, sometimes eight months from its neighbour, so a line sloping between
+  // two of them draws a path the price never provably took. Columns say
+  // "here is what one capture showed" and stop there. They also survive being
+  // shrunk — a 2px stroke with fourteen dots on it does not.
+  //
+  // Same 440 viewBox as the area chart: an SVG scales its text with its
+  // viewBox, and this panel renders about 336px wide on a phone, so every size
+  // here is chosen for what it becomes after that ~0.76 (12 is the floor).
+  const W = 440, H = 200, L = 46, R = 40, T = 22, B = 36;
   const iw = W - L - R, ih = H - T - B;
   const max = Math.max(...h.map(m => m.median_idr));
   const ticks = mktNiceTicks(max, 4);
   const top = ticks[ticks.length - 1] || max || 1;
-  const x = i => L + (h.length === 1 ? iw / 2 : (i * iw) / (h.length - 1));
-  const y = v => T + ih - (v / top) * ih;
-  const gid = 'mktgrad-' + key;
+  const base = T + ih;
+  const slot = iw / h.length;
+  const bw = Math.max(6, Math.min(26, slot * 0.68));
+  const cx = i => L + slot * (i + 0.5);
+  const y = v => base - (v / top) * ih;
 
   const grid = ticks.map(t => `
     <line x1="${L}" y1="${y(t).toFixed(1)}" x2="${W - R}" y2="${y(t).toFixed(1)}"
-          stroke="var(--border)" stroke-width="1" opacity=".45"/>
+          stroke="var(--border)" stroke-width="1" opacity=".4"/>
     <text x="${L - 8}" y="${(y(t) + 4).toFixed(1)}" text-anchor="end"
           font-size="12" fill="var(--muted)">${mktIDRShort(t)}</text>`).join('');
 
-  // A soft fill under the line. Purely for legibility: it separates the series
-  // from the gridlines at a glance on a small screen, where a 2px stroke alone
-  // is easy to lose.
-  const area = `M ${x(0).toFixed(1)} ${y(h[0].median_idr).toFixed(1)} `
-    + h.slice(1).map((m, i) => `L ${x(i + 1).toFixed(1)} ${y(m.median_idr).toFixed(1)}`).join(' ')
-    + ` L ${x(h.length - 1).toFixed(1)} ${T + ih} L ${x(0).toFixed(1)} ${T + ih} Z`;
-
-  // Segments, not one polyline: a gap between observations that are months
-  // apart should not look like a measured trend across the gap.
-  const seg = h.slice(1).map((m, i) => {
-    const a = h[i], b = m;
-    const dashed = (a.origin !== 'live' || b.origin !== 'live');
-    return `<line x1="${x(i).toFixed(1)}" y1="${y(a.median_idr).toFixed(1)}"
-                  x2="${x(i + 1).toFixed(1)}" y2="${y(b.median_idr).toFixed(1)}"
-              stroke="${MKT_C.focus}" stroke-width="2.25" opacity=".9"
-              stroke-linecap="round" ${dashed ? 'stroke-dasharray="4 3.5"' : ''}/>`;
-  }).join('');
-
   const last = h.length - 1;
-  const dots = h.map((m, i) => {
+  const bars = h.map((m, i) => {
     const live = m.origin === 'live';
-    const isLast = i === last;
+    const yy = y(m.median_idr);
     const label = `${m.month} — median ${mktIDR(m.median_idr)} (${mktSGD(
       m.median_idr / 13936)}), ${m.n} listing${m.n === 1 ? '' : 's'}, `
       + (live ? 'from our own scans' : 'recovered from an archived page capture');
-    return `<circle cx="${x(i).toFixed(1)}" cy="${y(m.median_idr).toFixed(1)}"
-              r="${isLast ? 6.5 : 4.5}"
-              fill="${live ? MKT_C.focus : MKT_C.surface}" stroke="${MKT_C.focus}"
-              stroke-width="${isLast ? 3 : 2}"
-              data-tip="${mktEsc(label)}"><title>${mktEsc(label)}</title></circle>`;
+    // Recovered months are drawn hollow — outlined, lightly filled — so the
+    // ones we measured ourselves stand out solid without needing the legend.
+    return `<rect x="${(cx(i) - bw / 2).toFixed(1)}" y="${yy.toFixed(1)}"
+              width="${bw.toFixed(1)}" height="${Math.max(1, base - yy).toFixed(1)}"
+              rx="2.5" fill="${MKT_C.focus}" fill-opacity="${live ? 1 : .28}"
+              stroke="${MKT_C.focus}" stroke-width="${live ? 0 : 1.5}"
+              tabindex="0" data-tip="${mktEsc(label)}"><title>${mktEsc(label)}</title></rect>`;
   }).join('');
 
-  // The latest figure spelled out on the chart. It is the number anyone is
-  // actually here for, and reading it off a y-axis in "2 m" units loses the
-  // precision the median column beside it is careful to keep.
+  // Baseline drawn after the bars so they sit ON it rather than over it.
+  const axis = `<line x1="${L}" y1="${base}" x2="${W - R}" y2="${base}"
+                  stroke="var(--border)" stroke-width="1.5"/>`;
+
+  // The latest figure spelled out. It is the number anyone is here for, and
+  // reading it off an axis in "2 m" units loses the precision the median column
+  // beside it is careful to keep.
   const lv = h[last].median_idr;
-  const lastLabel = `<text x="${(x(last) + 10).toFixed(1)}"
-      y="${Math.min(T + ih - 4, Math.max(T + 10, y(lv) - 10)).toFixed(1)}"
-      font-size="12" font-weight="700" fill="var(--text)"
-      >${mktIDRShort(lv)}</text>`;
+  const lastLabel = `<text x="${Math.min(W - 4, cx(last) + bw / 2 + 5).toFixed(1)}"
+      y="${Math.max(T + 10, y(lv) - 5).toFixed(1)}" text-anchor="end"
+      font-size="13" font-weight="700" fill="var(--text)">${mktIDRShort(lv)}</text>`;
 
   // At most five x labels, and none allowed to touch the one beside it.
   // Fourteen "2026-05"s across 354 units smear into grey; and a stepped label
-  // falling next to the always-drawn last one overprinted it — the first cut
+  // falling next to the always-drawn last one overprinted it — an earlier cut
   // rendered "2026-01" and "2026-08" on top of each other as "2026-0126-08".
   const GAP = 56;                       // a "2026-08" at font 12 is ~50 wide
   const step = Math.max(1, Math.ceil((h.length - 1) / 4));
@@ -4693,11 +4684,11 @@ function mktHistory(cat, key) {
   let prevX = -1e9;
   h.forEach((m, i) => {
     if (i === last || i % step !== 0) return;
-    if (x(i) - prevX < GAP || x(last) - x(i) < GAP) return;
-    keep.push(i); prevX = x(i);
+    if (cx(i) - prevX < GAP || cx(last) - cx(i) < GAP) return;
+    keep.push(i); prevX = cx(i);
   });
   keep.push(last);
-  const xlab = keep.map(i => `<text x="${x(i).toFixed(1)}" y="${H - 12}"
+  const xlab = keep.map(i => `<text x="${cx(i).toFixed(1)}" y="${H - 12}"
       text-anchor="middle" font-size="12" fill="var(--muted)">${h[i].month}</text>`).join('');
 
   const recovered = h.filter(m => m.origin !== 'live').length;
@@ -4705,20 +4696,17 @@ function mktHistory(cat, key) {
     <svg viewBox="0 0 ${W} ${H}" width="100%"
          style="max-width:620px;display:block;height:auto"
          role="img" aria-label="Median asking price by month">
-      <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${MKT_C.focus}" stop-opacity=".22"/>
-        <stop offset="100%" stop-color="${MKT_C.focus}" stop-opacity="0"/>
-      </linearGradient></defs>
-      ${grid}
-      <path d="${area}" fill="url(#${gid})"/>
-      ${seg}${dots}${lastLabel}${xlab}
+      ${grid}${bars}${axis}${lastLabel}${xlab}
     </svg>
     <div style="font-size:11.5px;color:var(--muted);margin:2px 0 14px;line-height:1.5">
-      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
-        border:2px solid ${MKT_C.focus};background:${MKT_C.surface};
+      <span style="display:inline-block;width:10px;height:10px;border-radius:2px;
+        border:1.5px solid ${MKT_C.focus};background:${MKT_C.focus}47;
         margin-right:5px;vertical-align:-1px"></span>${recovered} of ${h.length} months
       recovered from archived page captures — each is one captured day, so part of
       the movement between them is a different set of listings being on page one.
+      <span style="display:inline-block;width:10px;height:10px;border-radius:2px;
+        background:${MKT_C.focus};margin:0 5px 0 4px;vertical-align:-1px"></span>solid
+      = our own scans.
     </div>`;
 }
 
@@ -4755,7 +4743,8 @@ function mktRender() {
             background:${MKT_C.focus};margin-right:6px;vertical-align:-1px"></span>Focus area</span>
           <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;
             background:${MKT_C.other};margin-right:6px;vertical-align:-1px"></span>Other area</span>
-          <span style="color:var(--muted)">each dot = one listing · line = min to max</span>
+          <span style="color:var(--muted)">bar = middle half of listings · bright
+            line = median · thin line = full range</span>
         </div>
 
         ${mktHistory(cat, key)}
@@ -4764,7 +4753,7 @@ function mktRender() {
           By area — listings seen in the last ${cat.current_window_days || 120} days
           (${cat.n_current != null ? cat.n_current : cat.n} of ${cat.n})
         </div>
-        <div style="overflow-x:auto">${mktDotStrip(cat)}</div>
+        <div style="overflow-x:auto">${mktAreaBars(cat)}</div>
 
         <div style="margin-top:14px;font-size:13px;line-height:1.55">${mktSummary(key, cat)}</div>
 
@@ -4792,6 +4781,23 @@ function mktWireTooltip(host) {
       box-shadow:0 6px 20px rgba(0,0,0,.45)`;
     document.body.appendChild(tip);
   }
+  // Plain-text targets: the box-plot rows and the trend columns. Added when the
+  // per-listing dots went away — the detail they carried now lives in the row
+  // summary here and in the table view below the chart.
+  host.querySelectorAll('[data-tip]').forEach(el => {
+    const show = () => {
+      const r = el.getBoundingClientRect();
+      tip.textContent = el.dataset.tip;
+      tip.style.display = '';
+      tip.style.left = Math.min(window.innerWidth - 300, Math.max(8, r.left + 14)) + 'px';
+      tip.style.top = Math.max(8, r.top - 8) + 'px';
+    };
+    el.addEventListener('mouseenter', show);
+    el.addEventListener('focus', show);
+    el.addEventListener('mouseleave', () => tip.style.display = 'none');
+    el.addEventListener('blur', () => tip.style.display = 'none');
+  });
+
   host.querySelectorAll('.mkt-dot').forEach(el => {
     const show = e => {
       const r = el.getBoundingClientRect();
