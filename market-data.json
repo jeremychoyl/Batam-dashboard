@@ -1,45 +1,45 @@
 {
-  "generated_at": "2026-08-21T14:13:49+08:00",
+  "generated_at": "2026-08-22T07:30:03+08:00",
   "source": "BatamPropBot market archive — asking prices scraped from Facebook Marketplace, Mamikos, OLX, Rumah123.",
   "caveat": "ASKING prices, not transacted — no public Batam transaction database exists. Months before Aug 2026 are recovered from archived captures of Rumah123's Batam index pages, so each one is a single day's page-one listings: the monthly median moves partly because the market moved and partly because a different 19 listings were on that page.",
   "coverage": {
     "room": {
-      "scan_days_with_matches": 23,
+      "scan_days_with_matches": 24,
       "first_scan": "2025-01-15",
-      "last_scan": "2026-08-21",
-      "archive_scan_days": 36
+      "last_scan": "2026-08-22",
+      "archive_scan_days": 37
     },
     "shophouse": {
-      "scan_days_with_matches": 17,
+      "scan_days_with_matches": 18,
       "first_scan": "2022-03-24",
-      "last_scan": "2026-08-21",
-      "archive_scan_days": 36
+      "last_scan": "2026-08-22",
+      "archive_scan_days": 37
     }
   },
   "categories": {
     "room": {
       "unit": "IDR / month",
-      "n": 248,
-      "n_current": 233,
+      "n": 271,
+      "n_current": 256,
       "current_window_days": 120,
       "coverage": {
-        "scan_days_with_matches": 23,
+        "scan_days_with_matches": 24,
         "first_scan": "2025-01-15",
-        "last_scan": "2026-08-21",
-        "archive_scan_days": 36
+        "last_scan": "2026-08-22",
+        "archive_scan_days": 37
       },
       "by_platform": {
         "Facebook Marketplace": 1,
-        "Mamikos": 215,
+        "Mamikos": 238,
         "OLX": 3,
         "Rumah123": 29
       },
       "by_area": {
         "Batam Kota": {
-          "n": 55,
-          "priced_n": 55,
+          "n": 61,
+          "priced_n": 61,
           "min_idr": 750000,
-          "max_idr": 4000000,
+          "max_idr": 4800000,
           "median_idr": 1800000,
           "prices_idr": [
             750000,
@@ -57,11 +57,13 @@
             1400000,
             1400000,
             1450000,
+            1450000,
             1500000,
             1500000,
             1500000,
             1500000,
             1550000,
+            1600000,
             1600000,
             1600000,
             1600000,
@@ -80,9 +82,12 @@
             2000000,
             2000000,
             2000000,
+            2027000,
             2100000,
             2200000,
             2200000,
+            2200000,
+            2327000,
             2350000,
             2350000,
             2400000,
@@ -96,22 +101,26 @@
             3000000,
             3000001,
             4000000,
-            4000000
+            4000000,
+            4800000
           ]
         },
         "Lubuk Baja": {
-          "n": 23,
-          "priced_n": 23,
+          "n": 27,
+          "priced_n": 27,
           "min_idr": 130000,
           "max_idr": 3990000,
-          "median_idr": 2800000,
+          "median_idr": 2300000,
           "prices_idr": [
             130000,
             690000,
             900000,
+            900000,
             1500000,
             1500000,
             1700000,
+            1800000,
+            1800000,
             1800000,
             1800000,
             1900000,
@@ -127,17 +136,19 @@
             3000000,
             3000000,
             3000000,
+            3000000,
             3500000,
             3990000
           ]
         },
         "Batu Ampar": {
-          "n": 22,
-          "priced_n": 22,
+          "n": 25,
+          "priced_n": 25,
           "min_idr": 700000,
           "max_idr": 3600000,
-          "median_idr": 1750000,
+          "median_idr": 1800000,
           "prices_idr": [
+            700000,
             700000,
             700000,
             700000,
@@ -153,23 +164,26 @@
             2000000,
             2250000,
             2400000,
+            2400000,
             2450000,
             2500000,
             2650000,
             3000000,
             3200000,
             3300000,
+            3600000,
             3600000
           ]
         },
         "Batu Aji": {
-          "n": 21,
-          "priced_n": 21,
+          "n": 23,
+          "priced_n": 23,
           "min_idr": 500000,
           "max_idr": 3500000,
           "median_idr": 1200000,
           "prices_idr": [
             500000,
+            550000,
             600000,
             600000,
             750000,
@@ -189,6 +203,7 @@
             1500000,
             1700000,
             2150000,
+            2500000,
             3500000
           ]
         },
@@ -223,12 +238,13 @@
           ]
         },
         "Sagulung": {
-          "n": 18,
-          "priced_n": 18,
-          "min_idr": 750000,
+          "n": 20,
+          "priced_n": 20,
+          "min_idr": 700000,
           "max_idr": 5000000,
           "median_idr": 1650000,
           "prices_idr": [
+            700000,
             750000,
             750000,
             1000000,
@@ -241,6 +257,7 @@
             1700000,
             1700000,
             1800000,
+            1800000,
             2000000,
             2000000,
             2150000,
@@ -250,8 +267,8 @@
           ]
         },
         "Bengkong": {
-          "n": 15,
-          "priced_n": 15,
+          "n": 17,
+          "priced_n": 17,
           "min_idr": 650000,
           "max_idr": 5000000,
           "median_idr": 1400000,
@@ -263,12 +280,14 @@
             1000000,
             1100000,
             1100000,
+            1100000,
             1400000,
             1600000,
             1800000,
             1800000,
             2000000,
             2299999,
+            2300000,
             3500000,
             5000000
           ]
@@ -293,16 +312,17 @@
           ]
         },
         "Tiban": {
-          "n": 9,
-          "priced_n": 9,
+          "n": 10,
+          "priced_n": 10,
           "min_idr": 600000,
           "max_idr": 1800000,
-          "median_idr": 1700000,
+          "median_idr": 1600000,
           "prices_idr": [
             600000,
             1000000,
             1200000,
             1400000,
+            1500000,
             1700000,
             1700000,
             1700000,
@@ -311,12 +331,13 @@
           ]
         },
         "Nagoya": {
-          "n": 8,
-          "priced_n": 8,
-          "min_idr": 1800000,
+          "n": 9,
+          "priced_n": 9,
+          "min_idr": 850000,
           "max_idr": 3500000,
           "median_idr": 2000000,
           "prices_idr": [
+            850000,
             1800000,
             1800000,
             1900000,
@@ -328,12 +349,13 @@
           ]
         },
         "Mukakuning": {
-          "n": 6,
-          "priced_n": 6,
+          "n": 7,
+          "priced_n": 7,
           "min_idr": 650000,
           "max_idr": 1500000,
-          "median_idr": 725000,
+          "median_idr": 700000,
           "prices_idr": [
+            650000,
             650000,
             700000,
             700000,
@@ -396,6 +418,17 @@
             2500000
           ]
         },
+        "Baloi": {
+          "n": 2,
+          "priced_n": 2,
+          "min_idr": 1200000,
+          "max_idr": 2000000,
+          "median_idr": 1600000,
+          "prices_idr": [
+            1200000,
+            2000000
+          ]
+        },
         "Batam Center": {
           "n": 2,
           "priced_n": 2,
@@ -416,16 +449,6 @@
           "prices_idr": [
             2300000,
             2350000
-          ]
-        },
-        "Baloi": {
-          "n": 1,
-          "priced_n": 1,
-          "min_idr": 2000000,
-          "max_idr": 2000000,
-          "median_idr": 2000000,
-          "prices_idr": [
-            2000000
           ]
         },
         "Sei Panas": {
@@ -556,7 +579,7 @@
         },
         {
           "month": "2026-08",
-          "n": 224,
+          "n": 247,
           "origin": "live",
           "median_idr": 1700000,
           "min_idr": 130000,
@@ -573,7 +596,7 @@
           "price_idr": 3000000,
           "price_sgd": 215.27,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Panbil%20Homestay%20Superior%20Sei%20Beduk",
@@ -584,7 +607,7 @@
           "price_idr": 2350000,
           "price_sgd": 168.63,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Cross%20Shire%20Premium%20Kota%20Batam%20Kota",
@@ -595,7 +618,7 @@
           "price_idr": 4000000,
           "price_sgd": 287.03,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Cross%20Shire%20Living%20Tipe%20A%20Kot",
@@ -606,7 +629,7 @@
           "price_idr": 2500000,
           "price_sgd": 179.39,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Nikita%20Tipe%20A%20Kota%20Batam%20Kota",
@@ -617,7 +640,7 @@
           "price_idr": 1500000,
           "price_sgd": 107.63,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Dream%20Living%20Tipe%20Regular%20Kot",
@@ -628,7 +651,7 @@
           "price_idr": 1300000,
           "price_sgd": 93.28,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Dream%20Living%20Tipe%20Medium%20Kota",
@@ -639,7 +662,7 @@
           "price_idr": 2000000,
           "price_sgd": 143.51,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Vivaveraz%20Executive%20Kota%20Bata",
@@ -650,7 +673,7 @@
           "price_idr": 3000000,
           "price_sgd": 215.27,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Nirwana%20Bali%20Kota%20Kecamatan%20Ba",
@@ -661,7 +684,7 @@
           "price_idr": 1500000,
           "price_sgd": 107.63,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Ekslusif%20Central%20Sukajadi%20Boul",
@@ -672,7 +695,7 @@
           "price_idr": 2350000,
           "price_sgd": 168.63,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Baloi%20Kecamatan%20Lubuk%20Baja",
@@ -683,7 +706,7 @@
           "price_idr": 2000000,
           "price_sgd": 143.51,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Nagoya%20Blok%202%20Kecamatan%20Lubuk%20Baja",
@@ -694,7 +717,7 @@
           "price_idr": 2000000,
           "price_sgd": 143.51,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Istaycomfy%20Mitra%20Raya%20Corner%20Window",
@@ -705,7 +728,7 @@
           "price_idr": 2500000,
           "price_sgd": 179.39,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Premium%20Sungai%20Panas%20Tipe%20Suite%20Del",
@@ -716,7 +739,7 @@
           "price_idr": 2350000,
           "price_sgd": 168.63,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Kost%20Sei%20Panas%20Premium%20Tipe%20Deluxe%20Kota%20Batam%20Kota",
@@ -727,7 +750,7 @@
           "price_idr": 2200000,
           "price_sgd": 157.86,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Blok%202%20Tipe%20B%20Lubuk%20Baja",
@@ -738,7 +761,1855 @@
           "price_idr": 2800000,
           "price_sgd": 200.92,
           "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Joce%20Elite%20Kota%20Kecamatan%20Batam%20Kot",
+          "title": "Campur Sisa 2 kamar Kost Joce Elite Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 4000000,
+          "price_sgd": 287.03,
+          "first_seen": "2026-08-19",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Elite%20Kehl%20Kecamatan%20Bengkong",
+          "title": "Campur Kost Elite Kehl Kecamatan Bengkong",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 5000000,
+          "price_sgd": 358.78,
+          "first_seen": "2026-08-19",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Go%20Botania%20Kota%20Batam%20Kota",
+          "title": "Campur Sisa 2 kamar Kost Go Botania Kota Batam Kota",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 2300000,
+          "price_sgd": 165.04,
+          "first_seen": "2026-08-19",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Mitra%20Tipe%20Standard%20Kota%20Batam%20Kota",
+          "title": "Campur Kost Mitra Tipe Standard Kota Batam Kota",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 3000000,
+          "price_sgd": 215.27,
+          "first_seen": "2026-08-19",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%2081%20Executive%20Baloi%20Nagoya%201%20Kecamatan%20Lubuk%20Baja",
+          "title": "Campur Kost 81 Executive Baloi Nagoya 1 Kecamatan Lubuk Baja",
+          "category": "room",
+          "location": "Nagoya, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3500000,
+          "price_sgd": 251.15,
+          "first_seen": "2026-08-19",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Gaia%20Buana%20Central%20Park%20Tipe%20A%20Batu",
+          "title": "Campur Sisa 2 kamar Kost Gaia Buana Central Park Tipe A Batu Aji WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 1250000,
+          "price_sgd": 89.7,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Dl%20Koszy%20Bida%201%20Tipe%20A%20Kota%20Batam%20Ko",
+          "title": "Putri Sisa 1 kamar Kost Dl Koszy Bida 1 Tipe A Kota Batam Kota",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 1400000,
+          "price_sgd": 100.46,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Terra%20Kota%20Legenda%20Puri%20Kota%20Batam%20",
+          "title": "Campur Sisa 2 kamar Kost Terra Kota Legenda Puri Kota Batam Kota",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Neo%20Homestay%20Kota%20Kecamatan%20Batam%20K",
+          "title": "Campur Sisa 2 kamar Kost Neo Homestay Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Palm%20House%20Executive%20Kota%20Kecamatan%20Batam%20Kota",
+          "title": "Campur Kost Palm House Executive Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 1950000,
+          "price_sgd": 139.93,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20A1%20Tipe%20Standard%20Sei%20Beduk",
+          "title": "Putri Sisa 1 kamar Kost A1 Tipe Standard Sei Beduk",
+          "category": "room",
+          "location": "Batam",
+          "platform": "Mamikos",
+          "price_idr": 1650000,
+          "price_sgd": 118.4,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Te%20Tik%20Tipe%20Eksklusif%20Batam%20Kota",
+          "title": "Putri Kost Te Tik Tipe Eksklusif Batam Kota",
+          "category": "room",
+          "location": "Batam Kota, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Nagoya%20Hill%20Tipe%20H%20Lubuk%20Baja",
+          "title": "Campur Kost Nagoya Hill Tipe H Lubuk Baja",
+          "category": "room",
+          "location": "Nagoya, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20Standar%20Kecamatan",
+          "title": "Campur Sisa 1 kamar Kost Kartika Residence Standar Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2500000,
+          "price_sgd": 179.39,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Nagoya%20Hill%20Tipe%20F%20Lubuk%20Baja",
+          "title": "Campur Sisa 1 kamar Kost Nagoya Hill Tipe F Lubuk Baja",
+          "category": "room",
+          "location": "Nagoya, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2000000,
+          "price_sgd": 143.51,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Pondok%20Keren%20Pelita%20Tipe%20G%20Lubuk%20Baja",
+          "title": "Campur Kost Pondok Keren Pelita Tipe G Lubuk Baja",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Pondok%20Keren%20Pelita%20Tipe%20C%20Lubuk%20Ba",
+          "title": "Campur Sisa 1 kamar Kost Pondok Keren Pelita Tipe C Lubuk Baja",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1900000,
+          "price_sgd": 136.34,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Jj%20Tipe%20Executive%20Lubuk%20Baja",
+          "title": "Campur Sisa 1 kamar Kost Jj Tipe Executive Lubuk Baja",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2950000,
+          "price_sgd": 211.68,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Link%20House%20TKB%20Tipe%20A%20Kecamatan%20Lub",
+          "title": "Campur Sisa 1 kamar Kost Link House TKB Tipe A Kecamatan Lubuk Baja",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Ds%20Tipe%20A%20Lubuk%20Baja",
+          "title": "Putri Kost Ds Tipe A Lubuk Baja",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20C11%20Super%20Vip%20Lubuk%20Baja",
+          "title": "Campur Sisa 1 kamar Kost C11 Super Vip Lubuk Baja",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3990000,
+          "price_sgd": 286.31,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Nabila%20Tipe%20A%20Kecamatan%20Batu%20A",
+          "title": "Putra Ikut Daftar Tunggu Kost Nabila Tipe A Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 700000,
+          "price_sgd": 50.23,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Martini%20Kecamatan%20Batu%20Ampar",
+          "title": "Campur Ikut Daftar Tunggu Kost Martini Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Sgp%20Planet%20Nomor%202%20Kecamatan%20Batu%20A",
+          "title": "Campur Sisa 1 kamar Kost Sgp Planet Nomor 2 Kecamatan Batu Ampar WiFi·AC·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1200000,
+          "price_sgd": 86.11,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20The%20Haven%20Suites%201%20Tipe%20A%20Kec",
+          "title": "Campur Ikut Daftar Tunggu Kost The Haven Suites 1 Tipe A Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2450000,
+          "price_sgd": 175.8,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Shafa%20Tipe%20B%20Bengkong",
+          "title": "Campur Sisa 2 kamar Kost Shafa Tipe B Bengkong",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1100000,
+          "price_sgd": 78.93,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20The%20Haven%20Suites%20Tipe%20B%20Batu%20",
+          "title": "Campur Ikut Daftar Tunggu Kost The Haven Suites Tipe B Batu Ampar",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2650000,
+          "price_sgd": 190.15,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Graha%20R8%20Tipe%20A%20Bengkong",
+          "title": "Putri Ikut Daftar Tunggu Kost Graha R8 Tipe A Bengkong",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20The%20Haven%20Suites%201%20Tipe%20C%20Kec",
+          "title": "Campur Ikut Daftar Tunggu Kost The Haven Suites 1 Tipe C Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2250000,
+          "price_sgd": 161.45,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Marley%20Tipe%20D%20Kecamatan%20Batu%20",
+          "title": "Campur Ikut Daftar Tunggu Kost Marley Tipe D Kecamatan Batu Ampar WiFi·Kasur",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 700000,
+          "price_sgd": 50.23,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Marley%20Tipe%20E%20Batu%20Ampar%20WiFi",
+          "title": "Campur Ikut Daftar Tunggu Kost Marley Tipe E Batu Ampar WiFi·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 900000,
+          "price_sgd": 64.58,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Sumber%20Agung%20Tipe%20A%20Batu%20Ampa",
+          "title": "Campur Ikut Daftar Tunggu Kost Sumber Agung Tipe A Batu Ampar",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 950000,
+          "price_sgd": 68.17,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Mama%20Ami%20Kecamatan%20Bengkong",
+          "title": "Campur Ikut Daftar Tunggu Kost Mama Ami Kecamatan Bengkong",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 900000,
+          "price_sgd": 64.58,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Ibu%20Lian%20Kecamatan%20Bengkong",
+          "title": "Campur Ikut Daftar Tunggu Kost Ibu Lian Kecamatan Bengkong",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1000000,
+          "price_sgd": 71.76,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Rumah%20Kontrakan%20Dekat%20Golden%20Prawn",
+          "title": "Campur Ikut Daftar Tunggu Rumah Kontrakan Dekat Golden Prawn Kecamatan Bengkong",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1100000,
+          "price_sgd": 78.93,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Harapan%20Kecamatan%20Bengkong%20WiF",
+          "title": "Putra Ikut Daftar Tunggu Kost Harapan Kecamatan Bengkong WiFi·Akses 24 Jam",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 650000,
+          "price_sgd": 46.64,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Shafa%20Tipe%20A%20Bengkong",
+          "title": "Putri Ikut Daftar Tunggu Kost Shafa Tipe A Bengkong",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 650000,
+          "price_sgd": 46.64,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Bu%20Dina%20Bengkong",
+          "title": "Campur Ikut Daftar Tunggu Kost Bu Dina Bengkong",
+          "category": "room",
+          "location": "Batu Ampar, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1400000,
+          "price_sgd": 100.46,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Mipa%20Sekupang",
+          "title": "Campur Sisa 2 kamar Kost Mipa Sekupang",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Perumahan%20Tiban%20Tipe%20A%20Sekupa",
+          "title": "Campur Ikut Daftar Tunggu Kost Perumahan Tiban Tipe A Sekupang",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Perumahan%20Tiban%20Tipe%20B%20Sekupa",
+          "title": "Campur Ikut Daftar Tunggu Kost Perumahan Tiban Tipe B Sekupang WiFi·Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1000000,
+          "price_sgd": 71.76,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Blessed%20Tipe%20B%20Sekupang%20WiFi%C2%B7K",
+          "title": "Putri Ikut Daftar Tunggu Kost Blessed Tipe B Sekupang WiFi·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 500000,
+          "price_sgd": 35.88,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Blessed%20Tipe%20C%20Sekupang%20WiFi%C2%B7K",
+          "title": "Putri Ikut Daftar Tunggu Kost Blessed Tipe C Sekupang WiFi·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 600000,
+          "price_sgd": 43.05,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Blessed%20Tipe%20A%20Sekupang%20Kloset",
+          "title": "Putri Ikut Daftar Tunggu Kost Blessed Tipe A Sekupang Kloset Duduk·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 700000,
+          "price_sgd": 50.23,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20E%20Sekupang",
+          "title": "Putri Sisa 1 kamar Kost Marlene Tipe E Sekupang",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2000000,
+          "price_sgd": 143.51,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Kost%20Amanah%20Tipe%20A%20Sekupang",
+          "title": "Putra Kost Amanah Tipe A Sekupang",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1200000,
+          "price_sgd": 86.11,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20C%20Sekupang%20WiFi%C2%B7AC%C2%B7Kasu",
+          "title": "Putri Sisa 1 kamar Kost Marlene Tipe C Sekupang WiFi·AC·Kasur",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Danka%20Tipe%20Standart%20Sekupang",
+          "title": "Campur Sisa 2 kamar Kost Danka Tipe Standart Sekupang",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20D%20Sekupang%20WiFi%C2%B7AC%C2%B7Klo",
+          "title": "Campur Sisa 1 kamar Kost Marlene Tipe D Sekupang WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20Executive%20Kecamatan%20Sek",
+          "title": "Putri Sisa 1 kamar Kost Marlene Tipe Executive Kecamatan Sekupang WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20B%20Batam%20Sekupang%20WiFi%C2%B7A",
+          "title": "Putri Sisa 1 kamar Kost Marlene Tipe B Batam Sekupang WiFi·AC·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1650000,
+          "price_sgd": 118.4,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20A%20Sekupang%20WiFi%C2%B7AC%C2%B7Klo",
+          "title": "Campur Sisa 1 kamar Kost Marlene Tipe A Sekupang WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Rumah%20Kontrakan%20Nirwana%20Sekupang%20AC",
+          "title": "Campur Sisa 1 kamar Rumah Kontrakan Nirwana Sekupang AC",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2000000,
+          "price_sgd": 143.51,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Rumah%20Kontrakan%20Tiban%20Masyeba%20Kecamatan%20",
+          "title": "Campur Sisa 1 kamar Rumah Kontrakan Tiban Masyeba Kecamatan Sekupang WiFi·AC",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1200000,
+          "price_sgd": 86.11,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Grandi%20Tiban%203%20Kamar%20Ungu%20Kecamatan",
+          "title": "Campur Sisa 1 kamar Kost Grandi Tiban 3 Kamar Ungu Kecamatan Sekupang",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Tiban%20Kampung%20Tipe%20B%20Kecamatan",
+          "title": "Putra Ikut Daftar Tunggu Kost Tiban Kampung Tipe B Kecamatan Sekupang Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 600000,
+          "price_sgd": 43.05,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Gaia%2008%20Tipe%20Pro%20Series%20Bengkong",
+          "title": "Campur Sisa 2 kamar Kost Gaia 08 Tipe Pro Series Bengkong",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3500000,
+          "price_sgd": 251.15,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Homestay81%20Pasir%20Putih%20Centre",
+          "title": "Campur Ikut Daftar Tunggu Kost Homestay81 Pasir Putih Centre Kecamatan Bengkong",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Kartika%20Residence%20Lantai%204%20Tangga%20K",
+          "title": "Campur Sisa 3 kamar Kost Kartika Residence Lantai 4 Tangga Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Citra%202%20Tipe%20Standar%203%20Kota%20Batam%20Kota",
+          "title": "Campur Kost Citra 2 Tipe Standar 3 Kota Batam Kota",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2400000,
+          "price_sgd": 172.22,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20M7%20Greenland%20Kecamatan%20Batam%20Kota%20W",
+          "title": "Campur Sisa 1 kamar Kost M7 Greenland Kecamatan Batam Kota WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1850000,
+          "price_sgd": 132.75,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20Tipe%20VIP%20Kecamata",
+          "title": "Campur Sisa 1 kamar Kost Kartika Residence Tipe VIP Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3200000,
+          "price_sgd": 229.62,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Pondok%20Keren%20Pelita%20Tipe%20E%20Kecamata",
+          "title": "Campur Sisa 2 kamar Kost Pondok Keren Pelita Tipe E Kecamatan Lubuk Baja",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2100000,
+          "price_sgd": 150.69,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20VVIP%20Kecamatan%20Ba",
+          "title": "Campur Sisa 1 kamar Kost Kartika Residence VVIP Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3300000,
+          "price_sgd": 236.8,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20X1%20Kecamatan%20Batu",
+          "title": "Campur Sisa 1 kamar Kost Kartika Residence X1 Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3000000,
+          "price_sgd": 215.27,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%201%20kamar%20Kost%20Frandy%20Her%20Pratama%20Executive%20Kecamat",
+          "title": "Putra Sisa 1 kamar Kost Frandy Her Pratama Executive Kecamatan Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Bcl%20Kecamatan%20Nongsa",
+          "title": "Campur Ikut Daftar Tunggu Kost Bcl Kecamatan Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2100000,
+          "price_sgd": 150.69,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Homestay%2081%20MTC%20Kecamatan%20Non",
+          "title": "Campur Ikut Daftar Tunggu Kost Homestay 81 MTC Kecamatan Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3000000,
+          "price_sgd": 215.27,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Dl%20Koszy%20Bandara%20Executive%20Kec",
+          "title": "Putri Ikut Daftar Tunggu Kost Dl Koszy Bandara Executive Kecamatan Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1350000,
+          "price_sgd": 96.87,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Rumah%20Tipe%20A%20Nongsa",
+          "title": "Putra Ikut Daftar Tunggu Kost Rumah Tipe A Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Evelyn%203%20Tipe%20A%20Nongsa",
+          "title": "Campur Sisa 1 kamar Kost Evelyn 3 Tipe A Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1550000,
+          "price_sgd": 111.22,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Evelyn%203%20Tipe%20B%20Nongsa",
+          "title": "Campur Kost Evelyn 3 Tipe B Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Chelma%20Botania%20Kota%20Batam%20Kota",
+          "title": "Campur Kost Chelma Botania Kota Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3500000,
+          "price_sgd": 251.15,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20La%20Vista%20Executive%20Kota%20Batam",
+          "title": "Campur Ikut Daftar Tunggu Kost La Vista Executive Kota Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Asiyah%20Deluxe%20Nongsa",
+          "title": "Campur Sisa 3 kamar Kost Asiyah Deluxe Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3000000,
+          "price_sgd": 215.27,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20La%20Vista%20Deluxe%20Kota%20Batam%20Ko",
+          "title": "Campur Ikut Daftar Tunggu Kost La Vista Deluxe Kota Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20La%20Vista%20Super%20Deluxe%20Kota%20Ke",
+          "title": "Campur Ikut Daftar Tunggu Kost La Vista Super Deluxe Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Rita%20Kota%20Batam%20Kota",
+          "title": "Putra Ikut Daftar Tunggu Kost Rita Kota Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Ruko%20Arira%20Garden%20Nongsa%20Klose",
+          "title": "Putra Ikut Daftar Tunggu Kost Ruko Arira Garden Nongsa Kloset Duduk·Akses 24 Jam Kurang Respons",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 700000,
+          "price_sgd": 50.23,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Rumah%20Ramah%20Kota%20Batam%20Kota",
+          "title": "Campur Ikut Daftar Tunggu Kost Rumah Ramah Kota Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1400000,
+          "price_sgd": 100.46,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Family%20Dream%20Kecamatan%20Nongsa",
+          "title": "Putra Ikut Daftar Tunggu Kost Family Dream Kecamatan Nongsa",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 825000,
+          "price_sgd": 59.2,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Gardan%20Raya%20GA%20Kota%20Kecamatan%20",
+          "title": "Putra Ikut Daftar Tunggu Kost Gardan Raya GA Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 900000,
+          "price_sgd": 64.58,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Zavira%20II%20Kota%20Kecamatan%20Batam%20Kota",
+          "title": "Putri Sisa 1 kamar Kost Zavira II Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2200000,
+          "price_sgd": 157.86,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Premium%20Vvip%20Kota%20Kecamatan%20Batam%20Ko",
+          "title": "Putri Sisa 1 kamar Kost Premium Vvip Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1720000,
+          "price_sgd": 123.42,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%201%20kamar%20Kost%20Azka%202%20Kota%20Batam%20Kota",
+          "title": "Putra Sisa 1 kamar Kost Azka 2 Kota Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Azka%20Kecamatan%20Batam%20Kota",
+          "title": "Campur Sisa 1 kamar Kost Azka Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Premium%20Executive%20Kecamatan%20Batam%20Kota",
+          "title": "Putri Kost Premium Executive Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1920000,
+          "price_sgd": 137.77,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%203%20kamar%20Kost%20Zavira%20Kota%20Kecamatan%20Batam%20Kota",
+          "title": "Putri Sisa 3 kamar Kost Zavira Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1900000,
+          "price_sgd": 136.34,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Rumah%20Evelyn%20Tipe%20A%20Kota%20Batam%20Kota",
+          "title": "Campur Sisa 2 kamar Kost Rumah Evelyn Tipe A Kota Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1550000,
+          "price_sgd": 111.22,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Sarifa%20Reguler%20Kota%20Kecamatan%20Batam%20Kota",
+          "title": "Campur Kost Sarifa Reguler Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 900000,
+          "price_sgd": 64.58,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%201%20kamar%20Kost%20Calla%20Stay%20Cikitsu%20Kota%20Kecamatan%20Ba",
+          "title": "Putra Sisa 1 kamar Kost Calla Stay Cikitsu Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2100000,
+          "price_sgd": 150.69,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Graha%20Nusa%20Batuaji%20Tipe%20C%20Sagulung",
+          "title": "Campur Sisa 1 kamar Kost Graha Nusa Batuaji Tipe C Sagulung",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Graha%20Nusa%20Exlusive%20Mezzanine%20Vip%20K",
+          "title": "Campur Sisa 1 kamar Kost Graha Nusa Exlusive Mezzanine Vip Kecamatan Sagulung",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Tata78%20Tipe%20A%20Sagulung",
+          "title": "Campur Sisa 2 kamar Kost Tata78 Tipe A Sagulung",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1000000,
+          "price_sgd": 71.76,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Graha%20Nusa%20Batuaji%20Tipe%20B%20Sag",
+          "title": "Campur Ikut Daftar Tunggu Kost Graha Nusa Batuaji Tipe B Sagulung",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Levi%20Tipe%20A%20Batu%20Aji",
+          "title": "Campur Sisa 1 kamar Kost Levi Tipe A Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2150000,
+          "price_sgd": 154.28,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Harmony%20I%20Sagulung",
+          "title": "Putra Ikut Daftar Tunggu Kost Harmony I Sagulung",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1400000,
+          "price_sgd": 100.46,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20A%20Batu%20Aji",
+          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe A Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 750000,
+          "price_sgd": 53.82,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Anugrah%20Yahweh%20Kecamatan%20Sagulung",
+          "title": "Campur Sisa 2 kamar Kost Anugrah Yahweh Kecamatan Sagulung",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1507000,
+          "price_sgd": 108.14,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20B%20Batu%20Aji",
+          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe B Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 850000,
+          "price_sgd": 60.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Perum%20Taman%20Pesona%20Tipe%20A%20Keca",
+          "title": "Putra Ikut Daftar Tunggu Kost Perum Taman Pesona Tipe A Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 850000,
+          "price_sgd": 60.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Perum%20Taman%20Pesona%20Tipe%20C%20Keca",
+          "title": "Putra Ikut Daftar Tunggu Kost Perum Taman Pesona Tipe C Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 800000,
+          "price_sgd": 57.41,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Non%20Ac%20Kecamatan%20Batu%20Aji",
+          "title": "Putra Ikut Daftar Tunggu Kost TPI Non Ac Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 850000,
+          "price_sgd": 60.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20AC%20Kecamatan%20Batu%20Aji",
+          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe AC Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20E%20Kecamatan%20Batu%20Aji",
+          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe E Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 800000,
+          "price_sgd": 57.41,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Abc%20Sagulung",
+          "title": "Campur Kost Abc Sagulung",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20C%20Kecamatan%20Batu%20Aji",
+          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe C Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1250000,
+          "price_sgd": 89.7,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Perum%20Taman%20Pesona%20Tipe%20B%20Tan",
+          "title": "Campur Ikut Daftar Tunggu Kost Perum Taman Pesona Tipe B Tanjung Uncang Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1250000,
+          "price_sgd": 89.7,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Dreamland%20Park%20Marina%20Sekupang",
+          "title": "Putra Ikut Daftar Tunggu Kost Dreamland Park Marina Sekupang Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 800000,
+          "price_sgd": 57.41,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Kak%20Yana%20Kecamatan%20Batu%20Aji%20Ak",
+          "title": "Putri Ikut Daftar Tunggu Kost Kak Yana Kecamatan Batu Aji Akses 24 Jam Kurang Respons",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 600000,
+          "price_sgd": 43.05,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Tunas%20Regency%20Tanjung%20Uncang%20Kecama",
+          "title": "Campur Sisa 1 kamar Kost Tunas Regency Tanjung Uncang Kecamatan Sagulung",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2300000,
+          "price_sgd": 165.04,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Tunas%20Vip%20Jasmin%20Kecamatan%20Sagulung",
+          "title": "Campur Sisa 2 kamar Kost Tunas Vip Jasmin Kecamatan Sagulung",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2000000,
+          "price_sgd": 143.51,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Tunas%20VIP%20Kecamatan%20Sagulung",
+          "title": "Campur Ikut Daftar Tunggu Kost Tunas VIP Kecamatan Sagulung",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2000000,
+          "price_sgd": 143.51,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Basecamp%20Tipe%20A%20Kecamatan%20Bat",
+          "title": "Campur Ikut Daftar Tunggu Kost Basecamp Tipe A Kecamatan Batu Aji WiFi·Kasur",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 600000,
+          "price_sgd": 43.05,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Edu%20Kecamatan%20Batu%20Aji",
+          "title": "Campur Ikut Daftar Tunggu Kost Edu Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1300000,
+          "price_sgd": 93.28,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Pak%20Pulungan%20Tipe%20Tanjung%20Unca",
+          "title": "Putri Ikut Daftar Tunggu Kost Pak Pulungan Tipe Tanjung Uncang Batu Aji",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 600000,
+          "price_sgd": 43.05,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Sodentna%20Kartini%206%20Sekupang",
+          "title": "Campur Sisa 1 kamar Kost Sodentna Kartini 6 Sekupang",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Citra%20Pandawa%20Asri%20Batu%20Aji%20Wi",
+          "title": "Putra Ikut Daftar Tunggu Kost Citra Pandawa Asri Batu Aji WiFi·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 850000,
+          "price_sgd": 60.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Sgp%20Gesya%20Eternal%20Marina%20Tipe%20B%20Sek",
+          "title": "Campur Sisa 3 kamar Kost Sgp Gesya Eternal Marina Tipe B Sekupang WiFi·Kloset Duduk·Kasur",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 900000,
+          "price_sgd": 64.58,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%201%20kamar%20Kost%20Dilaa%20Tipe%20Ekslusif%20Sekupang%20WiFi%C2%B7Ka",
+          "title": "Putra Sisa 1 kamar Kost Dilaa Tipe Ekslusif Sekupang WiFi·Kasur",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 800000,
+          "price_sgd": 57.41,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%203%20kamar%20Kost%20Palem%20Home%20Tipe%20Standard%20Kecamatan%20S",
+          "title": "Putri Sisa 3 kamar Kost Palem Home Tipe Standard Kecamatan Sekupang",
+          "category": "room",
+          "location": "Batu Aji, Batam",
+          "platform": "Mamikos",
+          "price_idr": 600000,
+          "price_sgd": 43.05,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Andini%20Kecamatan%20Sei%20Beduk",
+          "title": "Putri Sisa 1 kamar Kost Andini Kecamatan Sei Beduk",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 850000,
+          "price_sgd": 60.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Pimaro%20Pancur%20Sei%20Beduk",
+          "title": "Campur Ikut Daftar Tunggu Kost Pimaro Pancur Sei Beduk",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 650000,
+          "price_sgd": 46.64,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Gaia%20Buana%20Central%20Park%20Tipe%20",
+          "title": "Campur Ikut Daftar Tunggu Kost Gaia Buana Central Park Tipe 1 Sagulung",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 750000,
+          "price_sgd": 53.82,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Afif%20I%20Executive%20Kecamatan%20Sagulung",
+          "title": "Campur Sisa 1 kamar Kost Afif I Executive Kecamatan Sagulung",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3100000,
+          "price_sgd": 222.45,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Afif%20Rexvin%20Kecamatan%20Sagulung",
+          "title": "Campur Sisa 1 kamar Kost Afif Rexvin Kecamatan Sagulung",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2150000,
+          "price_sgd": 154.28,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20A1%20Tipe%20A1%20Sei%20Beduk",
+          "title": "Putri Sisa 1 kamar Kost A1 Tipe A1 Sei Beduk",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Jefferson%20Homestay%20Tipe%20Executive%20A%20Batu%20Aji",
+          "title": "Campur Kost Jefferson Homestay Tipe Executive A Batu Aji",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1700000,
+          "price_sgd": 121.99,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20My%20Living%20Studio%20Vip%20Sagulung",
+          "title": "Putri Ikut Daftar Tunggu Kost My Living Studio Vip Sagulung",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Non%20AC%20lantai1%20Sagu",
+          "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Non AC lantai1 Sagulung",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 650000,
+          "price_sgd": 46.64,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20A1%20Tipe%20A%20Sei%20Beduk",
+          "title": "Putri Ikut Daftar Tunggu Kost A1 Tipe A Sei Beduk",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1650000,
+          "price_sgd": 118.4,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20SPA%20D%20Batu%20Aji%20WiFi%C2%B7AC%C2%B7Kloset%20Duduk",
+          "title": "Campur Sisa 2 kamar Kost SPA D Batu Aji WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3500000,
+          "price_sgd": 251.15,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://www.olx.co.id/item/kost-exclusive-nagoya-thamrin-batam-iid-947583543",
+          "title": "KOST EXCLUSIVE NAGOYA THAMRIN BATAM LUBUK BAJA, BATAM KOTA",
+          "category": "room",
+          "location": "Nagoya, Batam",
+          "platform": "OLX",
+          "price_idr": 1900000,
+          "price_sgd": 136.34,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://www.olx.co.id/item/brand-new-kost-at-nagoya-dc-mall-iid-939281744",
+          "title": "BRAND NEW KOST AT NAGOYA DC MALL LUBUK BAJA, BATAM KOTA",
+          "category": "room",
+          "location": "Nagoya, Batam",
+          "platform": "OLX",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%202%20kamar%20Kost%20Shinta%27s%20Homestay%20Sekupang",
+          "title": "Putra Sisa 2 kamar Kost Shinta's Homestay Sekupang",
+          "category": "room",
+          "location": "Sekupang, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-20",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Jj%20Tipe%20Superior%20B%20Lubuk%20Baja",
+          "title": "Campur Sisa 1 kamar Kost Jj Tipe Superior B Lubuk Baja",
+          "category": "room",
+          "location": "Lubuk Baja, Batam",
+          "platform": "Mamikos",
+          "price_idr": 3500000,
+          "price_sgd": 251.15,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20Super%20Small%20Kecam",
+          "title": "Campur Sisa 1 kamar Kost Kartika Residence Super Small Kecamatan Batu Ampar",
+          "category": "room",
+          "location": "Bengkong, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2000000,
+          "price_sgd": 143.51,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Evelyn%20I%20Kota%20Kecamatan%20Batam%20Kota",
+          "title": "Campur Sisa 1 kamar Kost Evelyn I Kota Kecamatan Batam Kota",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 2000000,
+          "price_sgd": 143.51,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Engku%20Putri%20Tipe%20B%20Kota%20Batam%20Kota%20WiFi%C2%B7Kasur",
+          "title": "Campur Kost Engku Putri Tipe B Kota Batam Kota WiFi·Kasur",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 750000,
+          "price_sgd": 53.82,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Engku%20Putri%20Tipe%20D%20Kota%20Batam%20Kota%20",
+          "title": "Campur Sisa 1 kamar Kost Engku Putri Tipe D Kota Batam Kota Kloset Duduk·Kasur·Akses 24 Jam",
+          "category": "room",
+          "location": "Nongsa, Batam",
+          "platform": "Mamikos",
+          "price_idr": 900000,
+          "price_sgd": 64.58,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Dahlia%20Kecamatan%20Batu%20Aji",
+          "title": "Putri Ikut Daftar Tunggu Kost Dahlia Kecamatan Batu Aji",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1200000,
+          "price_sgd": 86.11,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Gaia%20Buana%20Central%20Park%20Tipe%20B%20Batu",
+          "title": "Campur Sisa 3 kamar Kost Gaia Buana Central Park Tipe B Batu Aji WiFi·AC·Kloset Duduk·Kasur",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1300000,
+          "price_sgd": 93.28,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Type%20A%20Sagulung",
+          "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Type A Sagulung",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Tipe%20C%20Sagulung",
+          "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Tipe C Sagulung",
+          "category": "room",
+          "location": "Sei Beduk, Batam",
+          "platform": "Mamikos",
+          "price_idr": 775000,
+          "price_sgd": 55.61,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "url": "https://www.olx.co.id/item/disewakan-kos-full-furnished-tunas-regency-tanjung-uncang-iid-932935248",
+          "title": "1 KT - 1 KM - 60 m2 DISEWAKAN KOS FULL FURNISHED Tunas Regency, Tanjung Uncang SAGULUNG, BATAM KOTA",
+          "category": "room",
+          "location": "Sagulung, Batam",
+          "platform": "OLX",
+          "price_idr": 2300000,
+          "price_sgd": 165.04,
+          "first_seen": "2026-08-21",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Kost Aqella House Premium Lubuk Baja",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "location": "Lubuk Baja, Batam",
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Aqella%20House%20Premium%20Lubuk%20Baja",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Sisa 2 kamar Kost Papequeen Mezzanine Style Tipe Junior AC Kota Kecamatan Batam Kota",
+          "price_idr": 2027000,
+          "price_sgd": 145.45,
+          "location": "Batam Kota, Batam",
+          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Papequeen%20Mezzanine%20Style%20Tipe%20Juni",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Sisa 2 kamar Kost Crown Residence Tipe Ekslusif Lubuk Baja",
+          "price_idr": 3000000,
+          "price_sgd": 215.27,
+          "location": "Lubuk Baja, Batam",
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Crown%20Residence%20Tipe%20Ekslusif%20Lubuk",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putri Sisa 2 kamar Kost Berkah Tipe Ac Lubuk Baja",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "location": "Lubuk Baja, Batam",
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%202%20kamar%20Kost%20Berkah%20Tipe%20Ac%20Lubuk%20Baja",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putra Kost Baloi Living Tipe Standar Lubuk Baja WiFi·AC·Kasur",
+          "price_idr": 1200000,
+          "price_sgd": 86.11,
+          "location": "Baloi, Batam",
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Kost%20Baloi%20Living%20Tipe%20Standar%20Lubuk%20Baja%20WiFi%C2%B7AC%C2%B7Kasu",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putri Sisa 1 kamar Kost Link House SDN Tipe B Lubuk Baja WiFi·Kloset Duduk·Kasur·Akses 24 Jam",
+          "price_idr": 900000,
+          "price_sgd": 64.58,
+          "location": "Lubuk Baja, Batam",
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Link%20House%20SDN%20Tipe%20B%20Lubuk%20Baja%20WiF",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Sisa 1 kamar Kost LH Nagoya Garden Tipe D Kecamatan Batu Ampar WiFi·Kloset Duduk·Kasur",
+          "price_idr": 850000,
+          "price_sgd": 60.99,
+          "location": "Nagoya, Batam",
+          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20LH%20Nagoya%20Garden%20Tipe%20D%20Kecamatan%20B",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putra Ikut Daftar Tunggu Kost Bu Eliyasmi Kecamatan Batu Ampar WiFi·Kasur",
+          "price_idr": 700000,
+          "price_sgd": 50.23,
+          "location": "Batu Ampar, Batam",
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Bu%20Eliyasmi%20Kecamatan%20Batu%20Amp",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Ikut Daftar Tunggu Kost Lasmini Kecamatan Bengkong",
+          "price_idr": 1100000,
+          "price_sgd": 78.93,
+          "location": "Bengkong, Batam",
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Lasmini%20Kecamatan%20Bengkong",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Ikut Daftar Tunggu Kost Grand House Tipe A Kecamatan Bengkong",
+          "price_idr": 2300000,
+          "price_sgd": 165.04,
+          "location": "Bengkong, Batam",
+          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Grand%20House%20Tipe%20A%20Kecamatan%20",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Sisa 1 kamar Kost Grandi Tiban 3 Kamar Pink Kecamatan Sekupang",
+          "price_idr": 1500000,
+          "price_sgd": 107.63,
+          "location": "Tiban, Batam",
+          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Grandi%20Tiban%203%20Kamar%20Pink%20Kecamatan",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putri Kost Go Premium Tipe Deluxe Kota Batam Kota",
+          "price_idr": 2200000,
+          "price_sgd": 157.86,
+          "location": "Batam Kota, Batam",
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Go%20Premium%20Tipe%20Deluxe%20Kota%20Batam%20Kota",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Ikut Daftar Tunggu Kost GAIA 06 Kota Batam Kota WiFi·AC·Kloset Duduk·Akses 24 Jam",
+          "price_idr": 1450000,
+          "price_sgd": 104.05,
+          "location": "Batam Kota, Batam",
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20GAIA%2006%20Kota%20Batam%20Kota%20WiFi%C2%B7",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Sisa 1 kamar Kost Kartika Residence Gold Class Kecamatan Batu Ampar",
+          "price_idr": 3600000,
+          "price_sgd": 258.32,
+          "location": "Batu Ampar, Batam",
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20Gold%20Class%20Kecama",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Sisa 1 kamar Kost Kartika Residence Economy Kecamatan Batu Ampar",
+          "price_idr": 2400000,
+          "price_sgd": 172.22,
+          "location": "Batu Ampar, Batam",
+          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20Economy%20Kecamatan",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putri Kost Syafania Batam Kota",
+          "price_idr": 1600000,
+          "price_sgd": 114.81,
+          "location": "Batam Kota, Batam",
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Syafania%20Batam%20Kota",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Sisa 2 kamar Kost Papequeen Mezzanine Style Tipe Family AC Kota Batam Kota",
+          "price_idr": 2327000,
+          "price_sgd": 166.98,
+          "location": "Batam Kota, Batam",
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Papequeen%20Mezzanine%20Style%20Tipe%20Fami",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Sisa 1 kamar Kost Duta Spring Homes Orchard Park Tipe 2 BR Kota Batam Kota",
+          "price_idr": 4800000,
+          "price_sgd": 344.43,
+          "location": "Batam Kota, Batam",
+          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Duta%20Spring%20Homes%20Orchard%20Park%20Tipe",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putri Ikut Daftar Tunggu Kost Griya Prima Kecamatan Batu Aji",
+          "price_idr": 550000,
+          "price_sgd": 39.47,
+          "location": "Batu Aji, Batam",
+          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Griya%20Prima%20Kecamatan%20Batu%20Aji",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putri Ikut Daftar Tunggu Kost Maya Sari Sagulung WiFi·Kasur·Akses 24 Jam",
+          "price_idr": 700000,
+          "price_sgd": 50.23,
+          "location": "Sagulung, Batam",
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Maya%20Sari%20Sagulung%20WiFi%C2%B7Kasur%C2%B7",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Tipe F Sagulung",
+          "price_idr": 650000,
+          "price_sgd": 46.64,
+          "location": "Mukakuning, Batam",
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Tipe%20F%20Sagulung",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Campur Kost Serena Z3 Batu Aji",
+          "price_idr": 2500000,
+          "price_sgd": 179.39,
+          "location": "Batu Aji, Batam",
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Serena%20Z3%20Batu%20Aji",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Putri Ikut Daftar Tunggu Kost My Living Superior Ac Sagulung",
+          "price_idr": 1800000,
+          "price_sgd": 129.16,
+          "location": "Sagulung, Batam",
+          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20My%20Living%20Superior%20Ac%20Sagulung",
+          "platform": "Mamikos",
+          "category": "room",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
         },
         {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Go%20Premium%20Tipe%20Deluxe%20Kota%20Batam%20Kota",
@@ -752,17 +2623,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Elite%20Kehl%20Kecamatan%20Bengkong",
-          "title": "Campur Kost Elite Kehl Kecamatan Bengkong",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 5000000,
-          "price_sgd": 358.78,
-          "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Eksekutif%20Tipe%20B%20Kota%20Kecamatan%20Bat",
           "title": "Campur Sisa 2 kamar Kost Eksekutif Tipe B Kota Kecamatan Batam Kota",
           "category": "room",
@@ -770,17 +2630,6 @@
           "platform": "Mamikos",
           "price_idr": 3000001,
           "price_sgd": 215.27,
-          "first_seen": "2026-08-19",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%2081%20Executive%20Baloi%20Nagoya%201%20Kecamatan%20Lubuk%20Baja",
-          "title": "Campur Kost 81 Executive Baloi Nagoya 1 Kecamatan Lubuk Baja",
-          "category": "room",
-          "location": "Nagoya, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3500000,
-          "price_sgd": 251.15,
           "first_seen": "2026-08-19",
           "last_seen": "2026-08-21"
         },
@@ -807,105 +2656,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Gaia%20Buana%20Central%20Park%20Tipe%20A%20Batu",
-          "title": "Campur Sisa 2 kamar Kost Gaia Buana Central Park Tipe A Batu Aji WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 1250000,
-          "price_sgd": 89.7,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Dl%20Koszy%20Bida%201%20Tipe%20A%20Kota%20Batam%20Ko",
-          "title": "Putri Sisa 1 kamar Kost Dl Koszy Bida 1 Tipe A Kota Batam Kota",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 1400000,
-          "price_sgd": 100.46,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Terra%20Kota%20Legenda%20Puri%20Kota%20Batam%20",
-          "title": "Campur Sisa 2 kamar Kost Terra Kota Legenda Puri Kota Batam Kota",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Neo%20Homestay%20Kota%20Kecamatan%20Batam%20K",
-          "title": "Campur Sisa 2 kamar Kost Neo Homestay Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Palm%20House%20Executive%20Kota%20Kecamatan%20Batam%20Kota",
-          "title": "Campur Kost Palm House Executive Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 1950000,
-          "price_sgd": 139.93,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20A1%20Tipe%20Standard%20Sei%20Beduk",
-          "title": "Putri Sisa 1 kamar Kost A1 Tipe Standard Sei Beduk",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 1650000,
-          "price_sgd": 118.4,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Te%20Tik%20Tipe%20Eksklusif%20Batam%20Kota",
-          "title": "Putri Kost Te Tik Tipe Eksklusif Batam Kota",
-          "category": "room",
-          "location": "Batam Kota, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Nagoya%20Hill%20Tipe%20H%20Lubuk%20Baja",
-          "title": "Campur Kost Nagoya Hill Tipe H Lubuk Baja",
-          "category": "room",
-          "location": "Nagoya, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20Standar%20Kecamatan",
-          "title": "Campur Sisa 1 kamar Kost Kartika Residence Standar Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2500000,
-          "price_sgd": 179.39,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Kosin%20Executive%20Master%20Window",
           "title": "Campur Ikut Daftar Tunggu Kost Kosin Executive Master Window Kecamatan Lubuk Baja",
           "category": "room",
@@ -913,72 +2663,6 @@
           "platform": "Mamikos",
           "price_idr": 2900000,
           "price_sgd": 208.09,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Nagoya%20Hill%20Tipe%20F%20Lubuk%20Baja",
-          "title": "Campur Sisa 1 kamar Kost Nagoya Hill Tipe F Lubuk Baja",
-          "category": "room",
-          "location": "Nagoya, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2000000,
-          "price_sgd": 143.51,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Pondok%20Keren%20Pelita%20Tipe%20G%20Lubuk%20Baja",
-          "title": "Campur Kost Pondok Keren Pelita Tipe G Lubuk Baja",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Pondok%20Keren%20Pelita%20Tipe%20C%20Lubuk%20Ba",
-          "title": "Campur Sisa 1 kamar Kost Pondok Keren Pelita Tipe C Lubuk Baja",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1900000,
-          "price_sgd": 136.34,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Jj%20Tipe%20Executive%20Lubuk%20Baja",
-          "title": "Campur Sisa 1 kamar Kost Jj Tipe Executive Lubuk Baja",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2950000,
-          "price_sgd": 211.68,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Link%20House%20TKB%20Tipe%20A%20Kecamatan%20Lub",
-          "title": "Campur Sisa 1 kamar Kost Link House TKB Tipe A Kecamatan Lubuk Baja",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Ds%20Tipe%20A%20Lubuk%20Baja",
-          "title": "Putri Kost Ds Tipe A Lubuk Baja",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
           "first_seen": "2026-08-20",
           "last_seen": "2026-08-21"
         },
@@ -1016,105 +2700,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Nabila%20Tipe%20A%20Kecamatan%20Batu%20A",
-          "title": "Putra Ikut Daftar Tunggu Kost Nabila Tipe A Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 700000,
-          "price_sgd": 50.23,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Martini%20Kecamatan%20Batu%20Ampar",
-          "title": "Campur Ikut Daftar Tunggu Kost Martini Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Sgp%20Planet%20Nomor%202%20Kecamatan%20Batu%20A",
-          "title": "Campur Sisa 1 kamar Kost Sgp Planet Nomor 2 Kecamatan Batu Ampar WiFi·AC·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1200000,
-          "price_sgd": 86.11,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20The%20Haven%20Suites%201%20Tipe%20A%20Kec",
-          "title": "Campur Ikut Daftar Tunggu Kost The Haven Suites 1 Tipe A Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2450000,
-          "price_sgd": 175.8,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Shafa%20Tipe%20B%20Bengkong",
-          "title": "Campur Sisa 2 kamar Kost Shafa Tipe B Bengkong",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1100000,
-          "price_sgd": 78.93,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20The%20Haven%20Suites%20Tipe%20B%20Batu%20",
-          "title": "Campur Ikut Daftar Tunggu Kost The Haven Suites Tipe B Batu Ampar",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2650000,
-          "price_sgd": 190.15,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Graha%20R8%20Tipe%20A%20Bengkong",
-          "title": "Putri Ikut Daftar Tunggu Kost Graha R8 Tipe A Bengkong",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20The%20Haven%20Suites%201%20Tipe%20C%20Kec",
-          "title": "Campur Ikut Daftar Tunggu Kost The Haven Suites 1 Tipe C Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2250000,
-          "price_sgd": 161.45,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Marley%20Tipe%20D%20Kecamatan%20Batu%20",
-          "title": "Campur Ikut Daftar Tunggu Kost Marley Tipe D Kecamatan Batu Ampar WiFi·Kasur",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 700000,
-          "price_sgd": 50.23,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Buk%20Nur%20Tipe%20A%20Kecamatan%20Batu%20",
           "title": "Putra Ikut Daftar Tunggu Kost Buk Nur Tipe A Kecamatan Batu Ampar",
           "category": "room",
@@ -1122,28 +2707,6 @@
           "platform": "Mamikos",
           "price_idr": 800000,
           "price_sgd": 57.41,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Sumber%20Agung%20Tipe%20A%20Batu%20Ampa",
-          "title": "Campur Ikut Daftar Tunggu Kost Sumber Agung Tipe A Batu Ampar",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 950000,
-          "price_sgd": 68.17,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Mama%20Ami%20Kecamatan%20Bengkong",
-          "title": "Campur Ikut Daftar Tunggu Kost Mama Ami Kecamatan Bengkong",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 900000,
-          "price_sgd": 64.58,
           "first_seen": "2026-08-20",
           "last_seen": "2026-08-21"
         },
@@ -1159,248 +2722,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Ibu%20Lian%20Kecamatan%20Bengkong",
-          "title": "Campur Ikut Daftar Tunggu Kost Ibu Lian Kecamatan Bengkong",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1000000,
-          "price_sgd": 71.76,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Harapan%20Kecamatan%20Bengkong%20WiF",
-          "title": "Putra Ikut Daftar Tunggu Kost Harapan Kecamatan Bengkong WiFi·Akses 24 Jam",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 650000,
-          "price_sgd": 46.64,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Bu%20Dina%20Bengkong",
-          "title": "Campur Ikut Daftar Tunggu Kost Bu Dina Bengkong",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1400000,
-          "price_sgd": 100.46,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Mipa%20Sekupang",
-          "title": "Campur Sisa 2 kamar Kost Mipa Sekupang",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Perumahan%20Tiban%20Tipe%20A%20Sekupa",
-          "title": "Campur Ikut Daftar Tunggu Kost Perumahan Tiban Tipe A Sekupang",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Perumahan%20Tiban%20Tipe%20B%20Sekupa",
-          "title": "Campur Ikut Daftar Tunggu Kost Perumahan Tiban Tipe B Sekupang WiFi·Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1000000,
-          "price_sgd": 71.76,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Blessed%20Tipe%20B%20Sekupang%20WiFi%C2%B7K",
-          "title": "Putri Ikut Daftar Tunggu Kost Blessed Tipe B Sekupang WiFi·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 500000,
-          "price_sgd": 35.88,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Blessed%20Tipe%20C%20Sekupang%20WiFi%C2%B7K",
-          "title": "Putri Ikut Daftar Tunggu Kost Blessed Tipe C Sekupang WiFi·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 600000,
-          "price_sgd": 43.05,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Blessed%20Tipe%20A%20Sekupang%20Kloset",
-          "title": "Putri Ikut Daftar Tunggu Kost Blessed Tipe A Sekupang Kloset Duduk·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 700000,
-          "price_sgd": 50.23,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20E%20Sekupang",
-          "title": "Putri Sisa 1 kamar Kost Marlene Tipe E Sekupang",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2000000,
-          "price_sgd": 143.51,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Kost%20Amanah%20Tipe%20A%20Sekupang",
-          "title": "Putra Kost Amanah Tipe A Sekupang",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1200000,
-          "price_sgd": 86.11,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20C%20Sekupang%20WiFi%C2%B7AC%C2%B7Kasu",
-          "title": "Putri Sisa 1 kamar Kost Marlene Tipe C Sekupang WiFi·AC·Kasur",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Danka%20Tipe%20Standart%20Sekupang",
-          "title": "Campur Sisa 2 kamar Kost Danka Tipe Standart Sekupang",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20D%20Sekupang%20WiFi%C2%B7AC%C2%B7Klo",
-          "title": "Campur Sisa 1 kamar Kost Marlene Tipe D Sekupang WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20Executive%20Kecamatan%20Sek",
-          "title": "Putri Sisa 1 kamar Kost Marlene Tipe Executive Kecamatan Sekupang WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20B%20Batam%20Sekupang%20WiFi%C2%B7A",
-          "title": "Putri Sisa 1 kamar Kost Marlene Tipe B Batam Sekupang WiFi·AC·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1650000,
-          "price_sgd": 118.4,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Marlene%20Tipe%20A%20Sekupang%20WiFi%C2%B7AC%C2%B7Klo",
-          "title": "Campur Sisa 1 kamar Kost Marlene Tipe A Sekupang WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Rumah%20Kontrakan%20Nirwana%20Sekupang%20AC",
-          "title": "Campur Sisa 1 kamar Rumah Kontrakan Nirwana Sekupang AC",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2000000,
-          "price_sgd": 143.51,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Rumah%20Kontrakan%20Tiban%20Masyeba%20Kecamatan%20",
-          "title": "Campur Sisa 1 kamar Rumah Kontrakan Tiban Masyeba Kecamatan Sekupang WiFi·AC",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1200000,
-          "price_sgd": 86.11,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Gaia%2008%20Tipe%20Pro%20Series%20Bengkong",
-          "title": "Campur Sisa 2 kamar Kost Gaia 08 Tipe Pro Series Bengkong",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3500000,
-          "price_sgd": 251.15,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Homestay81%20Pasir%20Putih%20Centre",
-          "title": "Campur Ikut Daftar Tunggu Kost Homestay81 Pasir Putih Centre Kecamatan Bengkong",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Kartika%20Residence%20Lantai%204%20Tangga%20K",
-          "title": "Campur Sisa 3 kamar Kost Kartika Residence Lantai 4 Tangga Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Citra%20Full%20House%20Executive%20Kota%20Bat",
           "title": "Campur Sisa 1 kamar Kost Citra Full House Executive Kota Batam Kota",
           "category": "room",
@@ -1412,336 +2733,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Citra%202%20Tipe%20Standar%203%20Kota%20Batam%20Kota",
-          "title": "Campur Kost Citra 2 Tipe Standar 3 Kota Batam Kota",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2400000,
-          "price_sgd": 172.22,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20M7%20Greenland%20Kecamatan%20Batam%20Kota%20W",
-          "title": "Campur Sisa 1 kamar Kost M7 Greenland Kecamatan Batam Kota WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1850000,
-          "price_sgd": 132.75,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20Tipe%20VIP%20Kecamata",
-          "title": "Campur Sisa 1 kamar Kost Kartika Residence Tipe VIP Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3200000,
-          "price_sgd": 229.62,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Pondok%20Keren%20Pelita%20Tipe%20E%20Kecamata",
-          "title": "Campur Sisa 2 kamar Kost Pondok Keren Pelita Tipe E Kecamatan Lubuk Baja",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2100000,
-          "price_sgd": 150.69,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20VVIP%20Kecamatan%20Ba",
-          "title": "Campur Sisa 1 kamar Kost Kartika Residence VVIP Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3300000,
-          "price_sgd": 236.8,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20X1%20Kecamatan%20Batu",
-          "title": "Campur Sisa 1 kamar Kost Kartika Residence X1 Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3000000,
-          "price_sgd": 215.27,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%201%20kamar%20Kost%20Frandy%20Her%20Pratama%20Executive%20Kecamat",
-          "title": "Putra Sisa 1 kamar Kost Frandy Her Pratama Executive Kecamatan Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Bcl%20Kecamatan%20Nongsa",
-          "title": "Campur Ikut Daftar Tunggu Kost Bcl Kecamatan Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2100000,
-          "price_sgd": 150.69,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Homestay%2081%20MTC%20Kecamatan%20Non",
-          "title": "Campur Ikut Daftar Tunggu Kost Homestay 81 MTC Kecamatan Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3000000,
-          "price_sgd": 215.27,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Dl%20Koszy%20Bandara%20Executive%20Kec",
-          "title": "Putri Ikut Daftar Tunggu Kost Dl Koszy Bandara Executive Kecamatan Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1350000,
-          "price_sgd": 96.87,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Rumah%20Tipe%20A%20Nongsa",
-          "title": "Putra Ikut Daftar Tunggu Kost Rumah Tipe A Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Evelyn%203%20Tipe%20A%20Nongsa",
-          "title": "Campur Sisa 1 kamar Kost Evelyn 3 Tipe A Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1550000,
-          "price_sgd": 111.22,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Evelyn%203%20Tipe%20B%20Nongsa",
-          "title": "Campur Kost Evelyn 3 Tipe B Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Chelma%20Botania%20Kota%20Batam%20Kota",
-          "title": "Campur Kost Chelma Botania Kota Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3500000,
-          "price_sgd": 251.15,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20La%20Vista%20Executive%20Kota%20Batam",
-          "title": "Campur Ikut Daftar Tunggu Kost La Vista Executive Kota Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Asiyah%20Deluxe%20Nongsa",
-          "title": "Campur Sisa 3 kamar Kost Asiyah Deluxe Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3000000,
-          "price_sgd": 215.27,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20La%20Vista%20Deluxe%20Kota%20Batam%20Ko",
-          "title": "Campur Ikut Daftar Tunggu Kost La Vista Deluxe Kota Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20La%20Vista%20Super%20Deluxe%20Kota%20Ke",
-          "title": "Campur Ikut Daftar Tunggu Kost La Vista Super Deluxe Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Rita%20Kota%20Batam%20Kota",
-          "title": "Putra Ikut Daftar Tunggu Kost Rita Kota Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Ruko%20Arira%20Garden%20Nongsa%20Klose",
-          "title": "Putra Ikut Daftar Tunggu Kost Ruko Arira Garden Nongsa Kloset Duduk·Akses 24 Jam Kurang Respons",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 700000,
-          "price_sgd": 50.23,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Rumah%20Ramah%20Kota%20Batam%20Kota",
-          "title": "Campur Ikut Daftar Tunggu Kost Rumah Ramah Kota Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1400000,
-          "price_sgd": 100.46,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Family%20Dream%20Kecamatan%20Nongsa",
-          "title": "Putra Ikut Daftar Tunggu Kost Family Dream Kecamatan Nongsa",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 825000,
-          "price_sgd": 59.2,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Gardan%20Raya%20GA%20Kota%20Kecamatan%20",
-          "title": "Putra Ikut Daftar Tunggu Kost Gardan Raya GA Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 900000,
-          "price_sgd": 64.58,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Zavira%20II%20Kota%20Kecamatan%20Batam%20Kota",
-          "title": "Putri Sisa 1 kamar Kost Zavira II Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2200000,
-          "price_sgd": 157.86,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Premium%20Vvip%20Kota%20Kecamatan%20Batam%20Ko",
-          "title": "Putri Sisa 1 kamar Kost Premium Vvip Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1720000,
-          "price_sgd": 123.42,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%201%20kamar%20Kost%20Azka%202%20Kota%20Batam%20Kota",
-          "title": "Putra Sisa 1 kamar Kost Azka 2 Kota Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Azka%20Kecamatan%20Batam%20Kota",
-          "title": "Campur Sisa 1 kamar Kost Azka Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Premium%20Executive%20Kecamatan%20Batam%20Kota",
-          "title": "Putri Kost Premium Executive Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1920000,
-          "price_sgd": 137.77,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%203%20kamar%20Kost%20Zavira%20Kota%20Kecamatan%20Batam%20Kota",
-          "title": "Putri Sisa 3 kamar Kost Zavira Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1900000,
-          "price_sgd": 136.34,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Rumah%20Evelyn%20Tipe%20A%20Kota%20Batam%20Kota",
-          "title": "Campur Sisa 2 kamar Kost Rumah Evelyn Tipe A Kota Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1550000,
-          "price_sgd": 111.22,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Gaia%208%20Tipe%20Lite%20Series%20Bengk",
           "title": "Campur Ikut Daftar Tunggu Kost Gaia 8 Tipe Lite Series Bengkong",
           "category": "room",
@@ -1749,17 +2740,6 @@
           "platform": "Mamikos",
           "price_idr": 2299999,
           "price_sgd": 165.04,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Sarifa%20Reguler%20Kota%20Kecamatan%20Batam%20Kota",
-          "title": "Campur Kost Sarifa Reguler Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 900000,
-          "price_sgd": 64.58,
           "first_seen": "2026-08-20",
           "last_seen": "2026-08-21"
         },
@@ -1797,380 +2777,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Graha%20Nusa%20Batuaji%20Tipe%20C%20Sagulung",
-          "title": "Campur Sisa 1 kamar Kost Graha Nusa Batuaji Tipe C Sagulung",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Graha%20Nusa%20Exlusive%20Mezzanine%20Vip%20K",
-          "title": "Campur Sisa 1 kamar Kost Graha Nusa Exlusive Mezzanine Vip Kecamatan Sagulung",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Tata78%20Tipe%20A%20Sagulung",
-          "title": "Campur Sisa 2 kamar Kost Tata78 Tipe A Sagulung",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1000000,
-          "price_sgd": 71.76,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Graha%20Nusa%20Batuaji%20Tipe%20B%20Sag",
-          "title": "Campur Ikut Daftar Tunggu Kost Graha Nusa Batuaji Tipe B Sagulung",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1600000,
-          "price_sgd": 114.81,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Levi%20Tipe%20A%20Batu%20Aji",
-          "title": "Campur Sisa 1 kamar Kost Levi Tipe A Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2150000,
-          "price_sgd": 154.28,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Harmony%20I%20Sagulung",
-          "title": "Putra Ikut Daftar Tunggu Kost Harmony I Sagulung",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1400000,
-          "price_sgd": 100.46,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20A%20Batu%20Aji",
-          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe A Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 750000,
-          "price_sgd": 53.82,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Anugrah%20Yahweh%20Kecamatan%20Sagulung",
-          "title": "Campur Sisa 2 kamar Kost Anugrah Yahweh Kecamatan Sagulung",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1507000,
-          "price_sgd": 108.14,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20B%20Batu%20Aji",
-          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe B Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 850000,
-          "price_sgd": 60.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Perum%20Taman%20Pesona%20Tipe%20A%20Keca",
-          "title": "Putra Ikut Daftar Tunggu Kost Perum Taman Pesona Tipe A Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 850000,
-          "price_sgd": 60.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Perum%20Taman%20Pesona%20Tipe%20C%20Keca",
-          "title": "Putra Ikut Daftar Tunggu Kost Perum Taman Pesona Tipe C Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 800000,
-          "price_sgd": 57.41,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Non%20Ac%20Kecamatan%20Batu%20Aji",
-          "title": "Putra Ikut Daftar Tunggu Kost TPI Non Ac Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 850000,
-          "price_sgd": 60.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20AC%20Kecamatan%20Batu%20Aji",
-          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe AC Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20E%20Kecamatan%20Batu%20Aji",
-          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe E Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 800000,
-          "price_sgd": 57.41,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Abc%20Sagulung",
-          "title": "Campur Kost Abc Sagulung",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20TPI%20Tipe%20C%20Kecamatan%20Batu%20Aji",
-          "title": "Putra Ikut Daftar Tunggu Kost TPI Tipe C Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1250000,
-          "price_sgd": 89.7,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Perum%20Taman%20Pesona%20Tipe%20B%20Tan",
-          "title": "Campur Ikut Daftar Tunggu Kost Perum Taman Pesona Tipe B Tanjung Uncang Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1250000,
-          "price_sgd": 89.7,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Tunas%20Regency%20Tanjung%20Uncang%20Kecama",
-          "title": "Campur Sisa 1 kamar Kost Tunas Regency Tanjung Uncang Kecamatan Sagulung",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2300000,
-          "price_sgd": 165.04,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Tunas%20Vip%20Jasmin%20Kecamatan%20Sagulung",
-          "title": "Campur Sisa 2 kamar Kost Tunas Vip Jasmin Kecamatan Sagulung",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2000000,
-          "price_sgd": 143.51,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Tunas%20VIP%20Kecamatan%20Sagulung",
-          "title": "Campur Ikut Daftar Tunggu Kost Tunas VIP Kecamatan Sagulung",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2000000,
-          "price_sgd": 143.51,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Basecamp%20Tipe%20A%20Kecamatan%20Bat",
-          "title": "Campur Ikut Daftar Tunggu Kost Basecamp Tipe A Kecamatan Batu Aji WiFi·Kasur",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 600000,
-          "price_sgd": 43.05,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Pak%20Pulungan%20Tipe%20Tanjung%20Unca",
-          "title": "Putri Ikut Daftar Tunggu Kost Pak Pulungan Tipe Tanjung Uncang Batu Aji",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 600000,
-          "price_sgd": 43.05,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Sodentna%20Kartini%206%20Sekupang",
-          "title": "Campur Sisa 1 kamar Kost Sodentna Kartini 6 Sekupang",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Citra%20Pandawa%20Asri%20Batu%20Aji%20Wi",
-          "title": "Putra Ikut Daftar Tunggu Kost Citra Pandawa Asri Batu Aji WiFi·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 850000,
-          "price_sgd": 60.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Sgp%20Gesya%20Eternal%20Marina%20Tipe%20B%20Sek",
-          "title": "Campur Sisa 3 kamar Kost Sgp Gesya Eternal Marina Tipe B Sekupang WiFi·Kloset Duduk·Kasur",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 900000,
-          "price_sgd": 64.58,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%201%20kamar%20Kost%20Dilaa%20Tipe%20Ekslusif%20Sekupang%20WiFi%C2%B7Ka",
-          "title": "Putra Sisa 1 kamar Kost Dilaa Tipe Ekslusif Sekupang WiFi·Kasur",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 800000,
-          "price_sgd": 57.41,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Andini%20Kecamatan%20Sei%20Beduk",
-          "title": "Putri Sisa 1 kamar Kost Andini Kecamatan Sei Beduk",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 850000,
-          "price_sgd": 60.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Pimaro%20Pancur%20Sei%20Beduk",
-          "title": "Campur Ikut Daftar Tunggu Kost Pimaro Pancur Sei Beduk",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 650000,
-          "price_sgd": 46.64,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Gaia%20Buana%20Central%20Park%20Tipe%20",
-          "title": "Campur Ikut Daftar Tunggu Kost Gaia Buana Central Park Tipe 1 Sagulung",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 750000,
-          "price_sgd": 53.82,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Afif%20I%20Executive%20Kecamatan%20Sagulung",
-          "title": "Campur Sisa 1 kamar Kost Afif I Executive Kecamatan Sagulung",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3100000,
-          "price_sgd": 222.45,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Afif%20Rexvin%20Kecamatan%20Sagulung",
-          "title": "Campur Sisa 1 kamar Kost Afif Rexvin Kecamatan Sagulung",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2150000,
-          "price_sgd": 154.28,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20A1%20Tipe%20A1%20Sei%20Beduk",
-          "title": "Putri Sisa 1 kamar Kost A1 Tipe A1 Sei Beduk",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Jefferson%20Homestay%20Tipe%20Executive%20A%20Batu%20Aji",
-          "title": "Campur Kost Jefferson Homestay Tipe Executive A Batu Aji",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20My%20Living%20Studio%20Vip%20Sagulung",
-          "title": "Putri Ikut Daftar Tunggu Kost My Living Studio Vip Sagulung",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Tipe%20A%20Sagulung",
           "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Tipe A Sagulung",
           "category": "room",
@@ -2204,17 +2810,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Non%20AC%20lantai1%20Sagu",
-          "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Non AC lantai1 Sagulung",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 650000,
-          "price_sgd": 46.64,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Tipe%20B%20Sagulung",
           "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Tipe B Sagulung",
           "category": "room",
@@ -2233,39 +2828,6 @@
           "platform": "Mamikos",
           "price_idr": 750000,
           "price_sgd": 53.82,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://www.olx.co.id/item/kost-exclusive-nagoya-thamrin-batam-iid-947583543",
-          "title": "KOST EXCLUSIVE NAGOYA THAMRIN BATAM LUBUK BAJA, BATAM KOTA",
-          "category": "room",
-          "location": "Nagoya, Batam",
-          "platform": "OLX",
-          "price_idr": 1900000,
-          "price_sgd": 136.34,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://www.olx.co.id/item/brand-new-kost-at-nagoya-dc-mall-iid-939281744",
-          "title": "BRAND NEW KOST AT NAGOYA DC MALL LUBUK BAJA, BATAM KOTA",
-          "category": "room",
-          "location": "Nagoya, Batam",
-          "platform": "OLX",
-          "price_idr": 1800000,
-          "price_sgd": 129.16,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%202%20kamar%20Kost%20Shinta%27s%20Homestay%20Sekupang",
-          "title": "Putra Sisa 2 kamar Kost Shinta's Homestay Sekupang",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
           "first_seen": "2026-08-20",
           "last_seen": "2026-08-21"
         },
@@ -2310,17 +2872,6 @@
           "platform": "Mamikos",
           "price_idr": 2800000,
           "price_sgd": 200.92,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Jj%20Tipe%20Superior%20B%20Lubuk%20Baja",
-          "title": "Campur Sisa 1 kamar Kost Jj Tipe Superior B Lubuk Baja",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3500000,
-          "price_sgd": 251.15,
           "first_seen": "2026-08-21",
           "last_seen": "2026-08-21"
         },
@@ -2402,17 +2953,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Kartika%20Residence%20Super%20Small%20Kecam",
-          "title": "Campur Sisa 1 kamar Kost Kartika Residence Super Small Kecamatan Batu Ampar",
-          "category": "room",
-          "location": "Bengkong, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2000000,
-          "price_sgd": 143.51,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/bengkong-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Kost%20Vivi%20Tipe%20A%20Bengkong",
           "title": "Putri Kost Vivi Tipe A Bengkong",
           "category": "room",
@@ -2435,17 +2975,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Evelyn%20I%20Kota%20Kecamatan%20Batam%20Kota",
-          "title": "Campur Sisa 1 kamar Kost Evelyn I Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2000000,
-          "price_sgd": 143.51,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Engku%20Putri%20Tipe%20Executive%20Kota%20Bat",
           "title": "Campur Sisa 1 kamar Kost Engku Putri Tipe Executive Kota Batam Kota",
           "category": "room",
@@ -2453,28 +2982,6 @@
           "platform": "Mamikos",
           "price_idr": 2000000,
           "price_sgd": 143.51,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Engku%20Putri%20Tipe%20B%20Kota%20Batam%20Kota%20WiFi%C2%B7Kasur",
-          "title": "Campur Kost Engku Putri Tipe B Kota Batam Kota WiFi·Kasur",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 750000,
-          "price_sgd": 53.82,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Engku%20Putri%20Tipe%20D%20Kota%20Batam%20Kota%20",
-          "title": "Campur Sisa 1 kamar Kost Engku Putri Tipe D Kota Batam Kota Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 900000,
-          "price_sgd": 64.58,
           "first_seen": "2026-08-21",
           "last_seen": "2026-08-21"
         },
@@ -2501,50 +3008,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Dahlia%20Kecamatan%20Batu%20Aji",
-          "title": "Putri Ikut Daftar Tunggu Kost Dahlia Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1200000,
-          "price_sgd": 86.11,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Gaia%20Buana%20Central%20Park%20Tipe%20B%20Batu",
-          "title": "Campur Sisa 3 kamar Kost Gaia Buana Central Park Tipe B Batu Aji WiFi·AC·Kloset Duduk·Kasur",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1300000,
-          "price_sgd": 93.28,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Type%20A%20Sagulung",
-          "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Type A Sagulung",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1500000,
-          "price_sgd": 107.63,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Mukakuning%20Tipe%20C%20Sagulung",
-          "title": "Putri Ikut Daftar Tunggu Kost Mukakuning Tipe C Sagulung",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 775000,
-          "price_sgd": 55.61,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
           "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20My%20Living%20Tipe%20Luxury%20AC%20Sagul",
           "title": "Putri Ikut Daftar Tunggu Kost My Living Tipe Luxury AC Sagulung",
           "category": "room",
@@ -2556,28 +3019,6 @@
           "last_seen": "2026-08-21"
         },
         {
-          "url": "https://www.olx.co.id/item/disewakan-kos-full-furnished-tunas-regency-tanjung-uncang-iid-932935248",
-          "title": "1 KT - 1 KM - 60 m2 DISEWAKAN KOS FULL FURNISHED Tunas Regency, Tanjung Uncang SAGULUNG, BATAM KOTA",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "OLX",
-          "price_idr": 2300000,
-          "price_sgd": 165.04,
-          "first_seen": "2026-08-21",
-          "last_seen": "2026-08-21"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Joce%20Elite%20Kota%20Kecamatan%20Batam%20Kot",
-          "title": "Campur Sisa 2 kamar Kost Joce Elite Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 4000000,
-          "price_sgd": 287.03,
-          "first_seen": "2026-08-19",
-          "last_seen": "2026-08-20"
-        },
-        {
           "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%203%20kamar%20Kost%20Gaia%20Buana%20Central%20Park%20Tipe%20B%20Batu",
           "title": "Campur Sisa 3 kamar Kost Gaia Buana Central Park Tipe B Batu Aji WiFi·AC·Kloset Duduk·Kasur",
           "category": "room",
@@ -2585,28 +3026,6 @@
           "platform": "Mamikos",
           "price_idr": 1300000,
           "price_sgd": 93.28,
-          "first_seen": "2026-08-19",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Go%20Botania%20Kota%20Batam%20Kota",
-          "title": "Campur Sisa 2 kamar Kost Go Botania Kota Batam Kota",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 2300000,
-          "price_sgd": 165.04,
-          "first_seen": "2026-08-19",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/batam-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Kost%20Mitra%20Tipe%20Standard%20Kota%20Batam%20Kota",
-          "title": "Campur Kost Mitra Tipe Standard Kota Batam Kota",
-          "category": "room",
-          "location": "Batam",
-          "platform": "Mamikos",
-          "price_idr": 3000000,
-          "price_sgd": 215.27,
           "first_seen": "2026-08-19",
           "last_seen": "2026-08-20"
         },
@@ -2666,17 +3085,6 @@
           "last_seen": "2026-08-20"
         },
         {
-          "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20C11%20Super%20Vip%20Lubuk%20Baja",
-          "title": "Campur Sisa 1 kamar Kost C11 Super Vip Lubuk Baja",
-          "category": "room",
-          "location": "Lubuk Baja, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3990000,
-          "price_sgd": 286.31,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
           "url": "https://mamikos.com/cari/lubuk-baja-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20Lyno%20Exclusive%20Room%20204%20Lubuk%20Baja",
           "title": "Campur Sisa 2 kamar Kost Lyno Exclusive Room 204 Lubuk Baja",
           "category": "room",
@@ -2684,39 +3092,6 @@
           "platform": "Mamikos",
           "price_idr": 3000000,
           "price_sgd": 215.27,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Marley%20Tipe%20E%20Batu%20Ampar%20WiFi",
-          "title": "Campur Ikut Daftar Tunggu Kost Marley Tipe E Batu Ampar WiFi·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 900000,
-          "price_sgd": 64.58,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Rumah%20Kontrakan%20Dekat%20Golden%20Prawn",
-          "title": "Campur Ikut Daftar Tunggu Rumah Kontrakan Dekat Golden Prawn Kecamatan Bengkong",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1100000,
-          "price_sgd": 78.93,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-ampar-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Shafa%20Tipe%20A%20Bengkong",
-          "title": "Putri Ikut Daftar Tunggu Kost Shafa Tipe A Bengkong",
-          "category": "room",
-          "location": "Batu Ampar, Batam",
-          "platform": "Mamikos",
-          "price_idr": 650000,
-          "price_sgd": 46.64,
           "first_seen": "2026-08-20",
           "last_seen": "2026-08-20"
         },
@@ -2743,28 +3118,6 @@
           "last_seen": "2026-08-20"
         },
         {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%201%20kamar%20Kost%20Grandi%20Tiban%203%20Kamar%20Ungu%20Kecamatan",
-          "title": "Campur Sisa 1 kamar Kost Grandi Tiban 3 Kamar Ungu Kecamatan Sekupang",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1700000,
-          "price_sgd": 121.99,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/sekupang-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Tiban%20Kampung%20Tipe%20B%20Kecamatan",
-          "title": "Putra Ikut Daftar Tunggu Kost Tiban Kampung Tipe B Kecamatan Sekupang Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sekupang, Batam",
-          "platform": "Mamikos",
-          "price_idr": 600000,
-          "price_sgd": 43.05,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
           "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%201%20kamar%20Kost%20Dl%20Koszy%20Bida%201%20Tipe%20A%20Kota%20Batam%20Ko",
           "title": "Putri Sisa 1 kamar Kost Dl Koszy Bida 1 Tipe A Kota Batam Kota",
           "category": "room",
@@ -2783,17 +3136,6 @@
           "platform": "Mamikos",
           "price_idr": 1000000,
           "price_sgd": 71.76,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/nongsa-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Sisa%201%20kamar%20Kost%20Calla%20Stay%20Cikitsu%20Kota%20Kecamatan%20Ba",
-          "title": "Putra Sisa 1 kamar Kost Calla Stay Cikitsu Kota Kecamatan Batam Kota",
-          "category": "room",
-          "location": "Nongsa, Batam",
-          "platform": "Mamikos",
-          "price_idr": 2100000,
-          "price_sgd": 150.69,
           "first_seen": "2026-08-20",
           "last_seen": "2026-08-20"
         },
@@ -2827,72 +3169,6 @@
           "platform": "Mamikos",
           "price_idr": 750000,
           "price_sgd": 53.82,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putra%20Ikut%20Daftar%20Tunggu%20Kost%20Dreamland%20Park%20Marina%20Sekupang",
-          "title": "Putra Ikut Daftar Tunggu Kost Dreamland Park Marina Sekupang Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 800000,
-          "price_sgd": 57.41,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/sagulung-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20Kak%20Yana%20Kecamatan%20Batu%20Aji%20Ak",
-          "title": "Putri Ikut Daftar Tunggu Kost Kak Yana Kecamatan Batu Aji Akses 24 Jam Kurang Respons",
-          "category": "room",
-          "location": "Sagulung, Batam",
-          "platform": "Mamikos",
-          "price_idr": 600000,
-          "price_sgd": 43.05,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Ikut%20Daftar%20Tunggu%20Kost%20Edu%20Kecamatan%20Batu%20Aji",
-          "title": "Campur Ikut Daftar Tunggu Kost Edu Kecamatan Batu Aji",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1300000,
-          "price_sgd": 93.28,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/batu-aji-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Sisa%203%20kamar%20Kost%20Palem%20Home%20Tipe%20Standard%20Kecamatan%20S",
-          "title": "Putri Sisa 3 kamar Kost Palem Home Tipe Standard Kecamatan Sekupang",
-          "category": "room",
-          "location": "Batu Aji, Batam",
-          "platform": "Mamikos",
-          "price_idr": 600000,
-          "price_sgd": 43.05,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Putri%20Ikut%20Daftar%20Tunggu%20Kost%20A1%20Tipe%20A%20Sei%20Beduk",
-          "title": "Putri Ikut Daftar Tunggu Kost A1 Tipe A Sei Beduk",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 1650000,
-          "price_sgd": 118.4,
-          "first_seen": "2026-08-20",
-          "last_seen": "2026-08-20"
-        },
-        {
-          "url": "https://mamikos.com/cari/sei-beduk-kota-batam-kepulauan-riau-indonesia/all/bulanan/0-15000000#Campur%20Sisa%202%20kamar%20Kost%20SPA%20D%20Batu%20Aji%20WiFi%C2%B7AC%C2%B7Kloset%20Duduk",
-          "title": "Campur Sisa 2 kamar Kost SPA D Batu Aji WiFi·AC·Kloset Duduk·Kasur·Akses 24 Jam",
-          "category": "room",
-          "location": "Sei Beduk, Batam",
-          "platform": "Mamikos",
-          "price_idr": 3500000,
-          "price_sgd": 251.15,
           "first_seen": "2026-08-20",
           "last_seen": "2026-08-20"
         },
@@ -3296,20 +3572,44 @@
     },
     "shophouse": {
       "unit": "IDR (asking, sale)",
-      "n": 252,
-      "n_current": 12,
+      "n": 256,
+      "n_current": 16,
       "current_window_days": 120,
       "coverage": {
-        "scan_days_with_matches": 17,
+        "scan_days_with_matches": 18,
         "first_scan": "2022-03-24",
-        "last_scan": "2026-08-21",
-        "archive_scan_days": 36
+        "last_scan": "2026-08-22",
+        "archive_scan_days": 37
       },
       "by_platform": {
-        "OLX": 7,
+        "OLX": 11,
         "Rumah123": 245
       },
       "by_area": {
+        "Batam Centre": {
+          "n": 3,
+          "priced_n": 3,
+          "min_idr": 2600000000,
+          "max_idr": 4200000000,
+          "median_idr": 3380000000,
+          "prices_idr": [
+            2600000000,
+            3380000000,
+            4200000000
+          ]
+        },
+        "Batam Kota": {
+          "n": 3,
+          "priced_n": 3,
+          "min_idr": 640000000,
+          "max_idr": 3150000000,
+          "median_idr": 850000000,
+          "prices_idr": [
+            640000000,
+            850000000,
+            3150000000
+          ]
+        },
         "Nagoya": {
           "n": 3,
           "priced_n": 3,
@@ -3322,28 +3622,6 @@
             2800000000
           ]
         },
-        "Batam Centre": {
-          "n": 2,
-          "priced_n": 2,
-          "min_idr": 2600000000,
-          "max_idr": 4200000000,
-          "median_idr": 3400000000,
-          "prices_idr": [
-            2600000000,
-            4200000000
-          ]
-        },
-        "Batam Kota": {
-          "n": 2,
-          "priced_n": 2,
-          "min_idr": 640000000,
-          "max_idr": 3150000000,
-          "median_idr": 1895000000,
-          "prices_idr": [
-            640000000,
-            3150000000
-          ]
-        },
         "Baloi": {
           "n": 1,
           "priced_n": 1,
@@ -3352,6 +3630,26 @@
           "median_idr": 2900000000,
           "prices_idr": [
             2900000000
+          ]
+        },
+        "Batam Center": {
+          "n": 1,
+          "priced_n": 1,
+          "min_idr": 900000000,
+          "max_idr": 900000000,
+          "median_idr": 900000000,
+          "prices_idr": [
+            900000000
+          ]
+        },
+        "Botania": {
+          "n": 1,
+          "priced_n": 1,
+          "min_idr": 1600000000,
+          "max_idr": 1600000000,
+          "median_idr": 1600000000,
+          "prices_idr": [
+            1600000000
           ]
         },
         "Jodoh": {
@@ -3502,14 +3800,58 @@
         },
         {
           "month": "2026-08",
-          "n": 12,
+          "n": 16,
           "origin": "live",
-          "median_idr": 2850000000,
+          "median_idr": 2700000000,
           "min_idr": 640000000,
           "max_idr": 7000000000
         }
       ],
       "listings": [
+        {
+          "title": "Dijual Cepat Ruko 2 Lantai Mega Legenda Siap pakai batam center BATAM KOTA, BATAM KOTA",
+          "price_idr": 900000000,
+          "price_sgd": 64580.94,
+          "location": "Batam Center, Batam",
+          "url": "https://www.olx.co.id/item/dijual-cepat-ruko-2-lantai-mega-legenda-siap-pakai-batam-center-iid-947605021",
+          "platform": "OLX",
+          "category": "shophouse",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Ruko Modern 3 LT Azure Exchange Batam Centre | Imperium Superblok BENGKONG, BATAM KOTA",
+          "price_idr": 3380000000,
+          "price_sgd": 242537.31,
+          "location": "Batam Centre, Batam",
+          "url": "https://www.olx.co.id/item/ruko-modern-3-lt-azure-exchange-batam-centre-imperium-superblok-iid-946607732",
+          "platform": "OLX",
+          "category": "shophouse",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "1 KT - 2 KM - 104 m2 DIJUAL RUKO DERMAGA SUKAJADI, BATAM BATAM KOTA, BATAM KOTA",
+          "price_idr": 850000000,
+          "price_sgd": 60993.11,
+          "location": "Batam Kota, Batam",
+          "url": "https://www.olx.co.id/item/dijual-ruko-dermaga-sukajadi-batam-iid-946610217",
+          "platform": "OLX",
+          "category": "shophouse",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
+        {
+          "title": "Di jual Ruko Gandeng Hook tengah taras mamen botania 2 NONGSA, BATAM KOTA",
+          "price_idr": 1600000000,
+          "price_sgd": 114810.56,
+          "location": "Botania, Batam",
+          "url": "https://www.olx.co.id/item/di-jual-ruko-gandeng-hook-tengah-taras-mamen-botania-2-iid-943442118",
+          "platform": "OLX",
+          "category": "shophouse",
+          "first_seen": "2026-08-22",
+          "last_seen": "2026-08-22"
+        },
         {
           "url": "https://www.olx.co.id/item/dijual-3-unit-ruko-2-lantai-siap-pakai-gandeng-grand-niaga-mas-batam-centre-iid-946580759",
           "title": "DiJUAL‼ 3 Unit Ruko 2 Lantai Siap Pakai (Gandeng) Grand Niaga Mas Batam Centre SAGULUNG, BATAM KOTA",
